@@ -19,19 +19,25 @@ type sessionKey struct{}
 
 // SessionStore holds the session data and settings
 type SessionStore[T any] struct {
-	name       string
-	sessions   map[string]*T
-	lock       sync.RWMutex
-	ctxKey     sessionKey
-	expiration time.Duration
+	name          string
+	sessions      map[string]*T
+	lock          sync.RWMutex
+	ctxKey        sessionKey
+	expiration    time.Duration
+	willRedirect  bool
+	redirectPath  string
+	defaultPath   string
 }
 
 // Init will initialize the SessionStore object
-func (st *SessionStore[T]) InitStore(name string, itemExpiry time.Duration) {
+func (st *SessionStore[T]) InitStore(name string, itemExpiry time.Duration, willRedirect bool, redirectPath string, defaultPath string) {
 	st.name = name
 	st.sessions = make(map[string]*T)
 	st.ctxKey = sessionKey{}
 	st.expiration = itemExpiry
+	st.willRedirect = willRedirect
+	st.redirectPath = redirectPath
+	st.defaultPath = defaultPath
 }
 
 func randBase64String(entropyBytes int) string {
@@ -97,10 +103,12 @@ func (st *SessionStore[T]) GetSessionFromRequest(r *http.Request) *T {
 func (st *SessionStore[T]) LoadSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		sess := st.GetSessionFromRequest(r)
-		if sess == nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		
+		if sess == nil  {
+			next.ServeHTTP(w, r)
 			return
 		}
+		
 		ctx := context.WithValue(r.Context(), st.ctxKey, sess)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

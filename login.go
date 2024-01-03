@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
-	"html/template"
 	"gohttp/session"
+	"html/template"
+	"net/http"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,17 +13,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
-		
+
 		if username == "admin" && password == "admin" {
 			sess := &session.AuthSession{}
 			sess.Role = "Administrator"
 			sess.Username = username
-			ss.PutSession(w, r, sess)
+			globalSession.PutSession(w, r, sess)
 			http.Redirect(w, r, "/hello", http.StatusFound)
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
 			tmpl := template.Must(template.ParseFS(viewTemplates, "views/error.html"))
-			tmpl.Execute(w, "ERROR FUCK YOU") 
+			tmpl.Execute(w, "LOGIN ERROR")
 		}
 	}
 }
