@@ -12,11 +12,12 @@ import (
 var globalSession session.SessionStore[session.AuthSession]
 
 func main() {
+	const expiry time.Duration = time.Duration(time.Hour*24*7) // 7 days
 	const location string = "localhost:8080"
 
 	fmt.Println("[Go HTTP Server Test]")
 
-	globalSession.InitStore("AuthenticationCookie", time.Duration(time.Hour*24*7), true, "/login", "/hello")
+	globalSession.InitStore("AuthenticationCookie", expiry, true, "/login", "/hello")
 	fmt.Println("-> Initializing in-memory session")
 
 	mapStaticAssets()

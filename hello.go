@@ -23,6 +23,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	val2, _ := strconv.Atoi(r.FormValue("val2"))
 
 	sess := globalSession.GetSessionFromCtx(r)
+	
 	if sess == nil {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}

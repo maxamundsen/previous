@@ -105,7 +105,8 @@ func (st *SessionStore[T]) LoadSession(next http.Handler) http.Handler {
 		sess := st.GetSessionFromRequest(r)
 		
 		if sess == nil  {
-			next.ServeHTTP(w, r)
+			ctx := context.WithValue(r.Context(), st.ctxKey, "value")
+			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
 		
