@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var globalSession session.SessionStore[session.AuthSession]
+var globalSession session.SessionStore
 
 func main() {
 	const expiry time.Duration = time.Duration(time.Hour*24*7) // 7 days

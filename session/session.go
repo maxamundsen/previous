@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-
 type AuthSession struct {
+	IsAuthenticated bool
 	Role     string
 	Username string
 }
@@ -18,9 +18,9 @@ type AuthSession struct {
 type sessionKey struct{}
 
 // SessionStore holds the session data and settings
-type SessionStore[T any] struct {
+type SessionStore struct {
 	name          string
-	sessions      map[string]*T
+	sessions      map[string]*AuthSession
 	lock          sync.RWMutex
 	ctxKey        sessionKey
 	expiration    time.Duration
@@ -30,9 +30,9 @@ type SessionStore[T any] struct {
 }
 
 // Init will initialize the SessionStore object
-func (st *SessionStore[T]) InitStore(name string, itemExpiry time.Duration, willRedirect bool, redirectPath string, defaultPath string) {
+func (st *SessionStore) InitStore(name string, itemExpiry time.Duration, willRedirect bool, redirectPath string, defaultPath string) {
 	st.name = name
-	st.sessions = make(map[string]*T)
+	st.sessions = make(map[string]*AuthSession)
 	st.ctxKey = sessionKey{}
 	st.expiration = itemExpiry
 	st.willRedirect = willRedirect
@@ -48,7 +48,7 @@ func randBase64String(entropyBytes int) string {
 
 // PutSession will store the session in the SessionStore.
 // The session will automatically expire after defined SessionStore.sessionExpiration.
-func (st *SessionStore[T]) PutSession(w http.ResponseWriter, r *http.Request, sess *T) {
+func (st *SessionStore) PutSession(w http.ResponseWriter, r *http.Request, sess *AuthSession) {
 	cookieValue := randBase64String(33) // 33 bytes entropy
 
 	time.AfterFunc(st.expiration, func() {
@@ -75,7 +75,7 @@ func (st *SessionStore[T]) PutSession(w http.ResponseWriter, r *http.Request, se
 }
 
 // DeleteSession will delete the session from the SessionStore.
-func (st *SessionStore[T]) DeleteSession(r *http.Request) {
+func (st *SessionStore) DeleteSession(r *http.Request) {
 	cookie, err := r.Cookie(st.name)
 	if err != nil {
 		return
@@ -87,7 +87,7 @@ func (st *SessionStore[T]) DeleteSession(r *http.Request) {
 
 // GetSessionFromRequest retrieves the session from the http.Request cookies.
 // The function will return nil if the session does not exist within the http.Request cookies.
-func (st *SessionStore[T]) GetSessionFromRequest(r *http.Request) *T {
+func (st *SessionStore) GetSessionFromRequest(r *http.Request) *AuthSession {
 	cookie, err := r.Cookie(st.name)
 	if err != nil {
 		return nil
@@ -99,13 +99,16 @@ func (st *SessionStore[T]) GetSessionFromRequest(r *http.Request) *T {
 }
 
 // LoadSession will load the session into the http.Request context.
-// A http.StatusUnauthorized will be retuned to the client if no session can be found.
-func (st *SessionStore[T]) LoadSession(next http.Handler) http.Handler {
+func (st *SessionStore) LoadSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		sess := st.GetSessionFromRequest(r)
 		
 		if sess == nil  {
-			ctx := context.WithValue(r.Context(), st.ctxKey, "value")
+			noAuthSession := &AuthSession {
+				IsAuthenticated: false,
+			}
+			
+			ctx := context.WithValue(r.Context(), st.ctxKey, noAuthSession)
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
@@ -116,7 +119,22 @@ func (st *SessionStore[T]) LoadSession(next http.Handler) http.Handler {
 }
 
 // GetSessionFromCtx retrieves the session from the http.Request context.
-// The function will return nil if the session does not exist within the http.Request context.
-func (st *SessionStore[T]) GetSessionFromCtx(r *http.Request) *T {
-	return r.Context().Value(st.ctxKey).(*T)
+// If no session is found, it returns an AuthSession with IsAuthenticated set to false.
+func (st *SessionStore) GetSessionFromCtx(r *http.Request) *AuthSession {
+	return r.Context().Value(st.ctxKey).(*AuthSession)
+}
+
+// Check session for auth, handle accordingly
+func (st *SessionStore) AuthorizeRoute(w http.ResponseWriter, r *http.Request, a *AuthSession) {
+	if !a.IsAuthenticated {
+		if st.willRedirect && st.redirectPath != r.URL.Path {
+			http.Redirect(w, r, st.redirectPath, http.StatusFound)
+		} else if !st.willRedirect {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		}
+	} else {
+		if st.willRedirect && st.redirectPath == r.URL.Path {
+			http.Redirect(w, r, st.defaultPath, http.StatusFound)
+		}
+	}
 }

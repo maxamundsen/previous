@@ -19,16 +19,13 @@ type PageData struct {
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	sess := globalSession.GetSessionFromCtx(r)
+	globalSession.AuthorizeRoute(w, r, sess)
+	
 	val1, _ := strconv.Atoi(r.FormValue("val1"))
 	val2, _ := strconv.Atoi(r.FormValue("val2"))
-
-	sess := globalSession.GetSessionFromCtx(r)
-	
-	if sess == nil {
-		http.Redirect(w, r, "/login", http.StatusFound)
-	}
-
 	age := val1 * val2
+	
 	isGreater := false
 
 	if sess.Role != "Administrator" {
