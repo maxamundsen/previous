@@ -3,28 +3,38 @@ package main
 import (
 	"embed"
 	"fmt"
+	"gohttp/constants"
+	"gohttp/handlers"
 	"net/http"
 )
 
 //go:embed assets
 var staticAssets embed.FS
 
-//go:embed views
-var viewTemplates embed.FS
+func InitMiddleware() {
+	handlers.MemorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+}
 
-func mapStaticAssets() {
-	staticSrv := http.FS(staticAssets)
+func MapStaticAssets(embed bool) {
+	var staticSrv http.FileSystem
+
+	if embed {
+		staticSrv = http.FS(staticAssets)
+	} else {
+		staticSrv = http.Dir("../assets")
+	}
+
 	fs := http.FileServer(staticSrv)
 	http.Handle("/assets/", fs)
 
-	fmt.Println("-> Mapped static assets [EMBED=TRUE]")
+	fmt.Println("-> Mapped static assets")
 }
 
-func mapDynamicRoutes() {
-	http.HandleFunc("/", IndexHandler)
-	http.Handle("/test", memorySession.LoadSession(http.HandlerFunc(TestHandler), true))
-	http.Handle("/login", memorySession.LoadSession(http.HandlerFunc(LoginHandler), false))
-	http.Handle("/logout", memorySession.LoadSession(http.HandlerFunc(LogoutHandler), true))
+func MapDynamicRoutes() {
+	mux.HandleFunc("/", handlers.IndexHandler)
+	mux.Handle("/test", handlers.MemorySession.LoadSession(http.HandlerFunc(handlers.TestHandler), true))
+	mux.Handle("/login", handlers.MemorySession.LoadSession(http.HandlerFunc(handlers.LoginHandler), false))
+	mux.Handle("/logout", handlers.MemorySession.LoadSession(http.HandlerFunc(handlers.LogoutHandler), true))
 
 	fmt.Println("-> Mapped dynamic routes")
 }

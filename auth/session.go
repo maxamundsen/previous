@@ -67,13 +67,13 @@ func (st *SessionStore) loadSession(next http.Handler, w http.ResponseWriter, r 
 		next.ServeHTTP(w, r.WithContext(ctx))
 		return
 	}
-	
+
 	// if auth'd
 	if st.WillRedirect && st.LoginPath == r.URL.Path {
 		http.Redirect(w, r, st.DefaultPath, http.StatusFound)
 		return
 	}
-	
+
 	// if there is a valid session
 	ctx := context.WithValue(r.Context(), st.ctxKey, sess)
 	next.ServeHTTP(w, r.WithContext(ctx))

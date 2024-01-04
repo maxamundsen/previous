@@ -3,25 +3,25 @@ package main
 import (
 	"errors"
 	"fmt"
-	"gohttp/auth"
 	"gohttp/constants"
 	"net/http"
 	"os"
 )
 
-var memorySession auth.MemorySessionStore
+var mux *http.ServeMux
 
 func main() {
+	mux = http.NewServeMux()
+
 	fmt.Println("[Go HTTP Server Test]")
 
-	memorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
-
-	mapStaticAssets()
-	mapDynamicRoutes()
+	InitMiddleware()
+	MapStaticAssets(false)
+	MapDynamicRoutes()
 
 	fmt.Println("-> Listening on http://" + constants.HttpPort)
 
-	err := http.ListenAndServe(constants.HttpPort, nil)
+	err := http.ListenAndServe(constants.HttpPort, mux)
 
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("-> [ERROR] Server closed\n")
