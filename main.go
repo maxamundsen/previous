@@ -9,18 +9,18 @@ import (
 	"os"
 )
 
-var globalSession auth.SessionStore
+var memorySession auth.MemorySessionStore
 
 func main() {
 	fmt.Println("[Go HTTP Server Test]")
 
-	globalSession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/hello")
+	memorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
 
 	mapStaticAssets()
 	mapDynamicRoutes()
 
 	fmt.Println("-> Listening on http://" + constants.HttpPort)
-	
+
 	err := http.ListenAndServe(constants.HttpPort, nil)
 
 	if errors.Is(err, http.ErrServerClosed) {
