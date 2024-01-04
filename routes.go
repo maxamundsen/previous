@@ -1,8 +1,9 @@
 package main
 
 import (
-	"net/http"
 	"embed"
+	"net/http"
+	"fmt"
 )
 
 //go:embed assets
@@ -11,18 +12,26 @@ var staticAssets embed.FS
 //go:embed views
 var viewTemplates embed.FS
 
-func handleWithSession(route string, function http.HandlerFunc) {
-	http.Handle(route, globalSession.LoadSession(http.HandlerFunc(function)))
+// wrapper function to simply session init process
+// when requireAuth is true, routes will 401, or redirect to login if
+// a valid session is not found
+func handleWithSession(route string, function http.HandlerFunc, requireAuth bool) {
+	// attach auth session middleware to provided route
+	http.Handle(route, globalSession.LoadSession(http.HandlerFunc(function), requireAuth))
 }
 
-func mapStaticAssets() {
+func mapStaticAssets() {	
 	staticSrv := http.FS(staticAssets)
 	fs := http.FileServer(staticSrv)
 	http.Handle("/assets/", fs)
+	
+	fmt.Println("-> Mapped static assets [EMBED=TRUE]")
 }
 
 func mapDynamicRoutes() {
-	http.HandleFunc("/", IndexHandler)
-	handleWithSession("/hello", HelloHandler)
-	handleWithSession("/login", LoginHandler)
+	handleWithSession("/", IndexHandler, true)
+	handleWithSession("/hello", HelloHandler, true)
+	handleWithSession("/login", LoginHandler, false)
+	
+	fmt.Println("-> Mapped dynamic routes")
 }

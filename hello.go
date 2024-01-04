@@ -1,9 +1,9 @@
 package main
 
 import (
+	"gohttp/auth"
 	"html/template"
 	"net/http"
-	"strconv"
 )
 
 type Person struct {
@@ -13,29 +13,33 @@ type Person struct {
 }
 
 type PageData struct {
-	Person    Person
-	Title     string
-	IsGreater bool
+	Person   Person
+	Title    string
+	Password string
+	IsAuth   bool
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	sess := globalSession.GetSessionFromCtx(r)
-	globalSession.AuthorizeRoute(w, r, sess)
 	
-	val1, _ := strconv.Atoi(r.FormValue("val1"))
-	val2, _ := strconv.Atoi(r.FormValue("val2"))
-	age := val1 * val2
-	
-	isGreater := false
+	val1 := r.FormValue("val1")
 
-	if sess.Role != "Administrator" {
-		isGreater = true
+	var password string
+
+	if val1 == "" {
+		password = "empty"
+	} else {
+		password, _ = auth.HashPassword(val1)
 	}
 
+	// if sess.Role != "Administrator" {
+
+	// }
+
 	harambe := Person{
-		"Harambe",
-		"Monke",
-		age,
+		"Firstname",
+		"Lastname",
+		15,
 	}
 
 	t := template.Must(template.ParseFS(viewTemplates, "views/base.html", "views/test.html"))
@@ -43,7 +47,8 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	pageData := PageData{
 		harambe,
 		"Title for page",
-		isGreater,
+		password,
+		sess.IsAuthenticated,
 	}
 
 	t.Execute(w, pageData)
