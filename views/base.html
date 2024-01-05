@@ -1,3 +1,4 @@
+{{define "header"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,7 +57,7 @@
             <li><a class="dropdown-item" href="#">Settings</a></li>
             <li><a class="dropdown-item" href="#">Profile</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li><a class="dropdown-item" href="/logout">Log out</a></li>
           </ul>
         </div>
       </div>
@@ -64,7 +65,11 @@
   </header>
 	      <h1>Main Content</h1>
 	      <p>This is the main area of your webpage.</p>
-	      	{{template "content" .}}
+{{end}}
+
+{{/*CONTENT GOES HERE */}}
+
+{{define "footer"}}      	
 	    </div>
 	  </div>
 	</div>
@@ -72,3 +77,4 @@
     <script src="/assets/lib/bootstrap/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+{{end}}

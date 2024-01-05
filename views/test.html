@@ -1,18 +1,20 @@
-{{define "content"}}
-	<h1>{{.Person.FirstName}}</h1>
-	<h2>{{.Person.LastName}}</h2>
-	<p>{{.Person.Age}}</p>
-	
-	
-	<form action="" method="post" autocomplete="off">
-		<input type="text" name="val1" placeholder="val1" autofocus/>
-		<input type="submit" />
-	</form>
-	
-	{{ if .IsAuth }}
-	<p style="color: blue;">AUTH'D</p>
-	{{ end }}
-	
-	<p>output password:</p>
-	{{ .Password }}
-{{end}}
+{{ template "header" .}}
+
+<h1>{{.Person.FirstName}}</h1>
+<h2>{{.Person.LastName}}</h2>
+<p>{{.Person.Age}}</p>
+
+
+<form action="" method="post" autocomplete="off">
+	<input type="text" name="val1" placeholder="val1" autofocus/>
+	<input type="submit" />
+</form>
+
+{{ if .IsAuth }}
+<p style="color: blue;">AUTH'D</p>
+{{ end }}
+
+<p>output password:</p>
+{{ .Password }}
+
+{{ template "footer" .}}

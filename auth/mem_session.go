@@ -11,9 +11,9 @@ package auth
 
 import (
 	"gohttp/constants"
+	"log"
 	"net/http"
 	"sync"
-	"log"
 	"time"
 )
 

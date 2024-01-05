@@ -3,11 +3,14 @@ package main
 import (
 	"fmt"
 	"gohttp/constants"
+	"gohttp/handlers"
 	"log"
 	"net/http"
 )
 
 var mux *http.ServeMux
+
+var useEmbed bool = true
 
 func main() {
 	mux = http.NewServeMux()
@@ -15,8 +18,9 @@ func main() {
 	fmt.Println("[Go HTTP Server Test]")
 	fmt.Println("")
 
-	InitMiddleware()
-	MapStaticAssets(false)
+	handlers.MemorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+
+	MapStaticAssets()
 	MapDynamicRoutes()
 
 	log.Println("Listening on http://" + constants.HttpPort)

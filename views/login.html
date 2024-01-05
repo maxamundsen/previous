@@ -1,21 +1,25 @@
-{{define "content"}}
-	<div class="card align-middle">
-		<div class="card-header">
-			Login
-		</div>
-		<div class="card-body">
-			<form action="" method="POST" autocomplete="off"/>
-				<label for="username">Username:</label>
-				<input id="username" type="text" name="username" autofocus/>
-				
-				<label for="password">Password:</label>
-				<input id="password" type="password" name="password" />
+{{template "header" .}}
 
-				<label for="rememberMe">Stay logged in:</label>
-				<input id="rememberMe" type="checkbox" name="rememberMe" value="true"/>
-				
-				<input type="submit" value="Login" />
-			</form>	
-		</div>
+{{block "login" .}}
+<div class="card align-middle">
+	<div class="card-header">
+		Login
 	</div>
+	<div class="card-body">
+		<form action="" method="POST" autocomplete="off"/>
+			<label for="username">Username:</label>
+			<input id="username" type="text" name="username" autofocus/>
+			
+			<label for="password">Password:</label>
+			<input id="password" type="password" name="password" />
+
+			<label for="rememberMe">Stay logged in:</label>
+			<input id="rememberMe" type="checkbox" name="rememberMe" value="true"/>
+			
+			<input type="submit" value="Login" />
+		</form>	
+	</div>
+</div>
 {{end}}
+
+{{template "footer" .}}

@@ -1,11 +1,9 @@
-<!DOCTYPE html>
+{{template "header" .}}
 
-<html>
-	<head>
-		<title>ERROR</title>
-	</head>
-	
-	<body>
-		<h1 style="color: red;">{{ . }}</h1>
-	</body>
-</html>
+<div class="alert alert-danger" role="alert">
+  Error.
+</div>
+
+{{template "login" .}}
+
+{{template "footer" .}}

@@ -2,15 +2,14 @@ package handlers
 
 import (
 	"gohttp/auth"
-	"html/template"
+	"gohttp/views"
 	"net/http"
 	"strconv"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		tmpl := template.Must(template.ParseFiles("views/base.html", "views/login.html"))
-		tmpl.Execute(w, nil)
+		views.RenderTemplate(w, "login", nil)
 	} else if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
@@ -36,8 +35,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, MemorySession.Base.LoginPath, http.StatusFound)
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
-			tmpl := template.Must(template.ParseFiles("views/error.html"))
-			tmpl.Execute(w, "LOGIN ERROR")
+			views.RenderTemplate(w, "error", nil)
 		}
 	}
 }

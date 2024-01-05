@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"gohttp/auth"
-	"html/template"
+	"gohttp/views"
 	"net/http"
 )
 
@@ -42,8 +42,6 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 		15,
 	}
 
-	t := template.Must(template.ParseFiles("views/base.html", "views/test.html"))
-
 	pageData := PageData{
 		harambe,
 		"Title for page",
@@ -51,5 +49,5 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 		sess.IsAuthenticated,
 	}
 
-	t.Execute(w, pageData)
+	views.RenderTemplate(w, "test", pageData)
 }

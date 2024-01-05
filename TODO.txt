@@ -1,7 +1,8 @@
 Project goals:
-- root file handling (favicons)
+- embeded statics need timestamps - FIXME
+
 - embed only on "production builds"
-- embed interface for templates (view engine thing)
 - database access
 - database session
 - renew session before expiry
+- json config file
