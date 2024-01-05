@@ -4,3 +4,4 @@ Project goals:
 - embed interface for templates (view engine thing)
 - database access
 - database session
+- renew session before expiry
