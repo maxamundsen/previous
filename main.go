@@ -1,11 +1,10 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"gohttp/constants"
+	"log"
 	"net/http"
-	"os"
 )
 
 var mux *http.ServeMux
@@ -14,19 +13,17 @@ func main() {
 	mux = http.NewServeMux()
 
 	fmt.Println("[Go HTTP Server Test]")
+	fmt.Println("")
 
 	InitMiddleware()
 	MapStaticAssets(false)
 	MapDynamicRoutes()
 
-	fmt.Println("-> Listening on http://" + constants.HttpPort)
+	log.Println("Listening on http://" + constants.HttpPort)
 
 	err := http.ListenAndServe(constants.HttpPort, mux)
 
-	if errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("-> [ERROR] Server closed\n")
-	} else if err != nil {
-		fmt.Printf("-> [ERROR] Starting server: %s\n", err)
-		os.Exit(1)
+	if err != nil {
+		log.Fatal(err)
 	}
 }

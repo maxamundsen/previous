@@ -1,8 +1,8 @@
 package main
 
 import (
+	"log"
 	"embed"
-	"fmt"
 	"gohttp/constants"
 	"gohttp/handlers"
 	"net/http"
@@ -16,18 +16,13 @@ func InitMiddleware() {
 }
 
 func MapStaticAssets(embed bool) {
-	var staticSrv http.FileSystem
-
 	if embed {
-		staticSrv = http.FS(staticAssets)
+		mux.Handle("/assets/", http.FileServer(http.FS(staticAssets)))
 	} else {
-		staticSrv = http.Dir("../assets")
+		mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 	}
 
-	fs := http.FileServer(staticSrv)
-	http.Handle("/assets/", fs)
-
-	fmt.Println("-> Mapped static assets")
+	log.Printf("Mapped static assets [embed: %t] \n", embed)
 }
 
 func MapDynamicRoutes() {
@@ -36,5 +31,5 @@ func MapDynamicRoutes() {
 	mux.Handle("/login", handlers.MemorySession.LoadSession(http.HandlerFunc(handlers.LoginHandler), false))
 	mux.Handle("/logout", handlers.MemorySession.LoadSession(http.HandlerFunc(handlers.LogoutHandler), true))
 
-	fmt.Println("-> Mapped dynamic routes")
+	log.Println("Mapped dynamic routes")
 }

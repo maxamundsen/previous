@@ -1,0 +1,6 @@
+Project goals:
+- root file handling (favicons)
+- embed only on "production builds"
+- embed interface for templates (view engine thing)
+- database access
+- database session

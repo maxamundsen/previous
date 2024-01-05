@@ -10,10 +10,10 @@ package auth
 // store is preferred.
 
 import (
-	"fmt"
 	"gohttp/constants"
 	"net/http"
 	"sync"
+	"log"
 	"time"
 )
 
@@ -34,7 +34,7 @@ func (st *MemorySessionStore) InitStore(name string, itemExpiry time.Duration, W
 	st.Base.LoginPath = LoginPath
 	st.Base.LogoutPath = LogoutPath
 	st.Base.DefaultPath = DefaultPath
-	fmt.Println("-> Initialized in-memory session authentication")
+	log.Printf("Initialized in-memory session authentication [redirects: %t]\n", WillRedirect)
 }
 
 // PutSession will store the session in the MemorySessionStore.
