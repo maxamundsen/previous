@@ -1,27 +1,40 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"gohttp/constants"
 	"gohttp/handlers"
+	"gohttp/auth"
 	"log"
 	"net/http"
 )
 
-var mux *http.ServeMux
+//go:embed wwwroot/favicon.ico
+var content embed.FS
 
-var useEmbed bool = true
+//go:embed wwwroot/assets
+var staticAssets embed.FS
 
 func main() {
-	mux = http.NewServeMux()
+	// Create in-memory session store
+	store := &auth.MemorySessionStore{}
+	store.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+	
+	// Create http multiplexer
+	mux := http.NewServeMux()
 
-	fmt.Println("[Go HTTP Server Test]")
-	fmt.Println("")
+	fmt.Printf("[Go HTTP Server Test]\n\n")
 
-	handlers.MemorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+	handlers.SessionInit()
 
-	MapStaticAssets()
-	MapDynamicRoutes()
+	if constants.UseEmbed {
+		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
+	} else {
+		handlers.MapStaticAssets(mux)
+	}
+
+	handlers.MapDynamicRoutesWithMemoryStore(mux, store)
 
 	log.Println("Listening on http://" + constants.HttpPort)
 

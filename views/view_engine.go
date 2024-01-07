@@ -1,14 +1,15 @@
 package views
 
 import (
+	"gohttp/constants"
 	"embed"
 	"html/template"
 	"net/http"
 	"sync"
+	// "errors"
 )
 
 var (
-	useEmbed bool = true
 	//go:embed *.html
 	embeddedTemplates embed.FS
 	templates         *template.Template
@@ -18,10 +19,10 @@ var (
 func parseTemplates() (*template.Template, error) {
 	var err error
 
-	if useEmbed {
+	if constants.UseEmbed {
 		templates, err = template.ParseFS(embeddedTemplates, "*.html")
 	} else {
-		templates, err = template.ParseGlob("*.html")
+		templates, err = template.ParseGlob("views/*.html")
 	}
 
 	if err != nil {
@@ -32,9 +33,15 @@ func parseTemplates() (*template.Template, error) {
 
 func loadTemplates() (*template.Template, error) {
 	var err error
-	once.Do(func() {
+	
+	// once.Do(func() {
 		templates, err = parseTemplates()
-	})
+	// })
+	
+	// if templates == nil {
+	// 	err = errors.New("Templates is null")
+	// }
+	
 	return templates, err
 }
 
