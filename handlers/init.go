@@ -5,8 +5,9 @@ import (
 	"gohttp/constants"
 )
 
-var MemorySession auth.MemorySessionStore
+var sessionStore auth.SessionStore
 
 func SessionInit() {
-	MemorySession.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+	sessionStore = &auth.MemorySessionStore{}
+	sessionStore.InitStore("ID", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
 }

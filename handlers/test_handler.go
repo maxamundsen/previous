@@ -19,8 +19,8 @@ type PageData struct {
 	IsAuth   bool
 }
 
-func TestHandler(w http.ResponseWriter, r *http.Request) {
-	sess := MemorySession.Base.GetSessionFromCtx(r)
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	sess := sessionStore.GetSessionFromCtx(r)
 
 	val1 := r.FormValue("val1")
 

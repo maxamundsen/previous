@@ -17,24 +17,42 @@ import (
 	"time"
 )
 
+// Implements a SessionStore
 type MemorySessionStore struct {
-	Base     *SessionStore
+	base     *sessionStoreBase
 	sessions map[string]*AuthSession
 	lock     sync.RWMutex
 }
 
 // Init will initialize the MemorySessionStore object
-func (st *MemorySessionStore) InitStore(name string, itemExpiry time.Duration, WillRedirect bool, LoginPath string, LogoutPath string, DefaultPath string) {
-	st.Base = &SessionStore{}
+func (st *MemorySessionStore) InitStore(name string, 
+                                        itemExpiry time.Duration, 
+                                        willRedirect bool, 
+                                        loginPath string, 
+                                        logoutPath string, 
+                                        defaultPath string) {
+	st.base = &sessionStoreBase{}
 	st.sessions = make(map[string]*AuthSession)
-	st.Base.name = name
-	st.Base.ctxKey = SessionKey{}
-	st.Base.expiration = itemExpiry
-	st.Base.WillRedirect = WillRedirect
-	st.Base.LoginPath = LoginPath
-	st.Base.LogoutPath = LogoutPath
-	st.Base.DefaultPath = DefaultPath
-	log.Printf("Initialized in-memory session authentication [redirects: %t]\n", WillRedirect)
+	st.base.name = name
+	st.base.ctxKey = sessionKey{}
+	st.base.expiration = itemExpiry
+	st.base.WillRedirect = willRedirect
+	st.base.LoginPath = loginPath
+	st.base.LogoutPath = logoutPath
+	st.base.DefaultPath = defaultPath
+	log.Printf("Initialized in-memory session authentication [redirects: %t]\n", willRedirect)
+}
+
+// middleware for loading sessions
+func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
+	var sess *AuthSession
+	
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sess = st.GetSessionFromRequest(r)
+		
+		handler := st.base.loadSession(next, sess, requireAuth)	
+		handler.ServeHTTP(w, r)
+	})
 }
 
 // PutSession will store the session in the MemorySessionStore.
@@ -43,7 +61,7 @@ func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request,
 	cookieValue := randBase64String(constants.CookieEntropy)
 
 	// Delete the session from the store after expiration time
-	time.AfterFunc(st.Base.expiration, func() {
+	time.AfterFunc(st.base.expiration, func() {
 		st.lock.Lock()
 		delete(st.sessions, cookieValue)
 		st.lock.Unlock()
@@ -53,31 +71,26 @@ func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request,
 	st.sessions[cookieValue] = sess
 	st.lock.Unlock()
 
-	st.Base.setCookie(w, r, cookieValue, sess.RememberMe)
+	st.base.setCookie(w, r, cookieValue, sess.RememberMe)
 }
 
 // DeleteSession will delete the session from the MemorySessionStore.
-func (st *MemorySessionStore) DeleteSession(r *http.Request) {
-	cookie, err := r.Cookie(st.Base.name)
+func (st *MemorySessionStore) DeleteSession(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(st.base.name)
 	if err != nil {
 		return
 	}
 	st.lock.Lock()
 	delete(st.sessions, cookie.Value)
 	st.lock.Unlock()
+	
+	st.base.removeCookie(w, r)
 }
 
-func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sess := st.GetSessionFromRequest(r)
-		st.Base.loadSession(next, w, r, sess, requireAuth)
-	})
-}
-
-// GetSessionFromRequest retrieves the session from the http.Request cookies.
+// getSessionFromRequest retrieves the session from the http.Request cookies.
 // The function will return nil if the session does not exist within the http.Request cookies.
 func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *AuthSession {
-	cookie, err := r.Cookie(st.Base.name)
+	cookie, err := r.Cookie(st.base.name)
 	if err != nil {
 		return nil
 	}
@@ -85,4 +98,12 @@ func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *AuthSessio
 	sess := st.sessions[cookie.Value]
 	st.lock.RUnlock()
 	return sess
+}
+
+func (st *MemorySessionStore) GetSessionFromCtx(r *http.Request) *AuthSession {
+	return st.base.getSessionFromCtx(r)
+}
+
+func (st *MemorySessionStore) GetBase() *sessionStoreBase {
+	return st.base
 }

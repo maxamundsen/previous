@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gohttp/constants"
 	"gohttp/handlers"
-	"gohttp/auth"
 	"log"
 	"net/http"
 )
@@ -17,16 +16,13 @@ var content embed.FS
 var staticAssets embed.FS
 
 func main() {
-	// Create in-memory session store
-	store := &auth.MemorySessionStore{}
-	store.InitStore("AuthenticationCookie", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
-	
-	// Create http multiplexer
-	mux := http.NewServeMux()
-
 	fmt.Printf("[Go HTTP Server Test]\n\n")
 
+	// Create in-memory session store
 	handlers.SessionInit()
+
+	// Create http multiplexer
+	mux := http.NewServeMux()
 
 	if constants.UseEmbed {
 		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
@@ -34,7 +30,7 @@ func main() {
 		handlers.MapStaticAssets(mux)
 	}
 
-	handlers.MapDynamicRoutesWithMemoryStore(mux, store)
+	handlers.MapDynamicRoutes(mux)
 
 	log.Println("Listening on http://" + constants.HttpPort)
 

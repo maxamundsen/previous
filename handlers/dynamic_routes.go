@@ -3,24 +3,14 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"gohttp/auth"
 )
 
 // Dynamic routes are defined here
-func MapDynamicRoutesWithMemoryStore(mux *http.ServeMux, store *auth.MemorySessionStore) {
-	mux.HandleFunc("/", IndexHandler)
-	// handleFuncWithSession("/test", mux, store, TestHandler, true)
-	handleFuncWithSession("/login", mux, store, LoginHandler, false)
-	// handleFuncWithSession("/logout", mux, store, LogoutHandler, true)
-
+func MapDynamicRoutes(mux *http.ServeMux) {
+	mux.Handle("/", sessionStore.LoadSession(http.HandlerFunc(indexHandler), true))
+	mux.Handle("/login", sessionStore.LoadSession(http.HandlerFunc(loginHandler), false))
+	mux.Handle("/logout", sessionStore.LoadSession(http.HandlerFunc(logoutHandler), true))
+	mux.Handle("/test", sessionStore.LoadSession(http.HandlerFunc(testHandler), true))
+	
 	log.Println("Mapped dynamic routes")
-}
-
-// wrapper function for working with session authentication middleware
-func handleFuncWithSession(route string, 
-                           mux *http.ServeMux,
-                           store *auth.MemorySessionStore, 
-                           handler http.Handler, 
-                           requireAuth bool) {
-	mux.Handle(route, store.LoadSession(handler, requireAuth))
 }

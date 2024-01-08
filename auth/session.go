@@ -9,9 +9,26 @@ import (
 	"time"
 )
 
-type SessionStore struct {
+// SessionStore interface describes the behavior of a 'session store'
+type SessionStore interface {
+	InitStore(name string, 
+	          itemExpiry time.Duration, 
+	          willRedirect bool, 
+	          loginPath string, 
+	          logoutPath string, 
+	          defaultPath string)
+	PutSession(w http.ResponseWriter, r *http.Request, sess *AuthSession)
+	DeleteSession(w http.ResponseWriter, r *http.Request)
+	LoadSession(next http.Handler, requireAuth bool) http.Handler
+	GetSessionFromCtx(r *http.Request) *AuthSession
+	GetSessionFromRequest(r *http.Request) *AuthSession
+	GetBase() *sessionStoreBase
+}
+
+
+type sessionStoreBase struct {
 	name         string
-	ctxKey       SessionKey
+	ctxKey       sessionKey
 	expiration   time.Duration
 	WillRedirect bool
 	LoginPath    string
@@ -26,9 +43,12 @@ type AuthSession struct {
 	Username        string
 }
 
-type SessionKey struct{}
+type sessionKey struct{}
 
-func (st *SessionStore) setCookie(w http.ResponseWriter, r *http.Request, cookieValue string, rememberMe bool) {
+func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
+                                      r *http.Request, 
+                                      cookieValue string, 
+                                      rememberMe bool) {
 	cookie := &http.Cookie{
 		Name:     st.name,
 		Value:    cookieValue,
@@ -46,42 +66,55 @@ func (st *SessionStore) setCookie(w http.ResponseWriter, r *http.Request, cookie
 	http.SetCookie(w, cookie)
 }
 
-func (st *SessionStore) loadSession(next http.Handler, w http.ResponseWriter, r *http.Request, sess *AuthSession, requireAuth bool) {
-	// if not auth'd
-	if sess == nil {
-		noAuthSession := &AuthSession{IsAuthenticated: false}
+func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+    	Name: st.name,
+    	MaxAge: -1,
+    	Expires: time.Now().Add(-100 * time.Hour),// Set expires for older versions of IE
+    	Path: "/",
+	})
+}
 
-		if requireAuth {
-			if st.WillRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
-				redirectPath := st.LoginPath + "?redirect=" + url.QueryEscape(r.URL.String())
-
-				http.Redirect(w, r, redirectPath, http.StatusFound)
-				return
-			} else if !st.WillRedirect && st.LoginPath != r.URL.Path {
-				http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
-				return
+func (st *sessionStoreBase) loadSession(next http.Handler, 
+                                        sess *AuthSession, 
+                                        requireAuth bool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// if not auth'd
+		if sess == nil {
+			noAuthSession := &AuthSession{IsAuthenticated: false}
+	
+			if requireAuth {
+				if st.WillRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
+					redirectPath := st.LoginPath + "?redirect=" + url.QueryEscape(r.URL.String())
+	
+					http.Redirect(w, r, redirectPath, http.StatusFound)
+					return
+				} else if !st.WillRedirect && st.LoginPath != r.URL.Path {
+					http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
+					return
+				}
 			}
+	
+			ctx := context.WithValue(r.Context(), st.ctxKey, noAuthSession)
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
 		}
-
-		ctx := context.WithValue(r.Context(), st.ctxKey, noAuthSession)
-		next.ServeHTTP(w, r.WithContext(ctx))
-		return
-	}
-
-	// if auth'd
-	if st.WillRedirect && st.LoginPath == r.URL.Path {
-		http.Redirect(w, r, st.DefaultPath, http.StatusFound)
-		return
-	}
-
-	// if there is a valid session
-	ctx := context.WithValue(r.Context(), st.ctxKey, sess)
-	next.ServeHTTP(w, r.WithContext(ctx))
+	
+		// if auth'd
+		if st.WillRedirect && st.LoginPath == r.URL.Path {
+			http.Redirect(w, r, st.DefaultPath, http.StatusFound)
+			return
+		}
+	
+		// if there is a valid session
+		ctx := context.WithValue(r.Context(), st.ctxKey, sess)
+		next.ServeHTTP(w, r.WithContext(ctx))	
+	})
 }
 
 // GetSessionFromCtx retrieves the session from the http.Request context.
 // If no session is found, it returns an AuthSession with IsAuthenticated set to false.
-func (st *SessionStore) GetSessionFromCtx(r *http.Request) *AuthSession {
+func (st *sessionStoreBase) getSessionFromCtx(r *http.Request) *AuthSession {
 	return r.Context().Value(st.ctxKey).(*AuthSession)
 }
 
