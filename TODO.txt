@@ -1,8 +1,7 @@
 Fixes:
-- embeded statics need timestamps - FIXME
+None :D
 
 Project goals:
-- embed only on "production builds"
 - database access
 - database session
 - renew session before expiry
