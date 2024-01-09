@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-// Implements a SessionStore
+// Implements a SessionStore interface
 type MemorySessionStore struct {
 	base     *sessionStoreBase
 	sessions map[string]*AuthSession

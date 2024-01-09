@@ -1,6 +1,4 @@
 Fixes:
-- create interface for session store
-- create session store in main, pass to handlers
 - embeded statics need timestamps - FIXME
 
 Project goals:
