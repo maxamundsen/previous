@@ -7,22 +7,28 @@ import (
 	"time"
 )
 
-// Preface:
 // This file contains the basis for creating "authentication sessions".
 // Other web frameworks contain crazy complecated authentication middleware and
 // identity management. This one should be pretty simple to understand.
 // Auth session management does NOT contain any code to actually authenticate users
 // (username/password checking, password hashing etc)
 
-// 1. Users
 // In this simple authentication system, there is an Identity struct that represents
 // a "user" on the system. You can customize this structure to fit your needs.
 
-// 2. Stores
-// SessionStore is an interface that describes the capabilities of a 'session store'
-// A session store is a storage mechanism for storing Identity structures.
-// The type of storage implemented does not matter, as long as it can 
+// Identities are not stored directly in the browser cookies.
+// Instead, they are stored on the server in a key-value pair called a 'session store'.
+// When a user successfully authenticates, an entry is made in the store
+// containing an Identity, and a randomly generated base64 string key. The
+// key is appended to the response as a cookie, and stored in the users browser.
 
+// SessionStore is an interface that describes the capabilities of a session store.
+// The type of storage implemented does not matter, as long as the custom storage
+// type contains all of the methods in the interface, and a sessionStoreBase.
+
+// Whatever implementation of the interface you choose to use, the method signatures will
+// always be the same. Http endpoint handlers that wish to use sessions do so without knowing
+// the implementation.
 
 type SessionStore interface {
 	InitStore(name string, 
@@ -34,20 +40,21 @@ type SessionStore interface {
 	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
-	GetSessionFromCtx(r *http.Request) *Identity
-	GetSessionFromRequest(r *http.Request) *Identity
+	GetIdentityFromCtx(r *http.Request) *Identity
+	GetIdentityFromRequest(r *http.Request) *Identity
 	GetBase() *sessionStoreBase
 }
 
 
+// The base store struct contains basic properties of a session store.
 type sessionStoreBase struct {
 	name         string
 	ctxKey       sessionKey
 	expiration   time.Duration
-	WillRedirect bool
-	LoginPath    string
+	willRedirect bool // used to determine if unauthorized requests get a 401, or redirect
+	LoginPath    string // redirect path if unauthorized
 	LogoutPath   string
-	DefaultPath  string
+	DefaultPath  string // redirect path if authorized
 }
 
 type sessionKey struct{}
@@ -93,12 +100,12 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 			blankIdentity := &Identity{IsAuthenticated: false}
 	
 			if requireAuth {
-				if st.WillRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
+				if st.willRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
 					redirectPath := st.LoginPath + "?redirect=" + url.QueryEscape(r.URL.String())
 	
 					http.Redirect(w, r, redirectPath, http.StatusFound)
 					return
-				} else if !st.WillRedirect && st.LoginPath != r.URL.Path {
+				} else if !st.willRedirect && st.LoginPath != r.URL.Path {
 					http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
 					return
 				}
@@ -110,7 +117,7 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 		}
 	
 		// if auth'd
-		if st.WillRedirect && st.LoginPath == r.URL.Path {
+		if st.willRedirect && st.LoginPath == r.URL.Path {
 			http.Redirect(w, r, st.DefaultPath, http.StatusFound)
 			return
 		}
@@ -121,7 +128,7 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 	})
 }
 
-// returns a session found in the http request context
-func (st *sessionStoreBase) getSessionFromCtx(r *http.Request) *Identity {
+// returns an identity found in the http request context
+func (st *sessionStoreBase) getIdentityFromCtx(r *http.Request) *Identity {
 	return r.Context().Value(st.ctxKey).(*Identity)
 }

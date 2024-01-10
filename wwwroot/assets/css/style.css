@@ -1,18 +1,26 @@
-    .sidebar {
-      height: 100%;
-      width: 70px; /* Narrower sidebar */
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #f8f9fa;
-      padding-top: 60px; /* Adjust this value based on your design */
-    }
+.sidebar {
+  height: 100%;
+  width: 70px; /* Narrower sidebar */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #555555;
+  padding-top: 20px; /* Adjust this value based on your design */
+}
 
-    .sidebar .nav-link {
-      text-align: center;
-      padding: 20px 0;
-    }
+.sidebar .nav-link {
+  text-align: center;
+  padding: 20px 0;
+  color: #cccccc;
+}
 
-    .content {
-      margin-left: 70px; /* Make sure to match the sidebar width */
-    }
+.sidebar .nav-link:hover{
+	color: white
+}
+.content {
+  margin-left: 70px; /* Make sure to match the sidebar width */
+}
+
+.navbar-test {
+	background: gray;
+}

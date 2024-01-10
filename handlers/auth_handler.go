@@ -33,8 +33,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 	
-			base := sessionStore.GetBase()
-			http.Redirect(w, r, base.LoginPath, http.StatusFound)
+			storeBase := sessionStore.GetBase()
+			http.Redirect(w, r, storeBase.DefaultPath, http.StatusFound)
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
 			views.RenderTemplate(w, "error", nil)
@@ -46,6 +46,5 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	sessionStore.DeleteSession(w, r)
 	
 	storeBase := sessionStore.GetBase()
-	
 	http.Redirect(w, r, storeBase.LoginPath, http.StatusFound)
 }

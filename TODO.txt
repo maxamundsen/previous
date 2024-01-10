@@ -5,7 +5,8 @@ Project goals:
 - document project
 - 'rebrand' as a '''framework''' with new name
 
+- json config file
+- renew session before expiry
 - database access
 - database session
-- renew session before expiry
-- json config file
+- charts https://github.com/wcharczuk/go-chart

@@ -4,6 +4,6 @@ package main
 
 import "embed"
 
-var content embed.FS
+var favicon embed.FS
 
 var staticAssets embed.FS

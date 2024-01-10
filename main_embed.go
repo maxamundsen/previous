@@ -4,8 +4,5 @@ package main
 
 import "embed"
 
-//go:embed wwwroot/favicon.ico
-var content embed.FS
-
-//go:embed wwwroot/assets
+//go:embed wwwroot
 var staticAssets embed.FS

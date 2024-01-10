@@ -1,20 +1,54 @@
 {{ template "header" .}}
 
-<h1>{{.Person.FirstName}}</h1>
-<h2>{{.Person.LastName}}</h2>
-<p>{{.Person.Age}}</p>
+<div class="card align-middle">
+	<div class="card-body">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Username</td>
+					<td>{{.User.Username}}</td>
+				</tr>
+				<tr>
+					<td>Role</td>
+					<td>{{.User.Role}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
 
+<br />
 
-<form action="" method="post" autocomplete="off">
-	<input type="text" name="val1" placeholder="val1" autofocus/>
-	<input type="submit" />
-</form>
+<div class="card align-middle">
+	<div class="card-header">
+		Example Chart
+	</div>
+	<div class="card-body">
+		<img src="/assets/images/chart.png" alt="chart" width="500" height="auto"/>
+	</div>
+</div>
 
-{{ if .IsAuth }}
-<p style="color: blue;">AUTH'D</p>
-{{ end }}
+<br />
 
-<p>output password:</p>
-{{ .Password }}
+<div class="card align-middle">
+	<div class="card-header">
+		Password Generator
+	</div>
+	<div class="card-body">
+		<form action="" method="post" autocomplete="off">
+			<input type="text" name="val1" placeholder="val1" autofocus/>
+			<button>Generate Password</button>
+		</form>
+		<br />
+		<p>Output:</p>
+		<code>{{ .Password }}</code>
+	</div>
+</div>
 
 {{ template "footer" .}}

@@ -12,48 +12,17 @@ import (
 // set timestamp at initial runtime
 var currentTime time.Time
 
-// Static assets are mapped here.
-type embeddedFileServer struct {
-	root embed.FS
-}
-
 func MapStaticAssets(mux *http.ServeMux) {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("wwwroot/assets"))))
+	mux.Handle("/favicon.ico", http.FileServer(http.Dir("wwwroot")))
 	log.Println("Mapped static assets [embed: false]")
 }
 
 func MapStaticAssetsEmbed(mux *http.ServeMux, fs *embed.FS) {
 	currentTime = time.Now()
 	mux.Handle("/assets/", serveEmbedded(fs))
+	mux.Handle("/favicon.ico", serveEmbedded(fs))
 	log.Println("Mapped static assets [embed: true]")
-}
-
-func MapFavicon(mux *http.ServeMux, fs *embed.FS) {
-	mux.HandleFunc("/favicon.ico", faviconHandler)
-}
-
-// map favicon
-func MapFaviconEmbed(mux *http.ServeMux, fs *embed.FS) {
-	mux.Handle("/favicon.ico", faviconHandlerEmbed(fs))
-}
-
-func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "../wwwroot/favicon.ico")
-}
-
-// Specific functions for working with root directory files
-func faviconHandlerEmbed(fs *embed.FS) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		favicon, err := fs.ReadFile("favicon.ico")
-		if err != nil {
-			http.Error(w, "Favicon not found", http.StatusNotFound)
-			return
-		}
-	
-		w.Header().Set("Content-Type", "image/x-icon")
-		w.Write(favicon)
-	
-	})
 }
 
 func serveEmbedded(fs *embed.FS) http.Handler {
@@ -69,8 +38,10 @@ func serveEmbedded(fs *embed.FS) http.Handler {
 		
 		var contentType string
 		
-		if (strings.HasSuffix(location, ".css")) {
+		if strings.HasSuffix(location, ".css") {
 			contentType = "text/css"
+		} else if strings.HasSuffix(location, ".js") {
+			contentType = "text/javascript"
 		} else {
 			contentType = http.DetectContentType(file)
 		}

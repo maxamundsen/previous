@@ -6,21 +6,14 @@ import (
 	"net/http"
 )
 
-type Person struct {
-	FirstName string
-	LastName  string
-	Age       int
-}
-
-type PageData struct {
-	Person   Person
+type pageData struct {
+	User   	 *auth.Identity
 	Title    string
 	Password string
-	IsAuth   bool
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
-	sess := sessionStore.GetSessionFromCtx(r)
+	user := sessionStore.GetIdentityFromCtx(r)
 
 	val1 := r.FormValue("val1")
 
@@ -32,21 +25,10 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 		password, _ = auth.HashPassword(val1)
 	}
 
-	// if sess.Role != "Administrator" {
-
-	// }
-
-	harambe := Person{
-		"Firstname",
-		"Lastname",
-		15,
-	}
-
-	pageData := PageData{
-		harambe,
+	pageData := pageData{
+		user,
 		"Title for page",
 		password,
-		sess.IsAuthenticated,
 	}
 
 	views.RenderTemplate(w, "test", pageData)

@@ -1,13 +1,5 @@
 package auth
 
-// mem_session provides functions for handling an in-memory session store.
-// keys are retrieved from a browser cookie to obtain a session struct
-// from a map in memory. sessions can be created or destroyed from http handlers
-// (such as a login page)
-
-// since the session store (which contains the session map)  is a struct in memory,
-// it is destroyed  when the program exits. for longer lived sessions, a database
-// store is preferred.
 
 import (
 	"gohttp/constants"
@@ -36,7 +28,7 @@ func (st *MemorySessionStore) InitStore(name string,
 	st.base.name = name
 	st.base.ctxKey = sessionKey{}
 	st.base.expiration = itemExpiry
-	st.base.WillRedirect = willRedirect
+	st.base.willRedirect = willRedirect
 	st.base.LoginPath = loginPath
 	st.base.LogoutPath = logoutPath
 	st.base.DefaultPath = defaultPath
@@ -48,7 +40,7 @@ func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) h
 	var id *Identity
 	
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id = st.GetSessionFromRequest(r)
+		id = st.GetIdentityFromRequest(r)
 		
 		handler := st.base.loadSession(next, id, requireAuth)	
 		handler.ServeHTTP(w, r)
@@ -87,9 +79,9 @@ func (st *MemorySessionStore) DeleteSession(w http.ResponseWriter, r *http.Reque
 	st.base.removeCookie(w, r)
 }
 
-// getSessionFromRequest retrieves the session from the http.Request cookies.
+// getIdentityFromRequest retrieves the Identity from the http.Request cookies.
 // The function will return nil if the session does not exist within the http.Request cookies.
-func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *Identity {
+func (st *MemorySessionStore) GetIdentityFromRequest(r *http.Request) *Identity {
 	cookie, err := r.Cookie(st.base.name)
 	if err != nil {
 		return nil
@@ -100,8 +92,8 @@ func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *Identity {
 	return id
 }
 
-func (st *MemorySessionStore) GetSessionFromCtx(r *http.Request) *Identity {
-	return st.base.getSessionFromCtx(r)
+func (st *MemorySessionStore) GetIdentityFromCtx(r *http.Request) *Identity {
+	return st.base.getIdentityFromCtx(r)
 }
 
 func (st *MemorySessionStore) GetBase() *sessionStoreBase {
