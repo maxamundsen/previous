@@ -17,13 +17,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		rememberMe, _ := strconv.ParseBool(r.FormValue("rememberMe"))
 	
 		if username == "admin" && password == "admin" {
-			sess := &auth.AuthSession{}
-			sess.IsAuthenticated = true
-			sess.RememberMe = rememberMe
-			sess.Role = "Administrator"
-			sess.Username = username
+			id := &auth.Identity{}
+			id.IsAuthenticated = true
+			id.RememberMe = rememberMe
+			id.Role = "Administrator"
+			id.Username = username
 	
-			sessionStore.PutSession(w, r, sess)
+			sessionStore.PutSession(w, r, id)
 	
 			params := r.URL.Query()
 			location := params.Get("redirect")

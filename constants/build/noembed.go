@@ -1,5 +1,5 @@
 //go:build !embed
 
-package constants
+package build
 
 const EMBED bool = false

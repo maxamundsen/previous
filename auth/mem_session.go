@@ -20,7 +20,7 @@ import (
 // Implements a SessionStore interface
 type MemorySessionStore struct {
 	base     *sessionStoreBase
-	sessions map[string]*AuthSession
+	sessions map[string]*Identity
 	lock     sync.RWMutex
 }
 
@@ -32,7 +32,7 @@ func (st *MemorySessionStore) InitStore(name string,
                                         logoutPath string, 
                                         defaultPath string) {
 	st.base = &sessionStoreBase{}
-	st.sessions = make(map[string]*AuthSession)
+	st.sessions = make(map[string]*Identity)
 	st.base.name = name
 	st.base.ctxKey = sessionKey{}
 	st.base.expiration = itemExpiry
@@ -45,19 +45,19 @@ func (st *MemorySessionStore) InitStore(name string,
 
 // middleware for loading sessions
 func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
-	var sess *AuthSession
+	var id *Identity
 	
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sess = st.GetSessionFromRequest(r)
+		id = st.GetSessionFromRequest(r)
 		
-		handler := st.base.loadSession(next, sess, requireAuth)	
+		handler := st.base.loadSession(next, id, requireAuth)	
 		handler.ServeHTTP(w, r)
 	})
 }
 
 // PutSession will store the session in the MemorySessionStore.
 // The session will automatically expire after defined MemorySessionStore.sessionExpiration.
-func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request, sess *AuthSession) {
+func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request, id *Identity) {
 	cookieValue := randBase64String(constants.CookieEntropy)
 
 	// Delete the session from the store after expiration time
@@ -68,10 +68,10 @@ func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request,
 	})
 
 	st.lock.Lock()
-	st.sessions[cookieValue] = sess
+	st.sessions[cookieValue] = id
 	st.lock.Unlock()
 
-	st.base.setCookie(w, r, cookieValue, sess.RememberMe)
+	st.base.setCookie(w, r, cookieValue, id.RememberMe)
 }
 
 // DeleteSession will delete the session from the MemorySessionStore.
@@ -89,18 +89,18 @@ func (st *MemorySessionStore) DeleteSession(w http.ResponseWriter, r *http.Reque
 
 // getSessionFromRequest retrieves the session from the http.Request cookies.
 // The function will return nil if the session does not exist within the http.Request cookies.
-func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *AuthSession {
+func (st *MemorySessionStore) GetSessionFromRequest(r *http.Request) *Identity {
 	cookie, err := r.Cookie(st.base.name)
 	if err != nil {
 		return nil
 	}
 	st.lock.RLock()
-	sess := st.sessions[cookie.Value]
+	id := st.sessions[cookie.Value]
 	st.lock.RUnlock()
-	return sess
+	return id
 }
 
-func (st *MemorySessionStore) GetSessionFromCtx(r *http.Request) *AuthSession {
+func (st *MemorySessionStore) GetSessionFromCtx(r *http.Request) *Identity {
 	return st.base.getSessionFromCtx(r)
 }
 

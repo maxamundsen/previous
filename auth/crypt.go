@@ -2,6 +2,9 @@ package auth
 
 import (
 	"golang.org/x/crypto/bcrypt"
+	"crypto/rand"
+	"encoding/base64"
+
 )
 
 func HashPassword(password string) (string, error) {
@@ -12,4 +15,10 @@ func HashPassword(password string) (string, error) {
 func CheckPassword(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func randBase64String(entropyBytes int) string {
+	b := make([]byte, entropyBytes)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
 }

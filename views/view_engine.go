@@ -1,7 +1,7 @@
 package views
 
 import (
-	"gohttp/constants"
+	"gohttp/constants/build"
 	"html/template"
 	"net/http"
 	"sync"
@@ -28,9 +28,13 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 func loadTemplates() (*template.Template, error) {
 	var err error
 	
-	once.Do(func() {
+	if build.DEVEL {
 		templates, err = parseTemplates()
-	})
+	} else {
+		once.Do(func() {
+			templates, err = parseTemplates()
+		})
+	}
 	
 	return templates, err
 }
@@ -39,10 +43,10 @@ func parseTemplates() (*template.Template, error) {
 
 	var err error
 
-	if constants.EMBED {
-		templates, err = template.ParseFS(embeddedTemplates, "*.html")
-	} else {
+	if build.DEVEL {
 		templates, err = template.ParseGlob("views/*.html")
+	} else {
+		templates, err = template.ParseFS(embeddedTemplates, "*.html")
 	}
 
 	

@@ -2,14 +2,28 @@ package auth
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"net/http"
 	"net/url"
 	"time"
 )
 
-// SessionStore interface describes the behavior of a 'session store'
+// Preface:
+// This file contains the basis for creating "authentication sessions".
+// Other web frameworks contain crazy complecated authentication middleware and
+// identity management. This one should be pretty simple to understand.
+// Auth session management does NOT contain any code to actually authenticate users
+// (username/password checking, password hashing etc)
+
+// 1. Users
+// In this simple authentication system, there is an Identity struct that represents
+// a "user" on the system. You can customize this structure to fit your needs.
+
+// 2. Stores
+// SessionStore is an interface that describes the capabilities of a 'session store'
+// A session store is a storage mechanism for storing Identity structures.
+// The type of storage implemented does not matter, as long as it can 
+
+
 type SessionStore interface {
 	InitStore(name string, 
 	          itemExpiry time.Duration, 
@@ -17,11 +31,11 @@ type SessionStore interface {
 	          loginPath string, 
 	          logoutPath string, 
 	          defaultPath string)
-	PutSession(w http.ResponseWriter, r *http.Request, sess *AuthSession)
+	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
-	GetSessionFromCtx(r *http.Request) *AuthSession
-	GetSessionFromRequest(r *http.Request) *AuthSession
+	GetSessionFromCtx(r *http.Request) *Identity
+	GetSessionFromRequest(r *http.Request) *Identity
 	GetBase() *sessionStoreBase
 }
 
@@ -34,13 +48,6 @@ type sessionStoreBase struct {
 	LoginPath    string
 	LogoutPath   string
 	DefaultPath  string
-}
-
-type AuthSession struct {
-	IsAuthenticated bool
-	RememberMe      bool
-	Role            string
-	Username        string
 }
 
 type sessionKey struct{}
@@ -75,13 +82,15 @@ func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request)
 	})
 }
 
+// middleware for loading a provided auth session, and automatically
+// handling redirections
 func (st *sessionStoreBase) loadSession(next http.Handler, 
-                                        sess *AuthSession, 
+                                        id *Identity, 
                                         requireAuth bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// if not auth'd
-		if sess == nil {
-			noAuthSession := &AuthSession{IsAuthenticated: false}
+		if id == nil {
+			blankIdentity := &Identity{IsAuthenticated: false}
 	
 			if requireAuth {
 				if st.WillRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
@@ -95,7 +104,7 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 				}
 			}
 	
-			ctx := context.WithValue(r.Context(), st.ctxKey, noAuthSession)
+			ctx := context.WithValue(r.Context(), st.ctxKey, blankIdentity)
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
@@ -106,20 +115,13 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 			return
 		}
 	
-		// if there is a valid session
-		ctx := context.WithValue(r.Context(), st.ctxKey, sess)
+		// if there is a valid identity
+		ctx := context.WithValue(r.Context(), st.ctxKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))	
 	})
 }
 
-// GetSessionFromCtx retrieves the session from the http.Request context.
-// If no session is found, it returns an AuthSession with IsAuthenticated set to false.
-func (st *sessionStoreBase) getSessionFromCtx(r *http.Request) *AuthSession {
-	return r.Context().Value(st.ctxKey).(*AuthSession)
-}
-
-func randBase64String(entropyBytes int) string {
-	b := make([]byte, entropyBytes)
-	rand.Read(b)
-	return base64.StdEncoding.EncodeToString(b)
+// returns a session found in the http request context
+func (st *sessionStoreBase) getSessionFromCtx(r *http.Request) *Identity {
+	return r.Context().Value(st.ctxKey).(*Identity)
 }

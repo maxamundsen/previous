@@ -3,21 +3,29 @@ package main
 import (
 	"fmt"
 	"gohttp/constants"
+	"gohttp/constants/build"
 	"gohttp/handlers"
 	"log"
 	"net/http"
 )
 
 func main() {
-	fmt.Printf("[Go HTTP Server Test]\n\n")
+	fmt.Println("Go HTTP Server Test")
 
+	if build.DEVEL {
+		fmt.Println("DEVELOPMENT MODE ENABLED")
+		fmt.Println("Note: View templates are NOT embedded in devel mode")
+	} else {
+		fmt.Println("PRODUCTION BUILD")
+	}
+	
 	// Create in-memory session store
 	handlers.SessionInit()
 
 	// Create http multiplexer
 	mux := http.NewServeMux()
 	
-	if constants.EMBED {
+	if build.EMBED {
 		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
 	} else {
 		handlers.MapStaticAssets(mux)

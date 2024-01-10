@@ -2,6 +2,9 @@ Fixes:
 None :D
 
 Project goals:
+- document project
+- 'rebrand' as a '''framework''' with new name
+
 - database access
 - database session
 - renew session before expiry
