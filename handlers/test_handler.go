@@ -6,15 +6,14 @@ import (
 	"net/http"
 )
 
-type pageData struct {
-	User   	 *auth.Identity
-	Title    string
+type testPageData struct {
+	Base views.ViewBase
 	Password string
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
 	user := sessionStore.GetIdentityFromCtx(r)
-
+	
 	val1 := r.FormValue("val1")
 
 	var password string
@@ -25,11 +24,16 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 		password, _ = auth.HashPassword(val1)
 	}
 
-	pageData := pageData{
-		user,
-		"Title for page",
+	viewData := make(map[string]string)
+	
+	viewData["Title"] = "Test Page"
+	
+	base := views.NewViewBase(user, viewData)
+
+	pageData := testPageData {
+		base,
 		password,
 	}
-
+	
 	views.RenderTemplate(w, "test", pageData)
 }

@@ -1,6 +1,7 @@
 package views
 
 import (
+	"gohttp/auth"
 	"gohttp/constants/build"
 	"html/template"
 	"net/http"
@@ -11,6 +12,20 @@ var (
 	templates         *template.Template
 	once              sync.Once
 )
+
+type ViewBase struct {
+	Identity      *auth.Identity
+	ViewData      map[string]string
+}
+
+func NewViewBase(user *auth.Identity, viewData map[string]string) ViewBase {
+	viewBase := ViewBase {
+		user,
+		viewData,
+	}
+	
+	return viewBase
+}
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	tmpls, err := loadTemplates()

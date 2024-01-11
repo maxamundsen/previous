@@ -1,53 +1,60 @@
-{{ template "header" .}}
+{{template "header" .}}
 
-<div class="card align-middle">
-	<div class="card-body">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Key</th>
-					<th>Value</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Username</td>
-					<td>{{.User.Username}}</td>
-				</tr>
-				<tr>
-					<td>Role</td>
-					<td>{{.User.Role}}</td>
-				</tr>
-			</tbody>
-		</table>
+{{template "navbar" .}}
+
+<div class="container">
+	<div class="card align-middle shadow-sm">
+		<div class="card-header">
+			Identity
+		</div>
+		<div class="card-body">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Username</td>
+						<td>{{.Base.Identity.Username}}</td>
+					</tr>
+					<tr>
+						<td>Role</td>
+						<td>{{.Base.Identity.Role}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-</div>
-
-<br />
-
-<div class="card align-middle">
-	<div class="card-header">
-		Example Chart
+	
+	<br />
+	
+	<div class="card align-middle shadow-sm">
+		<div class="card-header">
+			Example Chart
+		</div>
+		<div class="card-body">
+			<img src="/assets/images/chart.png" alt="chart" width="500" height="auto"/>
+		</div>
 	</div>
-	<div class="card-body">
-		<img src="/assets/images/chart.png" alt="chart" width="500" height="auto"/>
-	</div>
-</div>
-
-<br />
-
-<div class="card align-middle">
-	<div class="card-header">
-		Password Generator
-	</div>
-	<div class="card-body">
-		<form action="" method="post" autocomplete="off">
-			<input type="text" name="val1" placeholder="val1" autofocus/>
-			<button>Generate Password</button>
-		</form>
-		<br />
-		<p>Output:</p>
-		<code>{{ .Password }}</code>
+	
+	<br />
+	
+	<div class="card align-middle shadow-sm">
+		<div class="card-header">
+			Password Generator
+		</div>
+		<div class="card-body">
+			<form action="" method="post" autocomplete="off">
+				<input type="text" name="val1" placeholder="val1" autofocus/>
+				<button>Generate Password</button>
+			</form>
+			<br />
+			<p>Output:</p>
+			<code>{{ .Password }}</code>
+		</div>
 	</div>
 </div>
 
