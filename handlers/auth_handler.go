@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type loginPage struct {
+type loginModel struct {
 	Base views.ViewBase
 }
 
@@ -21,13 +21,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// https://security.stackexchange.com/questions/96489/can-i-prevent-timing-attacks-with-random-delays/96493#96493
 	// https://www.reddit.com/r/PHP/comments/kn6ezp/have_you_secured_your_signup_process_against_a/
 
-	viewData := make(map[string]string)
+	viewData := make(map[string]interface{})
 
 	viewData["Title"] = "Login"
 
 	base := views.NewViewBase(nil, viewData)
 
-	pageData := loginPage{
+	pageData := loginModel{
 		base,
 	}
 

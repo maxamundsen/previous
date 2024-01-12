@@ -15,10 +15,10 @@ var (
 
 type ViewBase struct {
 	Identity *auth.Identity
-	ViewData map[string]string
+	ViewData map[string]interface{}
 }
 
-func NewViewBase(user *auth.Identity, viewData map[string]string) ViewBase {
+func NewViewBase(user *auth.Identity, viewData map[string]interface{}) ViewBase {
 	viewBase := ViewBase{
 		user,
 		viewData,

@@ -9,15 +9,17 @@ import (
 	"time"
 )
 
-// set timestamp at initial runtime
+// set timestamp at initial runtime for embedded caching
 var currentTime time.Time
 
+// helper function to map endpoints for static assets.
 func MapStaticAssets(mux *http.ServeMux) {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("wwwroot/assets"))))
 	mux.Handle("/favicon.ico", http.FileServer(http.Dir("wwwroot")))
 	log.Println("Mapped static assets [embed: false]")
 }
 
+// helper function to map endpoints for embedded static assets.
 func MapStaticAssetsEmbed(mux *http.ServeMux, fs *embed.FS) {
 	currentTime = time.Now()
 	mux.Handle("/assets/", serveEmbedded(fs))
@@ -25,6 +27,9 @@ func MapStaticAssetsEmbed(mux *http.ServeMux, fs *embed.FS) {
 	log.Println("Mapped static assets [embed: true]")
 }
 
+// When static assets are served out of the embedded file system, you need to append
+// the proper http headers to allow caching. by default, the embedded fs has no 'last modified'
+// property, so you must add one, and specify that you want cache control on.
 func serveEmbedded(fs *embed.FS) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		location := "wwwroot" + r.URL.Path

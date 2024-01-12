@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -41,7 +41,7 @@ func apiUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // Struct for serializing json from 3rd party API
 // http://api.open-notify.org/astros.json
-type astro struct {
+type astroModel struct {
 	Message string `json:"message"`
 	People  []struct {
 		Name  string `json:"name"`
@@ -75,13 +75,13 @@ func apiClientFetchHandler(w http.ResponseWriter, r *http.Request) {
 		defer res.Body.Close()
 	}
 
-	body, readErr := ioutil.ReadAll(res.Body)
+	body, readErr := io.ReadAll(res.Body)
 
 	if readErr != nil {
 		log.Println(readErr)
 	}
 
-	jsonOutput := astro{}
+	jsonOutput := astroModel{}
 
 	jsonErr := json.Unmarshal(body, &jsonOutput)
 

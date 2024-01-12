@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type testPageData struct {
+type testPageModel struct {
 	Base     views.ViewBase
 	Password string
 }
@@ -24,13 +24,13 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 		password, _ = auth.HashPassword(val1)
 	}
 
-	viewData := make(map[string]string)
+	viewData := make(map[string]interface{})
 
 	viewData["Title"] = "Test Page"
 
 	base := views.NewViewBase(user, viewData)
 
-	pageData := testPageData{
+	pageData := testPageModel{
 		base,
 		password,
 	}

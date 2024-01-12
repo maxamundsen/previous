@@ -79,6 +79,8 @@ func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
 	http.SetCookie(w, cookie)
 }
 
+// create a cookie with the same name, but with no value, then append it to the response
+// setting a 'blank' cookie will delete it from the browser
 func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    st.name,

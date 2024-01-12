@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gohttp/constants"
+	"gohttp/config"
 	"gohttp/constants/build"
 	"gohttp/handlers"
 	"log"
@@ -11,6 +11,10 @@ import (
 
 func main() {
 	fmt.Println("Go HTTP Server Test")
+
+	// Read "config.json" file
+	config.InitConfiguration()
+	config := config.GetConfiguration()
 
 	if build.DEVEL {
 		fmt.Println("DEVELOPMENT MODE ENABLED")
@@ -25,6 +29,8 @@ func main() {
 	// Create http multiplexer
 	mux := http.NewServeMux()
 
+	// when the `embed` build tag is set, static assets will be
+	// embedded in the binary, and served from the embedded filesystem
 	if build.EMBED {
 		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
 	} else {
@@ -33,9 +39,9 @@ func main() {
 
 	handlers.MapDynamicRoutes(mux)
 
-	log.Println("Listening on http://" + constants.HttpPort)
+	log.Println("Listening on http://" + config.Host)
 
-	err := http.ListenAndServe(constants.HttpPort, mux)
+	err := http.ListenAndServe(config.Host, mux)
 
 	if err != nil {
 		log.Fatal(err)

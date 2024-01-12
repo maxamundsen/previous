@@ -1,37 +1,38 @@
 {{template "header" .}}
 
 <style>
-	body {
-		background-color: #f8f9fa;
-	}
+  body {
+    background-color: #f8f9fa;
+  }
 </style>
 
 {{ $error := index .Base.ViewData "Error" }}
 
 <div class="d-block m-auto mt-5 w-50">
-	
-	<div class="text-center mb-5">
-		<a href="/">
-			<img src="/assets/images/logo.png" alt="logo" />
-		</a>
-	</div>
-	
-	{{ if $error }}
-	<div class="alert alert-danger" role="alert">
-	  {{ $error }}
-	</div>
-	{{end}}
-	
-	<form action="" method="POST" autocomplete="off">
+
+  <div class="text-center mb-5">
+    <a href="/">
+      <img src="/assets/images/logo.png" alt="logo" />
+    </a>
+  </div>
+
+  {{ if $error }}
+  <div class="alert alert-danger" role="alert">
+    {{ $error }}
+  </div>
+  {{end}}
+
+  <form action="" method="POST" autocomplete="off">
     <h1 class="h3 mb-3 fw-normal">Log In</h1>
 
     <div class="form-floating">
-      <input name="username" type="text" class="form-control" id="floatingInput" placeholder="name@example.com" autofocus>
+      <input name="username" type="text" class="form-control" id="floatingInput" placeholder="name@example.com"
+        autofocus>
       <label for="floatingInput">Username</label>
     </div>
-    
+
     <br />
-    
+
     <div class="form-floating">
       <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
       <label for="floatingPassword">Password</label>
@@ -43,10 +44,10 @@
         Remember me
       </label>
     </div>
-    
+
     <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
     <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
-    
+
   </form>
 </div>
 

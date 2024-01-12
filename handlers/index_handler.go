@@ -10,7 +10,7 @@ type indexModel struct {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	viewData := make(map[string]string)
+	viewData := make(map[string]interface{})
 	viewData["Title"] = "Index"
 	base := views.NewViewBase(nil, viewData)
 
