@@ -18,13 +18,13 @@ func main() {
 	} else {
 		fmt.Println("PRODUCTION BUILD")
 	}
-	
+
 	// Create in-memory session store
 	handlers.SessionInit()
 
 	// Create http multiplexer
 	mux := http.NewServeMux()
-	
+
 	if build.EMBED {
 		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
 	} else {

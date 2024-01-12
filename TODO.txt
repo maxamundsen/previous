@@ -2,21 +2,22 @@ Needs fixing:
 None :D
 
 Project goals:
-- remove bootstrap dependency (replace with smaller lib)
+- json config file
 - proper authentication logic
 - document project
-- json config file
 - renew session before expiry
 - database access
 - database session
 - charts https://github.com/wcharczuk/go-chart
+- smtp client
+- htmx
 
 Completed:
 - Dynamic routing with handler functions
 - HTML View engine
+- HTTP Error page(s)
 - JSON reponses
 - JSON fetching (from 3rd party api)
 - Session authentication
 - Embedded view templates for release builds
 - *Optional* embedded static assets for release builds
-- HTTP Error page(s)

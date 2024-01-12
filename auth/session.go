@@ -31,12 +31,12 @@ import (
 // the implementation.
 
 type SessionStore interface {
-	InitStore(name string, 
-	          itemExpiry time.Duration, 
-	          willRedirect bool, 
-	          loginPath string, 
-	          logoutPath string, 
-	          defaultPath string)
+	InitStore(name string,
+		itemExpiry time.Duration,
+		willRedirect bool,
+		loginPath string,
+		logoutPath string,
+		defaultPath string)
 	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
@@ -45,13 +45,12 @@ type SessionStore interface {
 	GetBase() *sessionStoreBase
 }
 
-
 // The base store struct contains basic properties of a session store.
 type sessionStoreBase struct {
 	name         string
 	ctxKey       sessionKey
 	expiration   time.Duration
-	willRedirect bool // used to determine if unauthorized requests get a 401, or redirect
+	willRedirect bool   // used to determine if unauthorized requests get a 401, or redirect
 	LoginPath    string // redirect path if unauthorized
 	LogoutPath   string
 	DefaultPath  string // redirect path if authorized
@@ -60,9 +59,9 @@ type sessionStoreBase struct {
 type sessionKey struct{}
 
 func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
-                                      r *http.Request, 
-                                      cookieValue string, 
-                                      rememberMe bool) {
+	r *http.Request,
+	cookieValue string,
+	rememberMe bool) {
 	cookie := &http.Cookie{
 		Name:     st.name,
 		Value:    cookieValue,
@@ -82,27 +81,27 @@ func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
 
 func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
-    	Name: st.name,
-    	MaxAge: -1,
-    	Expires: time.Now().Add(-100 * time.Hour),// Set expires for older versions of IE
-    	Path: "/",
+		Name:    st.name,
+		MaxAge:  -1,
+		Expires: time.Now().Add(-100 * time.Hour), // Set expires for older versions of IE
+		Path:    "/",
 	})
 }
 
 // middleware for loading a provided auth session, and automatically
 // handling redirections
-func (st *sessionStoreBase) loadSession(next http.Handler, 
-                                        id *Identity, 
-                                        requireAuth bool) http.Handler {
+func (st *sessionStoreBase) loadSession(next http.Handler,
+	id *Identity,
+	requireAuth bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// if not auth'd
 		if id == nil {
 			blankIdentity := &Identity{IsAuthenticated: false}
-	
+
 			if requireAuth {
 				if st.willRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
 					redirectPath := st.LoginPath + "?redirect=" + url.QueryEscape(r.URL.String())
-	
+
 					http.Redirect(w, r, redirectPath, http.StatusFound)
 					return
 				} else if !st.willRedirect && st.LoginPath != r.URL.Path {
@@ -110,21 +109,21 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 					return
 				}
 			}
-	
+
 			ctx := context.WithValue(r.Context(), st.ctxKey, blankIdentity)
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
-	
+
 		// if auth'd
 		if st.willRedirect && st.LoginPath == r.URL.Path {
 			http.Redirect(w, r, st.DefaultPath, http.StatusFound)
 			return
 		}
-	
+
 		// if there is a valid identity
 		ctx := context.WithValue(r.Context(), st.ctxKey, id)
-		next.ServeHTTP(w, r.WithContext(ctx))	
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

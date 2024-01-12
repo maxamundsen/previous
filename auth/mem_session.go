@@ -1,6 +1,5 @@
 package auth
 
-
 import (
 	"gohttp/constants"
 	"log"
@@ -17,12 +16,12 @@ type MemorySessionStore struct {
 }
 
 // Init will initialize the MemorySessionStore object
-func (st *MemorySessionStore) InitStore(name string, 
-                                        itemExpiry time.Duration, 
-                                        willRedirect bool, 
-                                        loginPath string, 
-                                        logoutPath string, 
-                                        defaultPath string) {
+func (st *MemorySessionStore) InitStore(name string,
+	itemExpiry time.Duration,
+	willRedirect bool,
+	loginPath string,
+	logoutPath string,
+	defaultPath string) {
 	st.base = &sessionStoreBase{}
 	st.sessions = make(map[string]*Identity)
 	st.base.name = name
@@ -38,11 +37,11 @@ func (st *MemorySessionStore) InitStore(name string,
 // middleware for loading sessions
 func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
 	var id *Identity
-	
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id = st.GetIdentityFromRequest(r)
-		
-		handler := st.base.loadSession(next, id, requireAuth)	
+
+		handler := st.base.loadSession(next, id, requireAuth)
 		handler.ServeHTTP(w, r)
 	})
 }
@@ -75,7 +74,7 @@ func (st *MemorySessionStore) DeleteSession(w http.ResponseWriter, r *http.Reque
 	st.lock.Lock()
 	delete(st.sessions, cookie.Value)
 	st.lock.Unlock()
-	
+
 	st.base.removeCookie(w, r)
 }
 

@@ -9,21 +9,21 @@ import (
 )
 
 var (
-	templates         *template.Template
-	once              sync.Once
+	templates *template.Template
+	once      sync.Once
 )
 
 type ViewBase struct {
-	Identity      *auth.Identity
-	ViewData      map[string]string
+	Identity *auth.Identity
+	ViewData map[string]string
 }
 
 func NewViewBase(user *auth.Identity, viewData map[string]string) ViewBase {
-	viewBase := ViewBase {
+	viewBase := ViewBase{
 		user,
 		viewData,
 	}
-	
+
 	return viewBase
 }
 
@@ -42,7 +42,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 
 func loadTemplates() (*template.Template, error) {
 	var err error
-	
+
 	if build.DEVEL {
 		templates, err = parseTemplates()
 	} else {
@@ -50,7 +50,7 @@ func loadTemplates() (*template.Template, error) {
 			templates, err = parseTemplates()
 		})
 	}
-	
+
 	return templates, err
 }
 
@@ -64,11 +64,9 @@ func parseTemplates() (*template.Template, error) {
 		templates, err = template.ParseFS(embeddedTemplates, "*.html")
 	}
 
-	
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return templates, nil
 }
-

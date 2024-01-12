@@ -11,4 +11,3 @@ func SessionInit() {
 	sessionStore = &auth.MemorySessionStore{}
 	sessionStore.InitStore("ID", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
 }
-

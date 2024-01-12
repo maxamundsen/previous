@@ -1,10 +1,9 @@
 package auth
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"crypto/rand"
 	"encoding/base64"
-
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HashPassword(password string) (string, error) {

@@ -7,13 +7,13 @@ import (
 )
 
 type testPageData struct {
-	Base views.ViewBase
+	Base     views.ViewBase
 	Password string
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) {
 	user := sessionStore.GetIdentityFromCtx(r)
-	
+
 	val1 := r.FormValue("val1")
 
 	var password string
@@ -25,15 +25,15 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	viewData := make(map[string]string)
-	
+
 	viewData["Title"] = "Test Page"
-	
+
 	base := views.NewViewBase(user, viewData)
 
-	pageData := testPageData {
+	pageData := testPageData{
 		base,
 		password,
 	}
-	
+
 	views.RenderTemplate(w, "test", pageData)
 }
