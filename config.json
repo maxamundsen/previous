@@ -1,3 +1,4 @@
 {
-    "Host": "localhost:5000"
+    "Host": "localhost:8080",
+    "CookieExpiryDays": 100
 }

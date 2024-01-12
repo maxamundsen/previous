@@ -26,7 +26,8 @@ import (
 
 // define all configuration options here
 type configuration struct {
-	Host string `json:"Host"`
+	Host             string `json:"Host"`
+	CookieExpiryDays int    `json:"CookieExpiryDays"`
 }
 
 // Use the GetConfiguration() function to return this configuration struct
@@ -55,6 +56,15 @@ func InitConfiguration() {
 	defer configFile.Close()
 
 	json.Unmarshal(configBytes, &config)
+
+	// specify default values
+	if config.CookieExpiryDays == 0 {
+		config.CookieExpiryDays = 7
+	}
+
+	if config.Host == "" {
+		config.Host = "localhost:5000"
+	}
 }
 
 func GetConfiguration() configuration {

@@ -2,12 +2,16 @@ package handlers
 
 import (
 	"gohttp/auth"
-	"gohttp/constants"
+	"gohttp/config"
+	"time"
 )
 
 var sessionStore auth.SessionStore
 
 func SessionInit() {
+	config := config.GetConfiguration()
+
 	sessionStore = &auth.MemorySessionStore{}
-	sessionStore.InitStore("ID", constants.CookieExpiryTime, true, "/login", "/logout", "/test")
+	cookieExpiry := time.Duration(time.Hour * 24 * time.Duration(config.CookieExpiryDays))
+	sessionStore.InitStore("ID", cookieExpiry, true, "/login", "/logout", "/test")
 }

@@ -2,9 +2,7 @@ Needs fixing:
 None :D
 
 Project goals:
-- json config file
 - proper authentication logic
-- document project
 - renew session before expiry
 - database access
 - database session
@@ -13,6 +11,7 @@ Project goals:
 - htmx
 
 Completed:
+- json config file
 - Dynamic routing with handler functions
 - HTML View engine
 - HTTP Error page(s)
