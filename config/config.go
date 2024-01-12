@@ -38,7 +38,13 @@ func InitConfiguration() {
 	var err error
 
 	if build.DEVEL {
+		// if a config.devel.json exists
 		configFile, err = os.Open("config.devel.json")
+
+		// fallback to default config if devel config does not exist
+		if err != nil {
+			configFile, err = os.Open("config.json")
+		}
 	} else {
 		configFile, err = os.Open("config.json")
 	}
@@ -63,8 +69,10 @@ func InitConfiguration() {
 	}
 
 	if config.Host == "" {
-		config.Host = "localhost:5000"
+		config.Host = "localhost:8080"
 	}
+
+	log.Println("Loaded configuration file (" + configFile.Name() + ")")
 }
 
 func GetConfiguration() configuration {
