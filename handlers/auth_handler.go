@@ -10,38 +10,36 @@ import (
 	"time"
 )
 
-type loginModel struct {
-	Base views.ViewBase
-}
-
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	// time attack partial mitigation
-	// this does not fully prevent them, but should make it very unlikely when
-	// paired with a 'max login attempt per ip/minute/fingerprint'
-	// https://security.stackexchange.com/questions/96489/can-i-prevent-timing-attacks-with-random-delays/96493#96493
-	// https://www.reddit.com/r/PHP/comments/kn6ezp/have_you_secured_your_signup_process_against_a/
 
 	viewData := make(map[string]interface{})
 
 	viewData["Title"] = "Login"
 
-	base := views.NewViewBase(nil, viewData)
-
-	pageData := loginModel{
-		base,
-	}
+	base := views.NewViewModel(nil, viewData)
 
 	if r.Method == http.MethodGet {
-		views.RenderTemplate(w, "login", pageData)
+		views.RenderTemplate(w, "login", base)
 	} else if r.Method == http.MethodPost {
-		randomSeconds, _ := rand.Int(rand.Reader, big.NewInt(1000))
-		randomDuration := time.Duration(randomSeconds.Int64()) * time.Millisecond
-
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 		rememberMe, _ := strconv.ParseBool(r.FormValue("rememberMe"))
 
-		// add random time between 0-1 seconds to response
+		// time attack partial mitigation
+		// adds up to 0.5 seconds to the response time
+
+		// this technically does not prevent a time attack, since there is still time variance without the randomness added.
+		// you could theoretically take an average of a 'valid user; incorrect password' vs 'invalid user' response times
+		// to figure out if a user exists, but you would need a lot of data to do that.
+		// this should make it *extremely* unlikely to do when paired with 'n login attempt per ip/minute/fingerprint'
+		// since you would need way more than `n` login attempts to collect an average
+
+		// https://security.stackexchange.com/questions/96489/can-i-prevent-timing-attacks-with-random-delays/96493#96493
+		// https://www.reddit.com/r/PHP/comments/kn6ezp/have_you_secured_your_signup_process_against_a/
+
+		randomSeconds, _ := rand.Int(rand.Reader, big.NewInt(500))
+		randomDuration := time.Duration(randomSeconds.Int64()) * time.Millisecond
+
 		time.Sleep(randomDuration)
 
 		if username == "admin" && password == "admin" {
@@ -66,8 +64,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
 
-			pageData.Base.ViewData["Error"] = "Username or password incorrect."
-			views.RenderTemplate(w, "login", pageData)
+			base.ViewData["Error"] = "Username or password incorrect."
+			views.RenderTemplate(w, "login", base)
 		}
 	}
 }

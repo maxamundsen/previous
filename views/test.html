@@ -18,11 +18,11 @@
 				<tbody>
 					<tr>
 						<td>Username</td>
-						<td>{{.Base.Identity.Username}}</td>
+						<td>{{.Identity.Username}}</td>
 					</tr>
 					<tr>
 						<td>Role</td>
-						<td>{{.Base.Identity.Role}}</td>
+						<td>{{.Identity.Role}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -53,7 +53,7 @@
 			</form>
 			<br />
 			<p>Output:</p>
-			<code>{{ .Password }}</code>
+			<code>{{index .ViewData "Password" }}</code>
 		</div>
 	</div>
 </div>

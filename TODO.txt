@@ -4,16 +4,12 @@ None :D
 Project goals:
 - proper authentication logic
 - renew session before expiry
-- database access
-- database session
-- charts https://github.com/wcharczuk/go-chart
-- smtp client
 - htmx
 
 Completed:
 - json config file
 - Dynamic routing with handler functions
-- HTML View engine
+- HTML View engine with 'view model' struct
 - HTTP Error page(s)
 - JSON reponses
 - JSON fetching (from 3rd party api)

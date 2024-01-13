@@ -30,8 +30,8 @@ a:link, a:visited {
 
 
 <div>
-    <h1 style="color: #7c0000">{{ index .Base.ViewData "ErrorCode" }}</h1>
-    <p>{{ index .Base.ViewData "ErrorMsg" }}</p>
+    <h1 style="color: #7c0000">{{ index .ViewData "ErrorCode" }}</h1>
+    <p>{{ index .ViewData "ErrorMsg" }}</p>
 </div>
  
 {{template "footer" .}}

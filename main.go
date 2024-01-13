@@ -12,16 +12,15 @@ import (
 func main() {
 	fmt.Println("Go HTTP Server Test")
 
+	if build.DEVEL {
+		fmt.Println("*DEVELOPMENT BUILD")
+	} else {
+		fmt.Println("*RELEASE BUILD")
+	}
+
 	// Read "config.json" file
 	config.InitConfiguration()
 	config := config.GetConfiguration()
-
-	if build.DEVEL {
-		fmt.Println("DEVELOPMENT MODE ENABLED")
-		fmt.Println("Note: View templates are NOT embedded in devel mode")
-	} else {
-		fmt.Println("PRODUCTION BUILD")
-	}
 
 	// Create in-memory session store
 	handlers.SessionInit()

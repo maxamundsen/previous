@@ -6,13 +6,8 @@ import (
 	"net/http"
 )
 
-type testPageModel struct {
-	Base     views.ViewBase
-	Password string
-}
-
 func testHandler(w http.ResponseWriter, r *http.Request) {
-	user := sessionStore.GetIdentityFromCtx(r)
+	identity := sessionStore.GetIdentityFromCtx(r)
 
 	val1 := r.FormValue("val1")
 
@@ -27,13 +22,9 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 
 	viewData["Title"] = "Test Page"
+	viewData["Password"] = password
 
-	base := views.NewViewBase(user, viewData)
+	base := views.NewViewModel(identity, viewData)
 
-	pageData := testPageModel{
-		base,
-		password,
-	}
-
-	views.RenderTemplate(w, "test", pageData)
+	views.RenderTemplate(w, "test", base)
 }
