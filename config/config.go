@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"gohttp/constants/build"
+	"gohttp/build"
 	"io"
 	"log"
 	"os"
@@ -30,10 +30,20 @@ type configuration struct {
 	CookieExpiryDays int    `json:"CookieExpiryDays"`
 }
 
-// Use the GetConfiguration() function to return this configuration struct
 var config configuration
 
-func InitConfiguration() {
+// specify default values if none are specified in the config file
+func setDefaultValues() {
+	if config.CookieExpiryDays == 0 {
+		config.CookieExpiryDays = 7
+	}
+
+	if config.Host == "" {
+		config.Host = "localhost:8080"
+	}
+}
+
+func ReadConfiguration() {
 	var configFile *os.File
 	var err error
 
@@ -63,15 +73,7 @@ func InitConfiguration() {
 
 	json.Unmarshal(configBytes, &config)
 
-	// specify default values
-	if config.CookieExpiryDays == 0 {
-		config.CookieExpiryDays = 7
-	}
-
-	if config.Host == "" {
-		config.Host = "localhost:8080"
-	}
-
+	setDefaultValues()
 	log.Println("Loaded configuration file (" + configFile.Name() + ")")
 }
 

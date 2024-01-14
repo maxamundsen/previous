@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"gohttp/build"
 	"gohttp/config"
-	"gohttp/constants/build"
 	"gohttp/handlers"
 	"log"
 	"net/http"
@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// Read "config.json" file
-	config.InitConfiguration()
+	config.ReadConfiguration()
 	config := config.GetConfiguration()
 
 	// Create in-memory session store

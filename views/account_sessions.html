@@ -1,0 +1,23 @@
+{{template "header" .}}
+
+{{template "navbar" .}}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Identity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{$identityList := index .ViewData "IdentityList"}}
+        {{ range $value := $identityList }}
+        <tr>
+            <td>{{ $value }}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
+<a class="btn btn-success" href="/auth/logoutall">Click to logout all :D</a>
+
+{{ template "footer" .}}

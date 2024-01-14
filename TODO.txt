@@ -2,17 +2,23 @@ Needs fixing:
 None :D
 
 Project goals:
-- proper authentication logic
-- renew session before expiry
+- javascript session timeout
+- javascript logout on close when rememberme false (deletes server side session)
 - htmx
 
 Completed:
-- json config file
+- Configuration file (JSON format)
 - Dynamic routing with handler functions
-- HTML View engine with 'view model' struct
-- HTTP Error page(s)
-- JSON reponses
-- JSON fetching (from 3rd party api)
-- Session authentication
-- Embedded view templates for release builds
-- *Optional* embedded static assets for release builds
+- View Engine
+    > Templating
+    > ViewModel struct containing identity and viewdata
+    > HTTP Error pages
+- JSON
+    > http reponses
+    > 3rd party api fetching
+- Session based authentication
+    > get all sessions containing current user (see all logins)
+    > delete all sessions containing the current user (logout all)
+- Embedded files 
+    > view templates for release builds
+    > *Optional* embedded static assets for release builds

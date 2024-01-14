@@ -2,7 +2,7 @@ package views
 
 import (
 	"gohttp/auth"
-	"gohttp/constants/build"
+	"gohttp/build"
 	"html/template"
 	"net/http"
 	"sync"

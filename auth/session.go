@@ -39,9 +39,11 @@ type SessionStore interface {
 		defaultPath string)
 	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
+	DeleteAllById(w http.ResponseWriter, r *http.Request, id *Identity)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
 	GetIdentityFromCtx(r *http.Request) *Identity
-	GetIdentityFromRequest(r *http.Request) *Identity
+	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity
+	GetAllIdentities(id *Identity) []*Identity
 	GetBase() *sessionStoreBase
 }
 
@@ -58,6 +60,8 @@ type sessionStoreBase struct {
 
 type sessionKey struct{}
 
+const cookieEntropy int = 33
+
 func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
 	r *http.Request,
 	cookieValue string,
@@ -73,6 +77,7 @@ func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
 
 	// if no expiry is set, cookie defaults to clear after browser closes
 	if rememberMe {
+		// expiration is set from the config file
 		cookie.Expires = time.Now().Add(st.expiration)
 	}
 
@@ -96,7 +101,6 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 	id *Identity,
 	requireAuth bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// if not auth'd
 		if id == nil {
 			blankIdentity := &Identity{IsAuthenticated: false}
 
@@ -117,13 +121,11 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 			return
 		}
 
-		// if auth'd
 		if st.willRedirect && st.LoginPath == r.URL.Path {
 			http.Redirect(w, r, st.DefaultPath, http.StatusFound)
 			return
 		}
 
-		// if there is a valid identity
 		ctx := context.WithValue(r.Context(), st.ctxKey, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

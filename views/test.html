@@ -18,11 +18,7 @@
 				<tbody>
 					<tr>
 						<td>Username</td>
-						<td>{{.Identity.Username}}</td>
-					</tr>
-					<tr>
-						<td>Role</td>
-						<td>{{.Identity.Role}}</td>
+						<td>{{.Identity.UserId}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -42,6 +38,9 @@
 
 	<br />
 
+	{{$secret := index .Identity.Claims "TestSecret"}}
+
+	{{ if $secret}}
 	<div class="card align-middle shadow-sm">
 		<div class="card-header">
 			Password Generator
@@ -56,6 +55,7 @@
 			<code>{{index .ViewData "Password" }}</code>
 		</div>
 	</div>
+	{{end}}
 </div>
 
 {{ template "footer" .}}
