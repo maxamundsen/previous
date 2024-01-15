@@ -33,7 +33,7 @@ func apiTestHandler(w http.ResponseWriter, r *http.Request) {
 
 // This will print information about the current Identity
 // via session access
-func apiUserHandler(w http.ResponseWriter, r *http.Request) {
+func apiIdentityHandler(w http.ResponseWriter, r *http.Request) {
 	user := sessionStore.GetIdentityFromCtx(r)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
@@ -51,7 +51,8 @@ type astroModel struct {
 }
 
 // This endpoint fetches a JSON response from a third party API,
-// serializes it to an 'astro' struct, then
+// serializes it to an 'astro' struct, turns the struct back
+// into json, then responds with the result
 func apiClientFetchHandler(w http.ResponseWriter, r *http.Request) {
 	client := http.Client{
 		Timeout: time.Second * 5,

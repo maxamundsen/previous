@@ -1,5 +1,5 @@
 {{define "navbar"}}
-<nav class="navbar navbar-expand-lg mb-4 shadow-sm" style="background-color: #38488f">
+<nav class="navbar navbar-expand-lg mb-4 shadow-sm" style="background-color:#222222">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">
       <img src="/assets/images/logo.png" height="30" width="auto" alt="logo" />
@@ -11,7 +11,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link text-light" aria-current="page" href="/test">Dashboard</a>
+          <a class="nav-link text-light" aria-current="page" href="/example">Dashboard</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -19,7 +19,19 @@
             Account
           </a>
           <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/account/info">Account Info</a></li>
             <li><a class="dropdown-item" href="/account/sessions">View Login Sessions</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            JSON API
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/api/test">Test</a></li>
+            <li><a class="dropdown-item" href="/api/identity">Account Info</a></li>
+            <li><a class="dropdown-item" href="/api/clientfetch">3rd Party API Fetching</a></li>
           </ul>
         </li>
       </ul>

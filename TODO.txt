@@ -2,9 +2,7 @@ Needs fixing:
 None :D
 
 Project goals:
-- javascript session timeout
-- javascript logout on close when rememberme false (deletes server side session)
-- htmx
+- database connectivity
 
 Completed:
 - Configuration file (JSON format)
@@ -13,6 +11,7 @@ Completed:
     > Templating
     > ViewModel struct containing identity and viewdata
     > HTTP Error pages
+    > HTMX / AJAX pages with data submission
 - JSON
     > http reponses
     > 3rd party api fetching

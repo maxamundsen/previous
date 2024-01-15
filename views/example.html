@@ -1,0 +1,23 @@
+{{template "header" .}}
+
+{{template "navbar" .}}
+
+<div class="container">
+	<h3 class="display-6">Test Page</h3>
+    <hr />
+	<div class="card align-middle shadow-sm">
+		<div class="card-header">
+			Example Chart
+		</div>
+		<div class="card-body">
+			<img src="/assets/images/chart.png" alt="chart" width="500" height="auto" />
+		</div>
+	</div>
+
+	<br />
+
+	{{/* Will only load if Claims["CanGeneratePasswords"] == "true" */}}
+	<div hx-get="/passgen" hx-trigger="load"></div>
+</div>
+
+{{ template "footer" .}}

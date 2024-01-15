@@ -19,5 +19,5 @@ func SessionInit() {
 	// set store options here
 	// since the routes are determined at compile time, not runtime, it would not make
 	// sense to put these options in the config file
-	sessionStore.InitStore("id", cookieExpiry, true, "/auth/login", "/auth/logout", "/test")
+	sessionStore.InitStore("id", cookieExpiry, true, "/auth/login", "/auth/logout", "/example")
 }

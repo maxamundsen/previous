@@ -1,0 +1,47 @@
+{{template "header" .}}
+
+{{template "navbar" .}}
+
+<div class="container">
+    <h3 class="display-6">Account Info</h3>
+    <hr />
+
+    <h4>General Info</h4>
+    <table class="border table table-striped">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>UserId</td>
+                <td>{{.Identity.UserId}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <br />
+
+    <h4>Identity Claims</h4>
+    <table class="border table table-striped">
+        <thead>
+            <tr>
+                <th>Claim</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range $key, $value := .Identity.Claims}}
+                <tr>
+                    <td>{{ $key }}</td>
+                    <td>{{ $value }}</td>
+                </tr>
+            {{end}}        
+        </tbody>
+    </table>
+</div>
+
+
+{{ template "footer" .}}

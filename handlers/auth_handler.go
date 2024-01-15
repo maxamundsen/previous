@@ -5,6 +5,7 @@ import (
 	"gohttp/views"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +32,9 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		id.RememberMe = rememberMe
+		id.IpAddr = r.RemoteAddr
+		id.UserAgent = r.UserAgent()
+		id.LoginTime = time.Now()
 		sessionStore.PutSession(w, r, id)
 
 		params := r.URL.Query()

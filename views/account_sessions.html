@@ -2,22 +2,33 @@
 
 {{template "navbar" .}}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Identity</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{$identityList := index .ViewData "IdentityList"}}
-        {{ range $value := $identityList }}
-        <tr>
-            <td>{{ $value }}</td>
-        </tr>
-        {{end}}
-    </tbody>
-</table>
+<div class="container">
+    <h3 class="display-6">Active Login Sessions</h3>
+    <hr />
 
-<a class="btn btn-success" href="/auth/logoutall">Click to logout all :D</a>
+    <table class="table table-striped border">
+        <thead>
+            <tr>
+                <th>UserId</th>
+                <th>IP</th>
+                <th>User Agent</th>
+                <th>Login Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{$identityList := index .ViewData "IdentityList"}}
+            {{ range $value := $identityList }}
+            <tr>
+                <td>{{ $value.UserId }}</td>
+                <td>{{ $value.IpAddr }}</td>
+                <td>{{ $value.UserAgent }}</td>
+                <td>{{ $value.LoginTime }}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    <a class="btn btn-danger" href="/auth/logoutall">Logout All</a>
+</div>
+
 
 {{ template "footer" .}}

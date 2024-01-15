@@ -1,30 +1,16 @@
 package handlers
 
 import (
-	"gohttp/auth"
 	"gohttp/views"
 	"net/http"
 )
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
+func exampleHandler(w http.ResponseWriter, r *http.Request) {
 	identity := sessionStore.GetIdentityFromCtx(r)
 
-	val1 := r.FormValue("val1")
-
-	var password string
-
-	if val1 == "" {
-		password = "empty"
-	} else {
-		password, _ = auth.HashPassword(val1)
-	}
-
 	viewData := make(map[string]interface{})
-
-	viewData["Title"] = "Test Page"
-	viewData["Password"] = password
+	viewData["Title"] = "Example Page"
 
 	base := views.NewViewModel(identity, viewData)
-
-	views.RenderTemplate(w, "test", base)
+	views.RenderTemplate(w, "example", base)
 }

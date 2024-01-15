@@ -17,3 +17,16 @@ func accountSessionHandler(w http.ResponseWriter, r *http.Request) {
 	model := views.NewViewModel(identity, viewData)
 	views.RenderTemplate(w, "account_sessions", model)
 }
+
+func accountInfoHandler(w http.ResponseWriter, r *http.Request) {
+	identity := sessionStore.GetIdentityFromCtx(r)
+
+	identityList := sessionStore.GetAllIdentities(identity)
+
+	viewData := make(map[string]interface{})
+	viewData["Title"] = "Account Info"
+	viewData["IdentityList"] = identityList
+
+	model := views.NewViewModel(identity, viewData)
+	views.RenderTemplate(w, "account_info", model)
+}
