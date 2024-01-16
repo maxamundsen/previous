@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"gohttp/views"
 	"io"
 	"log"
 	"net/http"
@@ -12,24 +13,6 @@ import (
 // In order to parse json, you must specify some information about the output json
 // via decorators.
 // structs can be automatically generated from json using: https://mholt.github.io/json-to-go/
-
-type person struct {
-	FirstName string
-	LastName  string
-	Age       int
-}
-
-// This endpoint creates a person struct and returns encoded JSON
-func apiTestHandler(w http.ResponseWriter, r *http.Request) {
-	data := person{
-		"John",
-		"Doe",
-		20,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(data)
-}
 
 // This will print information about the current Identity
 // via session access
@@ -90,6 +73,10 @@ func apiClientFetchHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(jsonErr)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(jsonOutput)
+	viewData := make(map[string]interface{})
+	viewData["Title"] = "3rd Party Api Fetch"
+	viewData["Data"] = jsonOutput
+
+	model := views.NewViewModel(nil, viewData)
+	views.RenderTemplate(w, "api_fetch", model)
 }

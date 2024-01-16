@@ -1,51 +1,25 @@
 {{define "navbar"}}
-<nav class="navbar navbar-expand-lg mb-4 shadow-sm" style="background-color:#222222">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/">
-      <img src="/assets/images/logo.png" height="30" width="auto" alt="logo" />
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon text-light"></span>
+<div class="topnav" id="myTopnav">
+  <a href="/" class="active">Index</a>
+  <a href="/example">Example Page</a>
+  <div class="dropdown">
+    <button class="dropbtn">Account
+      ▼
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link text-light" aria-current="page" href="/example">Dashboard</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Account
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/account/info">Account Info</a></li>
-            <li><a class="dropdown-item" href="/account/sessions">View Login Sessions</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            JSON API
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/api/test">Test</a></li>
-            <li><a class="dropdown-item" href="/api/identity">Account Info</a></li>
-            <li><a class="dropdown-item" href="/api/clientfetch">3rd Party API Fetching</a></li>
-          </ul>
-        </li>
-      </ul>
-      <div class="d-flex">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link text-light"><i>{{.Identity.UserId}}</i></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-light" href="/auth/logout"><i class="bi bi-box-arrow-left h4"></i></a>
-          </li>
-        </ul>
-      </div>
+    <div class="dropdown-content">
+      <a href="/account/info">Info</a>
+      <a href="/account/sessions">Active Sessions</a>
     </div>
   </div>
-</nav>
+  <div class="dropdown">
+    <button class="dropbtn">API
+      ▼
+    </button>
+    <div class="dropdown-content">
+      <a href="/api/identity" target="_blank">Show Identity Info (respond with JSON)</a>
+      <a href="/api/clientfetch">Fetch data from 3rd party (recieve JSON)</a>
+    </div>
+  </div>
+  <a href="javascript:void(0);" class="icon" onclick="openNavbar()">&#9776;</a>
+</div>
 {{end}}

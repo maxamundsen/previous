@@ -1,0 +1,15 @@
+<div id="htmx-example">
+    <div class="card">
+        <div class="card-container">
+            <h3>HTMX Counter</h3>
+
+            <form method="get" action="/example/counter" hx-get="/example/counter" hx-target="#htmx-example" hx-swap="outerHTML" autocomplete="off">
+                <input type="hidden" name="number" value="{{index .ViewData "Number" }}">
+                <button>Increment Number</button>
+            </form>
+            <br />
+            <p>Output:</p>
+            <code>{{index .ViewData "Number" }}</code>
+        </div>
+    </div>
+</div>

@@ -1,13 +1,39 @@
+@import url("/assets/css/navbar.css");
+@import url("/assets/css/card.css");
+@import url("/assets/css/table.css");
+@import url("/assets/css/grid.css");
+
 html {
   height: -webkit-fill-available;
   font-size: 14px;
+  font-family: sans-serif;
 }
 
 body {
+  background-color: #fefefe;
   min-height: 100vh;
   min-height: -webkit-fill-available;
 }
 
-.navbar {
-	--bs-navbar-padding-y: .25rem;
+.content {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 768px;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.content-lg {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1700px;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.shadow {
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+code {
+  color: magenta;
 }

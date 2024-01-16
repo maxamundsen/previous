@@ -5,10 +5,6 @@ import (
 	"net/http"
 )
 
-type indexModel struct {
-	Base views.ViewModel
-}
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 	viewData["Title"] = "Index"

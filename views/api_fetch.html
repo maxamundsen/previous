@@ -1,0 +1,38 @@
+{{template "header" .}}
+
+{{template "navbar" .}}
+
+{{$data := index .ViewData "Data"}}
+
+<div class="content-lg">
+    <h3 class="display-6">3rd Party Api Fetch</h3>
+    <a href="http://api.open-notify.org/astros.json">http://api.open-notify.org/astros.json</a>
+
+    <hr />
+    <br />
+
+    <p>Message:</p>
+    <code>{{$data.Message}}</code>
+
+    <br />
+    <br />
+
+    <table>
+        <thead>
+            <tr>
+                <th>Person</th>
+                <th>Spacecraft</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $value := $data.People }}
+            <tr>
+                <td>{{$value.Name}}</td>
+                <td>{{$value.Craft}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+
+{{ template "footer" .}}

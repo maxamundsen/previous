@@ -1,0 +1,15 @@
+<div class="card" id="passform">
+    <div class="card-container">
+        <h3>HTMX Enhanced Password Generator</h3>
+        <p><i>(only shows when "CanGeneratePasswords" claim is "true")</i></p>
+
+        <form method="post" action="/example/passgen" hx-post="/example/passgen" hx-target="#passform" hx-swap="outerHTML"
+            hx-indicator="#spinner" autocomplete="off">
+            <input type="text" name="val1" placeholder="val1" autofocus />
+            <button class="btn btn-success">Generate Password</button>
+        </form>
+        <img src="/assets/images/loading.gif" class="htmx-indicator" id="spinner" alt="Loading..." />
+        <p>Output:</p>
+        <code>{{index .ViewData "Password" }}</code>
+    </div>
+</div>
