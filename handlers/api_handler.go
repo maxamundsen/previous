@@ -22,7 +22,7 @@ func apiIdentityHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// Struct for serializing json from 3rd party API
+// Struct for deserializing json from 3rd party API
 // http://api.open-notify.org/astros.json
 type astroModel struct {
 	Message string `json:"message"`

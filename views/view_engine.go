@@ -68,7 +68,6 @@ func loadTemplates() (*template.Template, error) {
 }
 
 func parseTemplates() (*template.Template, error) {
-
 	var err error
 
 	if build.DEVEL {
