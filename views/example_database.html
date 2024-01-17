@@ -1,0 +1,30 @@
+{{template "header" .}}
+
+{{template "navbar" .}}
+
+<div class="content-lg">
+	<h3 class="display-6">Example Page</h3>
+	<hr />
+	<br />
+	<br />
+
+	<div class="card">
+		<div class="card-container">
+			<h3>Chart Example</h3>
+			<img src="/assets/images/chart.png" alt="chart" width="500" height="auto" />
+		</div>
+	</div>
+
+	<br />
+
+	<div class="grid">
+		<div hx-get="/example/counter" hx-trigger="load"></div>
+
+
+		<div hx-get="/example/passgen" hx-trigger="load"></div>
+
+	</div>
+
+</div>
+
+{{ template "footer" .}}

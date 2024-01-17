@@ -5,6 +5,7 @@ import (
 	"gohttp/build"
 	"gohttp/config"
 	"gohttp/handlers"
+	"gohttp/data"
 	"log"
 	"net/http"
 )
@@ -22,6 +23,9 @@ func main() {
 	config.ReadConfiguration()
 	config := config.GetConfiguration()
 
+	// Create database connection
+	data.InitializeDb(config.ConnectionString)
+	
 	// Create in-memory session store
 	handlers.SessionInit()
 

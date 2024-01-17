@@ -1,4 +1,5 @@
 {
     "Host": "localhost:8080",
-    "CookieExpiryDays": 30
+    "CookieExpiryDays": 30,
+    "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example"
 }

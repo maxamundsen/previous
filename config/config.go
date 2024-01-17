@@ -28,6 +28,7 @@ import (
 type configuration struct {
 	Host             string `json:"Host"`
 	CookieExpiryDays int    `json:"CookieExpiryDays"`
+	ConnectionString string `json:"ConnectionString"`
 }
 
 var config configuration

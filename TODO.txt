@@ -1,8 +1,7 @@
 Needs fixing:
-None :D
+- Return []Identity instead of []*Identity in session
 
 Project goals:
-- database connectivity
 
 Completed:
 - Configuration file (JSON format)

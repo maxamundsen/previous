@@ -3,6 +3,7 @@ package handlers
 import (
 	"gohttp/auth"
 	"gohttp/views"
+	"gohttp/data"
 	"net/http"
 	"strconv"
 )
@@ -50,7 +51,21 @@ func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 	viewData["Password"] = password
 
-	base := views.NewViewModel(identity, viewData)
+	model := views.NewViewModel(identity, viewData)
 
-	views.RenderTemplate(w, "example_passgen", base)
+	views.RenderTemplate(w, "example_passgen", model)
+}
+
+func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
+	identity := sessionStore.GetIdentityFromCtx(r)
+	
+	users := data.FetchUsers()
+	
+	viewData := make(map[string]interface{})
+	viewData["Users"] = users
+	
+	model := views.NewViewModel(identity, viewData)
+
+//TODO UPDATE VIEW 
+	views.RenderTemplate(w, "example_passgen", model)
 }
