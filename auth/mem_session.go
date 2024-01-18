@@ -96,13 +96,13 @@ func (st *MemorySessionStore) GetIdentityFromCtx(r *http.Request) *Identity {
 	return st.base.getIdentityFromCtx(r)
 }
 
-func (st *MemorySessionStore) GetAllIdentities(id *Identity) []*Identity {
-	identities := make([]*Identity, 0)
+func (st *MemorySessionStore) GetAllIdentities(id *Identity) []Identity {
+	identities := make([]Identity, 0)
 
 	// find all sessions that contain the input identity
 	for _, v := range st.sessions {
 		if v.UserId == id.UserId {
-			identities = append(identities, v)
+			identities = append(identities, *v)
 		}
 	}
 

@@ -11,7 +11,7 @@ import (
 // Other web frameworks contain crazy complecated authentication middleware and
 // identity management. This one should be pretty simple to understand.
 // Auth session management does NOT contain any code to actually authenticate users
-// (username/password checking, password hashing etc)
+// (username/password checking, password hashing etc). That should be handled elsewhere.
 
 // In this simple authentication system, there is an Identity struct that represents
 // a "user" on the system. You can customize this structure to fit your needs.
@@ -43,7 +43,7 @@ type SessionStore interface {
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
 	GetIdentityFromCtx(r *http.Request) *Identity
 	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity
-	GetAllIdentities(id *Identity) []*Identity
+	GetAllIdentities(id *Identity) []Identity
 	GetBase() *sessionStoreBase
 }
 
@@ -60,6 +60,7 @@ type sessionStoreBase struct {
 
 type sessionKey struct{}
 
+// hardcoded value of 33, feel free to modify
 const cookieEntropy int = 33
 
 func (st *sessionStoreBase) setCookie(w http.ResponseWriter,

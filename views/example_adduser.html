@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<div id="adduser">
+	<form method="post" action="/example/adduser" hx-post="/example/adduser" hx-target="#adduser" hx-swap="outerHTML" autocomplete="off">
+		<label for="emailinput">Email:</label>
+		<input type="email" name="email" id="emailinput" autofocus/>
+		<input type="submit" value="Add new user"/>
+	</form>
+	
+	<br />
+	
+	<table>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{ $users := index .ViewData "Users" }}
+		
+			{{ range $val := $users }}
+			<tr>
+				<td>{{$val.Id}}</td>
+				<td>{{$val.Email}}</td>
+			</tr>
+	
+			{{end}}
+		</tbody>
+	</table>
+</div>

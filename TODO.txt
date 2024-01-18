@@ -1,10 +1,12 @@
 Needs fixing:
-- Return []Identity instead of []*Identity in session
 
 Project goals:
 
 Completed:
+- Database Access
+	> MySQL
 - Configuration file (JSON format)
+	> optional 'config.devel.json' config file for development specific config
 - Dynamic routing with handler functions
 - View Engine
     > Templating
