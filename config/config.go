@@ -78,6 +78,6 @@ func ReadConfiguration() {
 	log.Println("Loaded configuration file (" + configFile.Name() + ")")
 }
 
-func GetConfiguration() configuration {
-	return config
+func GetConfiguration() *configuration {
+	return &config
 }
