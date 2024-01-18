@@ -78,6 +78,8 @@ func ReadConfiguration() {
 	log.Println("Loaded configuration file (" + configFile.Name() + ")")
 }
 
-func GetConfiguration() *configuration {
-	return &config
+// return a COPY of the configuration to ensure that
+// config options cannot be modified globally
+func GetConfiguration() configuration {
+	return config
 }
