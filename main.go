@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"gohttp/build"
 	"gohttp/config"
-	"gohttp/handlers"
 	"gohttp/data"
+	"gohttp/handlers"
 	"log"
 	"net/http"
 )
@@ -25,7 +25,7 @@ func main() {
 
 	// Create database connection
 	data.InitializeDb(config.ConnectionString)
-	
+
 	// Create in-memory session store
 	handlers.SessionInit()
 

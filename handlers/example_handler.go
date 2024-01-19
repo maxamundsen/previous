@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"gohttp/auth"
-	"gohttp/views"
 	"gohttp/data"
+	"gohttp/views"
 	"net/http"
+	"net/mail"
 	"strconv"
 )
 
@@ -58,25 +59,46 @@ func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 
 func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 	identity := sessionStore.GetIdentityFromCtx(r)
-	
+
 	viewData := make(map[string]interface{})
+	viewData["Title"] = "Database Example"
+	
 	model := views.NewViewModel(identity, viewData)
 
 	views.RenderTemplate(w, "example_database", model)
 }
 
 func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {	
-		email := r.FormValue("email")
-		data.AddUser(email)
-	}
-	
-	users := data.FetchUsers()
-	
 	viewData := make(map[string]interface{})
+
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+
+		_, err := mail.ParseAddress(email)
+
+		if err != nil {
+			viewData["Error"] = err
+		} else {
+			data.AddUser(email)
+			viewData["SuccessMsg"] = "Successfully added user " + email + ". ✓"
+		}
+	}
+
+	users := data.FetchUsers()
 	viewData["Users"] = users
-	
+
 	model := views.NewViewModel(nil, viewData)
 
 	views.RenderTemplate(w, "example_adduser", model)
+}
+
+func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
+	viewData := make(map[string]interface{})
+
+	data.DeleteAllUsers()
+	viewData["SuccessMsg"] = "Successfully deleted all users. ✓"
+	
+	model := views.NewViewModel(nil, viewData)
+	
+	views.RenderTemplate(w, "example_adduser", model)	
 }

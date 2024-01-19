@@ -11,8 +11,6 @@ html {
 
 body {
   background-color: #fefefe;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
 }
 
 .content {
