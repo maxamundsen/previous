@@ -3,10 +3,10 @@ package handlers
 import (
 	"gohttp/auth"
 	"gohttp/views"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
-	"log"
 )
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -67,9 +67,9 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 func logoutAllHandler(w http.ResponseWriter, r *http.Request) {
 	id := sessionStore.GetIdentityFromCtx(r)
 	sessionStore.DeleteAllById(w, r, id)
-	
+
 	log.Println("Successful all-session logout for UserId: " + id.UserId)
-	
+
 	storeBase := sessionStore.GetBase()
 	http.Redirect(w, r, storeBase.LoginPath, http.StatusFound)
 }

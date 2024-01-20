@@ -62,7 +62,7 @@ func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 
 	viewData := make(map[string]interface{})
 	viewData["Title"] = "Database Example"
-	
+
 	model := views.NewViewModel(identity, viewData)
 
 	views.RenderTemplate(w, "example_database", model)
@@ -97,8 +97,8 @@ func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 
 	data.DeleteAllUsers()
 	viewData["SuccessMsg"] = "Successfully deleted all users. ✓"
-	
+
 	model := views.NewViewModel(nil, viewData)
-	
-	views.RenderTemplate(w, "example_adduser", model)	
+
+	views.RenderTemplate(w, "example_adduser", model)
 }

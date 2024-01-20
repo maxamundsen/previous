@@ -13,7 +13,7 @@ func FetchUsers() []User {
 	users := make([]User, 0)
 
 	sql := "SELECT * FROM users"
-	
+
 	rows, err := db.Query(sql)
 
 	defer rows.Close()
@@ -23,7 +23,7 @@ func FetchUsers() []User {
 	}
 
 	count := 0
-	
+
 	for rows.Next() {
 		var user User
 		rows.Scan(&user.Id, &user.Email)
@@ -31,10 +31,10 @@ func FetchUsers() []User {
 		users = append(users, user)
 		count += 1
 	}
-	
+
 	log.Printf("Fetched %d users\n", count)
 
-	return users	
+	return users
 }
 
 func AddUser(email string) {
@@ -55,24 +55,24 @@ func AddUser(email string) {
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	log.Println("User added. Email: " + email)
 }
 
 func DeleteAllUsers() {
 	sql := "TRUNCATE TABLE users"
-	
+
 	stmt, err := db.Prepare(sql)
-	
+
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	_, err = stmt.Exec()
-	
+
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	log.Println("Deleted all users")
 }
