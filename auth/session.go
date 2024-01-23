@@ -39,7 +39,7 @@ type SessionStore interface {
 		defaultPath string)
 	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
-	DeleteAllById(w http.ResponseWriter, r *http.Request, id *Identity)
+	DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
 	GetIdentityFromCtx(r *http.Request) *Identity
 	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity

@@ -17,5 +17,5 @@ func InitializeDb(connectionString string) {
 		panic(err.Error())
 	}
 
-	log.Println("Initialized database connection")
+	log.Println("Initialized MySQL application database connection")
 }

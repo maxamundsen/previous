@@ -1,6 +1,7 @@
 Needs fixing:
 
 Project goals:
+Database session
 
 Completed:
 - Database Access

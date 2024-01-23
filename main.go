@@ -10,6 +10,8 @@ import (
 	"net/http"
 )
 
+// Entry point for the application, initializes package globals
+// such as the database connection, http multiplexer, config, etc.
 func main() {
 	fmt.Println("Go HTTP Server Test")
 
@@ -19,21 +21,13 @@ func main() {
 		fmt.Println("*RELEASE BUILD")
 	}
 
-	// Read "config.json" file
 	config.ReadConfiguration()
 	config := config.GetConfiguration()
 
-	// Create database connection
 	data.InitializeDb(config.ConnectionString)
-
-	// Create in-memory session store
-	handlers.SessionInit()
-
-	// Create http multiplexer
+	handlers.SessionInit(config.CookieExpiryDays)
 	mux := http.NewServeMux()
 
-	// when the `embed` build tag is set, static assets will be
-	// embedded in the binary, and served from the embedded filesystem
 	if build.EMBED {
 		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
 	} else {

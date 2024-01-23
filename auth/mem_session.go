@@ -81,6 +81,7 @@ func (st *MemorySessionStore) DeleteSession(w http.ResponseWriter, r *http.Reque
 // The function will return nil if the session does not exist within the http.Request cookies.
 func (st *MemorySessionStore) GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity {
 	cookie, err := r.Cookie(st.base.name)
+
 	if err != nil {
 		return nil
 	}
@@ -117,7 +118,7 @@ func (st *MemorySessionStore) GetBase() *sessionStoreBase {
 // make to to log user out when completed for security reasons
 // an attacker should not be able to log out 'other' sessions without also
 // needing to log back in
-func (st *MemorySessionStore) DeleteAllById(w http.ResponseWriter, r *http.Request, id *Identity) {
+func (st *MemorySessionStore) DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity) {
 	for i, v := range st.sessions {
 		if v.UserId == id.UserId {
 			st.lock.Lock()

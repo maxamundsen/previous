@@ -66,7 +66,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func logoutAllHandler(w http.ResponseWriter, r *http.Request) {
 	id := sessionStore.GetIdentityFromCtx(r)
-	sessionStore.DeleteAllById(w, r, id)
+	sessionStore.DeleteAllByUserId(w, r, id)
 
 	log.Println("Successful all-session logout for UserId: " + id.UserId)
 
