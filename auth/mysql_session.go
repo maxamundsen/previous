@@ -57,7 +57,7 @@ func (st *MySqlSessionStore) LoadSession(next http.Handler, requireAuth bool) ht
 func (st *MySqlSessionStore) PutSession(w http.ResponseWriter, r *http.Request, id *Identity) {
 	cookieValue := randBase64String(cookieEntropy)
 
-	sql := "INSERT INTO sessions (id, userid, useragent, ipaddr, logintime) VALUES (?, ?, ?, ?, ?, ?)"
+	sql := "INSERT INTO sessions (id, userid, useragent, ipaddr, logintime) VALUES (?, ?, ?, ?, ?)"
 
 	stmt, err := st.db.Prepare(sql)
 
@@ -71,6 +71,10 @@ func (st *MySqlSessionStore) PutSession(w http.ResponseWriter, r *http.Request, 
 		log.Println(err)
 	}
 
+	time.AfterFunc(st.base.expiration, func() {
+		st.DeleteSessionByKey(cookieValue)
+	})
+
 	st.base.setCookie(w, r, cookieValue, id.RememberMe)
 }
 
@@ -80,12 +84,16 @@ func (st *MySqlSessionStore) DeleteSession(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	st.DeleteSessionByKey(cookie.Value)
+
+	st.base.removeCookie(w, r)
+}
+
+func (st *MySqlSessionStore) DeleteSessionByKey(sessionKey string) {
 	sql := "DELETE FROM sessions WHERE id = ?"
 	stmt, _ := st.db.Prepare(sql)
 
-	stmt.Exec(cookie.Value)
-
-	st.base.removeCookie(w, r)
+	stmt.Exec(sessionKey)
 }
 
 func (st *MySqlSessionStore) GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity {

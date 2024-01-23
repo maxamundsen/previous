@@ -10,7 +10,7 @@ import (
 // This file contains the basis for creating "authentication sessions".
 // Other web frameworks contain crazy complecated authentication middleware and
 // identity management. This one should be pretty simple to understand.
-// Auth session management does NOT contain any code to actually authenticate users
+// The session management does NOT contain any code to actually authenticate users
 // (username/password checking, password hashing etc). That should be handled elsewhere.
 
 // In this simple authentication system, there is an Identity struct that represents
@@ -39,6 +39,7 @@ type SessionStore interface {
 		defaultPath string)
 	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
+	DeleteSessionByKey(sessionKey string)
 	DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity)
 	LoadSession(next http.Handler, requireAuth bool) http.Handler
 	GetIdentityFromCtx(r *http.Request) *Identity
@@ -85,8 +86,6 @@ func (st *sessionStoreBase) setCookie(w http.ResponseWriter,
 	http.SetCookie(w, cookie)
 }
 
-// create a cookie with the same name, but with no value, then append it to the response
-// setting a 'blank' cookie will delete it from the browser
 func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    st.name,
@@ -132,7 +131,6 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 	})
 }
 
-// returns an identity found in the http request context
 func (st *sessionStoreBase) getIdentityFromCtx(r *http.Request) *Identity {
 	return r.Context().Value(st.ctxKey).(*Identity)
 }

@@ -11,7 +11,7 @@ import (
 )
 
 // Entry point for the application, initializes package globals
-// such as the database connection, http multiplexer, config, etc.
+// such as the database connections, http multiplexer, config, etc.
 func main() {
 	fmt.Println("Go HTTP Server Test")
 
