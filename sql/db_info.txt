@@ -1,0 +1,21 @@
+Database management:
+
+When making any change to the database, the query that carried out the action should be saved for future record.
+The convention for this project is to place all of these scripts inside
+$PROJECT_ROOT/sql/migrations
+
+All change scripts should be numbered to indicate the order that they are executed.
+Executing each script in order should 'migrate' from nothing, to a schema fully compatible with your program.
+
+When creating these scripts, following these guidelines:
+
+FILE NAME: [INDEX]_[*ACTION]_[TABLE].sql
+	Examples:
+	01_UDPATE_USERID_USERS.sql
+	57_REMOVE_IPADDR_SESSIONS.sql
+	182_CREATE_TABLE_BOOKS.sql
+
+SCRIPT CONTENT:
+	Each script should be idempotent, meaning it can be run more than once without doing any additional changes on subsequent execution.
+	This means each script needs to check and ensure that it is in the desired state before making a modification.
+	If the database IS in the desired state, the script should fail to avoid accidentally overwriting data.
