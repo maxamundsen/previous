@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gohttp/build"
 	"gohttp/config"
-	"gohttp/data"
+	"gohttp/database"
 	"gohttp/handlers"
 	"log"
 	"net/http"
@@ -24,7 +24,7 @@ func main() {
 	config.ReadConfiguration()
 	config := config.GetConfiguration()
 
-	data.InitializeDb(config.ConnectionString)
+	database.InitializeDb(config.ConnectionString)
 	handlers.SessionInit(config.CookieExpiryDays)
 	mux := http.NewServeMux()
 

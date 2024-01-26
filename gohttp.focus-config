@@ -8,12 +8,12 @@ C:/Projects/GoHttp
 [ignore dirs]
 .git
 vendor
-./wwwroot/assets/lib
 
 [allow file extensions]
 
 [ignore file extensions]
-
+*min.*
+	
 [[ settings ]]
 tab_size: 4
 insert_spaces_when_pressing_tab: false

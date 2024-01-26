@@ -7,28 +7,32 @@ import (
 	"time"
 )
 
-// This file contains the basis for creating "authentication sessions".
-// Other web frameworks contain crazy complecated authentication middleware and
-// identity management. This one should be pretty simple to understand.
-// The session management does NOT contain any code to actually authenticate users
-// (username/password checking, password hashing etc). That should be handled elsewhere.
+/*
 
-// In this simple authentication system, there is an Identity struct that represents
-// a "user" on the system. You can customize this structure to fit your needs.
+This file contains the basis for creating "authentication sessions".
+Other web frameworks contain crazy complecated authentication middleware and
+identity management. This one should be pretty simple to understand.
+The session management does NOT contain any code to actually authenticate users
+(username/password checking, password hashing etc). That should be handled elsewhere.
 
-// Identities are not stored directly in the browser cookies.
-// Instead, they are stored on the server in a key-value pair called a 'session store'.
-// When a user successfully authenticates, an entry is made in the store
-// containing an Identity, and a randomly generated base64 string key. The
-// key is appended to the response as a cookie, and stored in the users browser.
+In this simple authentication system, there is an Identity struct that represents
+a "user" on the system. You can customize this structure to fit your needs.
 
-// SessionStore is an interface that describes the capabilities of a session store.
-// The type of storage implemented does not matter, as long as the custom storage
-// type contains all of the methods in the interface, and a sessionStoreBase.
+Identities are not stored directly in the browser cookies.
+Instead, they are stored on the server in a key-value pair called a 'session store'.
+When a user successfully authenticates, an entry is made in the store
+containing an Identity, and a randomly generated base64 string key. The
+key is appended to the response as a cookie, and stored in the users browser.
 
-// Whatever implementation of the interface you choose to use, the method signatures will
-// always be the same. Http endpoint handlers that wish to use sessions do so without knowing
-// the implementation.
+SessionStore is an interface that describes the capabilities of a session store.
+The type of storage implemented does not matter, as long as the custom storage
+type contains all of the methods in the interface, and a sessionStoreBase.
+
+Whatever implementation of the interface you choose to use, the method signatures will
+always be the same. Http endpoint handlers that wish to use sessions do so without knowing
+the implementation.
+
+*/
 
 type SessionStore interface {
 	InitStore(name string,

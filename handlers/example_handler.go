@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"gohttp/auth"
-	"gohttp/data"
+	"gohttp/database"
 	"gohttp/views"
 	"net/http"
 	"net/mail"
@@ -78,7 +78,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 	var toomany bool
 
-	users := data.FetchUsers()
+	users := database.FetchUsers()
 	if len(users) >= 10 {
 		viewData["TooMany"] = true
 		toomany = true
@@ -92,12 +92,12 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			viewData["Error"] = err
 		} else {
-			data.AddUser(email)
+			database.AddUser(email)
 			viewData["SuccessMsg"] = "Successfully added user " + email + ". ✓"
 		}
 	}
 
-	users = data.FetchUsers()
+	users = database.FetchUsers()
 	if len(users) >= 10 {
 		viewData["TooMany"] = true
 		toomany = true
@@ -113,7 +113,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 
-	data.DeleteAllUsers()
+	database.DeleteAllUsers()
 	viewData["SuccessMsg"] = "Successfully deleted all users. ✓"
 
 	model := views.NewViewModel(nil, viewData)
