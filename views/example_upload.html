@@ -1,0 +1,24 @@
+{{template "header" .}}
+{{template "navbar" .}}
+
+{{ $successmsg := index .ViewData "UploadSuccessMsg" }}
+
+<div class="container">
+	{{if $successmsg}}
+	<div class="alert alert-success" role="alert">
+  		{{$successmsg}}
+	</div>
+	{{end}}
+	
+    <h3 class="display-6">File Upload Example</h3>
+    <hr />
+    <br />
+    <br />
+
+	<form action="/example/upload" method="post" enctype="multipart/form-data">
+		<input type="file" name="file"/>
+		<input class="btn btn-success" type="submit" value="Upload" />
+	</form>
+</div>
+
+{{ template "footer" .}}

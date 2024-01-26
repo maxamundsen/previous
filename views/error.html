@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Error</title>
-<body>
-    <div>
-        <h1 style="color: #7c0000">{{ index .ViewData "ErrorCode" }}</h1>
-        <p>{{ index .ViewData "ErrorMsg" }}</p>
-    </div>
-    
-</body>
-</html>
+{{template "header" .}}
+
+<div class="container">
+    <h1 style="color: #7c0000">{{ index .ViewData "ErrorCode" }}</h1>
+    <p>{{ index .ViewData "ErrorMsg" }}</p>
+</div>
+
+{{template "footer" .}}

@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html>
+{{template "header" .}}
 
-<head>
-  <title>{{ index .ViewData "Title" }}</title>
-<body>
-  <div>
-    <h1>Index Page</h1>
-    <p>This is a super exciting index page!</p>
-    <p><a href="/auth/login">Log in </a></p>
-  </div>
-</body>
+<div class="container">
+	<h1>Index Page</h4>
+	<a href="/auth/login">Login</a>
+</div>
 
-</html>
+{{template "footer" .}}

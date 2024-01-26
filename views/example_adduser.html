@@ -1,12 +1,17 @@
 {{ $error := index .ViewData "Error" }}
 {{ $successmsg := index .ViewData "SuccessMsg" }}
+{{ $toomany := index .ViewData "TooMany" }}
 
 <div id="adduser">
+	{{if $toomany}}
+	<p style="color:blue;">ℹ️ Reached Maximum of 10 Users</p>
+	{{end}}
 	<form method="post" action="/example/adduser" hx-post="/example/adduser" hx-target="#adduser" hx-swap="outerHTML" autocomplete="off">
+		<fieldset {{ if $toomany }} disabled="disabled" {{end}}>
 		<label for="emailinput">Email:</label>
 		<input type="email" name="email" id="emailinput" autofocus/>
 		
-		<input type="submit" value="Add new user"/>
+		<input class="btn btn-secondary" type="submit" value="Add new user"/>
 		{{ if $error }}
 			<span style="color: red;">Error: {{$error}}</span>
 		{{end}}
@@ -15,14 +20,14 @@
 			<span style="color: green;">{{$successmsg}}</span>
 		{{end}}
 
+		</fieldset>
 	</form>
-	
 	<br />
 	
 	{{ $users := index .ViewData "Users" }}
 	
 	{{ if $users }}
-		<table>
+		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -40,11 +45,9 @@
 			</tbody>
 		</table>
 		
-		<button style="background: red;">
-			<a style="text-decoration: none; color: white;" href="/example/deleteall" hx-get="/example/deleteall" hx-target="#adduser" hx-swap="outerHTML">
-				Delete All
-			</a>
-		</button>
+		<a class="btn btn-danger"href="/example/deleteall" hx-get="/example/deleteall" hx-target="#adduser" hx-swap="outerHTML">
+			Delete All
+		</a>
 	{{ else }}
 		<p>There are currently no users.</p>
 	{{end}}

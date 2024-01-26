@@ -61,13 +61,13 @@ func ReadConfiguration() {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	configBytes, readErr := io.ReadAll(configFile)
 
 	if readErr != nil {
-		log.Fatal("Cannot read the configuration file.")
+		log.Fatal(err)
 	}
 
 	defer configFile.Close()

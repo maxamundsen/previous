@@ -1,33 +1,47 @@
 {{define "navbar"}}
-<div class="topnav" id="myTopnav">
-  <a href="/" class="active">Index</a>
-  <div class="dropdown">
-    <button class="dropbtn">Examples
-      ▼
+<nav class="navbar navbar-expand-lg bg-light mb-3" data-bs-theme="light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+    	<img src="/assets/images/logo.png" alt="Logo" height="30" width="auto"/>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="dropdown-content">
-      <a href="/example">Basic examples</a>
-      <a href="/example/database">Database example</a>
+    <div class="collapse navbar-collapse" id="navbarColor03">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Index
+            <span class="visually-hidden">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Examples</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/example">Example Page</a>
+            <a class="dropdown-item" href="/example/database">Database + HTMX</a>
+            <a class="dropdown-item" href="/example/upload">File Upload</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/account/info">Info</a>
+            <a class="dropdown-item" href="/account/sessions">Active Sessions</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">API</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/api/identity">Account Info</a>
+            <a class="dropdown-item" href="/api/clientfetch">3rd Party API Fetch</a>
+          </div>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <input class="form-control me-sm-2" type="search" placeholder="Search">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
     </div>
   </div>
-  <div class="dropdown">
-    <button class="dropbtn">Account
-      ▼
-    </button>
-    <div class="dropdown-content">
-      <a href="/account/info">Info</a>
-      <a href="/account/sessions">Active Sessions</a>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">API
-      ▼
-    </button>
-    <div class="dropdown-content">
-      <a href="/api/identity" target="_blank">Show Identity Info (respond with JSON)</a>
-      <a href="/api/clientfetch">Fetch data from 3rd party (recieve JSON)</a>
-    </div>
-  </div>
-  <a href="javascript:void(0);" class="icon" onclick="openNavbar()">&#9776;</a>
-</div>
+</nav>
 {{end}}

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/mail"
 	"strconv"
+	"log"
+	"io/ioutil"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,8 +72,15 @@ func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 
 func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
+	var toomany bool
 
-	if r.Method == http.MethodPost {
+	users := data.FetchUsers()
+	if len(users) >= 10 {
+		viewData["TooMany"] = true
+		toomany = true
+	}
+
+	if r.Method == http.MethodPost && !toomany {
 		email := r.FormValue("email")
 
 		_, err := mail.ParseAddress(email)
@@ -84,7 +93,12 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	users := data.FetchUsers()
+	users = data.FetchUsers()
+	if len(users) >= 10 {
+		viewData["TooMany"] = true
+		toomany = true
+	}
+
 	viewData["Users"] = users
 
 	model := views.NewViewModel(nil, viewData)
@@ -101,4 +115,40 @@ func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 	model := views.NewViewModel(nil, viewData)
 
 	views.RenderTemplate(w, "example_adduser", model)
+}
+
+func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
+	viewData := make(map[string]interface{})
+	viewData["Title"] = "File Upload"
+
+	if r.Method == http.MethodPost {
+		r.ParseMultipartForm(10 << 20)
+	
+		file, _, err := r.FormFile("file")
+		if err != nil {
+			log.Println("Error Retrieving the File")
+			log.Println(err)
+			return
+		}
+	
+		defer file.Close()
+	
+		tempFile, err := ioutil.TempFile("uploads", "upload-*.png")
+		if err != nil {
+			log.Println(err)
+		}
+		defer tempFile.Close()
+	
+		fileBytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			log.Println(err)
+		}
+	
+		tempFile.Write(fileBytes)
+		
+		viewData["UploadSuccessMsg"] = "Successfully uploaded file."
+	}
+	
+	model := views.NewViewModel(nil, viewData)
+	views.RenderTemplate(w, "example_upload", model)
 }

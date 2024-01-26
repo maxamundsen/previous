@@ -15,6 +15,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// the URL is actually '/' or else 404
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
+		model.ViewData["Title"] = "An error has occurred."
 		model.ViewData["ErrorCode"] = "Error 404"
 		model.ViewData["ErrorMsg"] = "Page not found."
 		views.RenderTemplate(w, "error", model)
