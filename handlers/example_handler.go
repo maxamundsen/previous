@@ -9,6 +9,10 @@ import (
 	"strconv"
 	"log"
 	"io/ioutil"
+	"fmt"
+	"os"
+	"time"
+	"path/filepath"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
@@ -124,27 +128,36 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseMultipartForm(10 << 20)
 	
-		file, _, err := r.FormFile("file")
+		file, fileHeader, err := r.FormFile("file")
+
 		if err != nil {
 			log.Println("Error Retrieving the File")
 			log.Println(err)
 			return
 		}
-	
+		
 		defer file.Close()
-	
-		tempFile, err := ioutil.TempFile("uploads", "upload-*.png")
+		
+		err = os.MkdirAll("./uploads", os.ModePerm)
 		if err != nil {
-			log.Println(err)
+			log.Println(err)			
+			return
 		}
-		defer tempFile.Close()
+
+		dst, err := os.Create(fmt.Sprintf("./uploads/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		
+		defer dst.Close()
 	
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
 			log.Println(err)
 		}
-	
-		tempFile.Write(fileBytes)
+		
+		dst.Write(fileBytes)
 		
 		viewData["UploadSuccessMsg"] = "Successfully uploaded file."
 	}
