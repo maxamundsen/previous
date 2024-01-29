@@ -4,7 +4,7 @@
 
 <div id="adduser">
 	{{if $toomany}}
-	<p style="color:blue;">ℹ️ Reached Maximum of 10 Users</p>
+	<p style="color:blue;">ℹ️ Reached Maximum of 5 Users</p>
 	{{end}}
 	<form method="post" action="/example/adduser" hx-post="/example/adduser" hx-target="#adduser" hx-swap="outerHTML" autocomplete="off">
 		<fieldset {{ if $toomany }} disabled="disabled" {{end}}>

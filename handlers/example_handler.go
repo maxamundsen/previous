@@ -79,7 +79,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 	var toomany bool
 
 	users := database.FetchUsers()
-	if len(users) >= 10 {
+	if len(users) >= 5 {
 		viewData["TooMany"] = true
 		toomany = true
 	}
@@ -98,7 +98,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users = database.FetchUsers()
-	if len(users) >= 10 {
+	if len(users) >= 5 {
 		viewData["TooMany"] = true
 		toomany = true
 	}
