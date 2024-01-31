@@ -73,13 +73,13 @@ func ReadConfiguration() {
 			log.Fatal(err)
 		} else {
 			configFile, err = os.Open("config.json")
-			
+
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
-	
+
 	configBytes, readErr := io.ReadAll(configFile)
 
 	if readErr != nil {

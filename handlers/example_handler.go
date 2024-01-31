@@ -1,18 +1,18 @@
 package handlers
 
 import (
+	"fmt"
 	"gohttp/auth"
 	"gohttp/database"
 	"gohttp/views"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/mail"
-	"strconv"
-	"log"
-	"io/ioutil"
-	"fmt"
 	"os"
-	"time"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +127,7 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		r.ParseMultipartForm(10 << 20)
-	
+
 		file, fileHeader, err := r.FormFile("file")
 
 		if err != nil {
@@ -135,12 +135,12 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		
+
 		defer file.Close()
-		
+
 		err = os.MkdirAll("./uploads", os.ModePerm)
 		if err != nil {
-			log.Println(err)			
+			log.Println(err)
 			return
 		}
 
@@ -149,19 +149,19 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		defer dst.Close()
-	
+
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
 			log.Println(err)
 		}
-		
+
 		dst.Write(fileBytes)
-		
+
 		viewData["UploadSuccessMsg"] = "Successfully uploaded file."
 	}
-	
+
 	model := views.NewViewModel(nil, viewData)
 	views.RenderTemplate(w, "example_upload", model)
 }
