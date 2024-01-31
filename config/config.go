@@ -29,6 +29,8 @@ type configuration struct {
 	Host             string `json:"Host"`
 	CookieExpiryDays int    `json:"CookieExpiryDays"`
 	ConnectionString string `json:"ConnectionString"`
+	SmtpServer string `json:"SmtpServer"`
+	SmtpPort string `json:"SmtpPort"`
 	SmtpUsername string `json:"SmtpUsername"`
 	SmtpPassword string `json:"SmtpPassword"`
 }
@@ -37,6 +39,8 @@ const defaultConfig string = `{
     "Host": "localhost:8080",
     "CookieExpiryDays": 30,
     "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example?parseTime=true",
+    "SmtpServer": "smtp.example.com",
+    "SmtpPort": "587",
     "SmtpUsername": "user@example.com",
     "SmtpPassword": "password"
 }

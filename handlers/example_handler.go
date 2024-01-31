@@ -186,8 +186,8 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 
 		smtpMessage := []byte("From: " + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n" + body)
 
-		smtpHost := "smtp.siteprotect.com"
-		smtpPort := "587"
+		smtpHost := config.SmtpServer
+		smtpPort := config.SmtpPort
 
 		auth := smtp.PlainAuth("", from, password, smtpHost)
 
