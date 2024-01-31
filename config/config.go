@@ -29,12 +29,16 @@ type configuration struct {
 	Host             string `json:"Host"`
 	CookieExpiryDays int    `json:"CookieExpiryDays"`
 	ConnectionString string `json:"ConnectionString"`
+	SmtpUsername string `json:"SmtpUsername"`
+	SmtpPassword string `json:"SmtpPassword"`
 }
 
 const defaultConfig string = `{
     "Host": "localhost:8080",
     "CookieExpiryDays": 30,
-    "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example?parseTime=true"
+    "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example?parseTime=true",
+    "SmtpUsername": "user@example.com",
+    "SmtpPassword": "password"
 }
 `
 

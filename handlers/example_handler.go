@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gohttp/config"
 	"encoding/json"
 	"fmt"
 	"gohttp/auth"
@@ -170,6 +171,8 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
+	config := config.GetConfiguration()
+
 	viewData := make(map[string]interface{})
 	viewData["Title"] = "Email client"
 
@@ -178,8 +181,8 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 		subject := r.FormValue("subject")
 		body := r.FormValue("body")
 
-		from := "max@cdrateline.com"
-		password := "password"
+		from := config.SmtpUsername
+		password := config.SmtpPassword
 
 		smtpMessage := []byte("From: " + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n" + body)
 
