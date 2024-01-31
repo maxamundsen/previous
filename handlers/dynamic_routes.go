@@ -29,7 +29,6 @@ func MapDynamicRoutes(mux *http.ServeMux) {
 	// account handlers
 	mux.Handle("/account/sessions", handleSession(accountSessionHandler, true))
 	mux.Handle("/account/info", handleSession(accountInfoHandler, true))
-	mux.Handle("/account/info", handleSession(accountInfoHandler, true))
 
 	// api handlers
 	mux.Handle("/api/identity", handleSession(apiIdentityHandler, true))
