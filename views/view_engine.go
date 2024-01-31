@@ -16,7 +16,6 @@ import (
 // Because of this structure, you do not need to create page specific models, but instead
 // load the map with whatever data you need, and retrieve it. You can still perform extremely simple
 // logic on map values such as 'does this exist' or 'is this a value'
-
 var (
 	templates *template.Template
 	once      sync.Once
@@ -56,6 +55,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, model ViewModel) {
 func loadTemplates() (*template.Template, error) {
 	var err error
 
+	// re-parse templates every call in development mode
+	// to allow 'hot editing' of templates
+	// templates will be uneditable in the binary once compiled for release
 	if build.DEVEL {
 		templates, err = parseTemplates()
 	} else {

@@ -8,25 +8,21 @@ import (
 	"os"
 )
 
-/*
+// the config package allows the use of runtime configuration options from a file.
+// the config options live in a global, non-exported struct called 'config'.
+// the InitConfiguration() function reads data from a config file, and
+// populates this struct. This function should be called once when the program
+// starts.
 
-the config package allows the use of runtime configuration options from a file.
-the config options live in a global, non-exported struct called 'config'.
-the InitConfiguration() function reads data from a config file, and
-populates this struct. This function should be called once when the program
-starts.
+// typically the configuration is read from `config.json`, however
+// when the `devel` build tag is set, the options are read from `config.devel.json`
 
-typically the configuration is read from `config.json`, however
-when the `devel` build tag is set, the options are read from `config.devel.json`
+// the config is automatically generated if it does not exist on the file system, else
+// the program will exit if it cannot be created
 
-the config is automatically generated if it does not exist on the file system, else
-the program will exit if it cannot be created
-
-the config struct is not exported, and must be retrieved via the GetConfiguration() function.
-because of this, you cannot modify the values inside configuration from anywhere in the program
-(except the `config` package directly)
-
-*/
+// the config struct is not exported, and must be retrieved via the GetConfiguration() function.
+// because of this, you cannot modify the values inside configuration from anywhere in the program
+// (except the `config` package directly)
 
 // define all configuration options here
 type configuration struct {
