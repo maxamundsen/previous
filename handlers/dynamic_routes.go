@@ -36,6 +36,7 @@ func MapDynamicRoutes(mux *http.ServeMux) {
 	log.Println("Mapped dynamic routes")
 }
 
+// middleware wrappers
 func handleSession(handlerFunc http.HandlerFunc, isAuth bool) http.Handler {
 	return sessionStore.LoadSession(http.HandlerFunc(handlerFunc), isAuth)
 }

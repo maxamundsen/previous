@@ -3,6 +3,7 @@
 {{template "navbar" .}}
 
 {{ $success := index .ViewData "Success" }}
+{{ $error := index .ViewData "Error" }}
 
 <div class="container">
     <h3 class="display-6">SMTP Client Example</h3>
@@ -13,6 +14,12 @@
 	{{ if $success }}
 	<div class="alert alert-success" role="alert">
   		{{$success}}
+	</div>
+	{{end}}
+
+	{{ if $error }}
+	<div class="alert alert-danger" role="alert">
+  		{{$error}}
 	</div>
 	{{end}}
 

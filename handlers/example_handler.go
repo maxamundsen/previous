@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"gohttp/auth"
 	"gohttp/database"
@@ -15,7 +16,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-	"encoding/json"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
@@ -191,9 +191,10 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 		err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, smtpMessage)
 		if err != nil {
 			log.Println(err)
+			viewData["Error"] = "Error sending mail"
+		} else {
+			viewData["Success"] = "Mail sent successfully"
 		}
-
-		viewData["Success"] = "Message sent successfully"
 
 		model := views.NewViewModel(nil, viewData)
 		views.RenderTemplate(w, "example_mail", model)
