@@ -5,14 +5,17 @@ import (
 	"gohttp/auth"
 	"gohttp/database"
 	"gohttp/views"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/mail"
+	"net/smtp"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+	"encoding/json"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
@@ -164,4 +167,98 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	model := views.NewViewModel(nil, viewData)
 	views.RenderTemplate(w, "example_upload", model)
+}
+
+func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
+	viewData := make(map[string]interface{})
+	viewData["Title"] = "Email client"
+
+	if r.Method == http.MethodPost {
+		to := r.FormValue("to")
+		subject := r.FormValue("subject")
+		body := r.FormValue("body")
+
+		from := "max@cdrateline.com"
+		password := "password"
+
+		smtpMessage := []byte("From: " + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n" + body)
+
+		smtpHost := "smtp.siteprotect.com"
+		smtpPort := "587"
+
+		auth := smtp.PlainAuth("", from, password, smtpHost)
+
+		err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, smtpMessage)
+		if err != nil {
+			log.Println(err)
+		}
+
+		viewData["Success"] = "Message sent successfully"
+
+		model := views.NewViewModel(nil, viewData)
+		views.RenderTemplate(w, "example_mail", model)
+		return
+	}
+
+	model := views.NewViewModel(nil, viewData)
+	views.RenderTemplate(w, "example_mail", model)
+}
+
+// Struct for deserializing json from 3rd party API
+// http://api.open-notify.org/astros.json
+type astroModel struct {
+	Message string `json:"message"`
+	People  []struct {
+		Name  string `json:"name"`
+		Craft string `json:"craft"`
+	} `json:"people"`
+	Number int `json:"number"`
+}
+
+// This endpoint fetches a JSON response from a third party API,
+// serializes it to an 'astro' struct, turns the struct back
+// into json, then responds with the result
+func exampleFetchHandler(w http.ResponseWriter, r *http.Request) {
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
+
+	req, reqErr := http.NewRequest(http.MethodGet, "http://api.open-notify.org/astros.json", nil)
+
+	if reqErr != nil {
+		log.Println(reqErr)
+	}
+
+	req.Header.Set("User-Agent", "Example-Api")
+
+	res, resErr := client.Do(req)
+
+	if resErr != nil {
+		log.Println(resErr)
+	}
+
+	if res.Body != nil {
+		defer res.Body.Close()
+	}
+
+	body, readErr := io.ReadAll(res.Body)
+
+	if readErr != nil {
+		log.Println(readErr)
+	}
+
+	jsonOutput := astroModel{}
+
+	jsonErr := json.Unmarshal(body, &jsonOutput)
+
+	if jsonErr != nil {
+		log.Println(jsonErr)
+	}
+
+	viewData := make(map[string]interface{})
+	viewData["Title"] = "3rd Party Api Fetch"
+	viewData["Data"] = jsonOutput
+
+	model := views.NewViewModel(nil, viewData)
+	views.RenderTemplate(w, "api_fetch", model)
 }

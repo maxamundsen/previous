@@ -43,4 +43,4 @@ key_binding: F5 4
 
 [Open Terminal (cmd.exe)]
 run_command: conhost.exe cmd.exe
-key_binding: F5 5
+key_binding: F5 `
