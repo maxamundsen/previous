@@ -18,9 +18,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		model.ViewData["Title"] = "An error has occurred."
 		model.ViewData["ErrorCode"] = "Error 404"
 		model.ViewData["ErrorMsg"] = "Page not found."
-		views.RenderTemplate(w, "error", model)
+		views.RenderWebpage(w, "error", model)
 		return
 	}
 
-	views.RenderTemplate(w, "index", model)
+	views.RenderWebpage(w, "index", model)
 }

@@ -1,38 +1,62 @@
 package snailmail
 
 import (
+	"bytes"
+	"encoding/base64"
+	"fmt"
 	"gohttp/config"
+	"log"
+	"mime"
+	"net/mail"
 	"net/smtp"
 	"strings"
-	"log"
+	"time"
+)
+
+const (
+	TYPE_TEXT = iota
+	TYPE_HTML = iota
 )
 
 type Email struct {
 	Recipients []string
-	Subject string
-	Body string
+	Subject    string
+	Body       *bytes.Buffer
 }
 
-func SendPlaintextMail(message Email) error {
+func SendMail(message Email, mailtype int) error {
 	config := config.GetConfiguration()
 
-	smtpHost := config.SmtpServer
-	smtpPort := config.SmtpPort
-
-	from := config.SmtpUsername
-	password := config.SmtpPassword
-
 	recipientString := strings.Join(message.Recipients, ",")
+	from := mail.Address{config.SmtpDisplayFrom, config.SmtpUsername}
 
-	smtpMessage := []byte("From: " + from + "\r\n" + "To: " + recipientString + "\r\n" + "Subject: " + message.Subject + "\r\n" + message.Body)
+	header := make(map[string]string)
+	header["To"] = recipientString
+	header["From"] = from.String()
+	header["Subject"] = mime.QEncoding.Encode("UTF-8", message.Subject)
+	header["MIME-Version"] = "1.0"
+	header["Content-Transfer-Encoding"] = "base64"
+	header["Date"] = time.Now().Format(time.RFC1123)
+
+	if mailtype == TYPE_HTML {
+		header["Content-Type"] = "text/html; charset=\"utf-8\""
+	} else {
+		header["Content-Type"] = "text/plain; charset=\"utf-8\""
+	}
+
+	email := ""
+	for k, v := range header {
+		email += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	email += "\r\n" + base64.StdEncoding.EncodeToString(message.Body.Bytes())
 
 	var auth smtp.Auth = nil
 
 	if config.SmtpRequireAuth {
-		auth = smtp.PlainAuth("", from, password, smtpHost)
+		auth = smtp.PlainAuth("", config.SmtpUsername, config.SmtpPassword, config.SmtpServer)
 	}
 
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, message.Recipients, smtpMessage)
+	err := smtp.SendMail(config.SmtpServer+":"+config.SmtpPort, auth, config.SmtpUsername, message.Recipients, []byte(email))
 	if err != nil {
 		log.Println(err)
 		return err

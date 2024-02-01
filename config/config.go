@@ -29,11 +29,12 @@ type configuration struct {
 	Host             string `json:"Host"`
 	CookieExpiryDays int    `json:"CookieExpiryDays"`
 	ConnectionString string `json:"ConnectionString"`
-	SmtpServer string `json:"SmtpServer"`
-	SmtpPort string `json:"SmtpPort"`
-	SmtpUsername string `json:"SmtpUsername"`
-	SmtpPassword string `json:"SmtpPassword"`
-	SmtpRequireAuth bool `json:"SmtpRequireAuth"`
+	SmtpServer       string `json:"SmtpServer"`
+	SmtpPort         string `json:"SmtpPort"`
+	SmtpUsername     string `json:"SmtpUsername"`
+	SmtpDisplayFrom  string `json:"SmtpDisplayFrom"`
+	SmtpPassword     string `json:"SmtpPassword"`
+	SmtpRequireAuth  bool   `json:"SmtpRequireAuth"`
 }
 
 const defaultConfig string = `{
@@ -43,6 +44,7 @@ const defaultConfig string = `{
     "SmtpServer": "smtp.example.com",
     "SmtpPort": "587",
     "SmtpUsername": "user@example.com",
+    "SmtpDisplayFrom": "SMTP Server",
     "SmtpPassword": "password",
     "SmtpRequireAuth": true
 }

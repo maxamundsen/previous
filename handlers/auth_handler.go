@@ -17,7 +17,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	model := views.NewViewModel(nil, viewData)
 
 	if r.Method == http.MethodGet {
-		views.RenderTemplate(w, "login", model)
+		views.RenderWebpage(w, "login", model)
 	} else if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
@@ -28,7 +28,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("Failed login attempt. Username: " + username)
 			model.ViewData["Error"] = "Username or password incorrect."
-			views.RenderTemplate(w, "login", model)
+			views.RenderWebpage(w, "login", model)
 			return
 		}
 

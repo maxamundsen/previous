@@ -1,9 +1,11 @@
 package views
 
 import (
+	"bytes"
 	"gohttp/auth"
 	"gohttp/build"
 	"html/template"
+	"log"
 	"net/http"
 	"sync"
 )
@@ -35,11 +37,11 @@ func NewViewModel(user *auth.Identity, viewData map[string]interface{}) ViewMode
 	return model
 }
 
-// RenderTemplate executes the template with the provided data.
+// RenderWebpage executes the template with the provided data.
 // Unlike the default, this wrapper forces the input data
 // to be a ViewModel struct. This is because a ViewModel struct contains
 // a map[string]interface{} where any data type can be passed.
-func RenderTemplate(w http.ResponseWriter, tmpl string, model ViewModel) {
+func RenderWebpage(w http.ResponseWriter, tmpl string, model ViewModel) {
 	tmpls, err := loadTemplates()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -49,6 +51,19 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, model ViewModel) {
 	err = tmpls.ExecuteTemplate(w, tmpl+".html", model)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// Input a byte buffer, and write the template to that buffer
+func RenderBytes(b *bytes.Buffer, tmpl string, model ViewModel) {
+	tmpls, err := loadTemplates()
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = tmpls.ExecuteTemplate(b, tmpl+".html", model)
+	if err != nil {
+		log.Println(err)
 	}
 }
 

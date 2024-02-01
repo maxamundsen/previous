@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"gohttp/auth"
 	"gohttp/database"
-	"gohttp/views"
 	"gohttp/snailmail"
+	"gohttp/views"
 	"io"
 	"io/ioutil"
 	"log"
@@ -25,7 +26,7 @@ func exampleHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["Title"] = "Example Page"
 
 	model := views.NewViewModel(identity, viewData)
-	views.RenderTemplate(w, "example", model)
+	views.RenderWebpage(w, "example", model)
 }
 
 func exampleCounterHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +39,7 @@ func exampleCounterHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["Number"] = num + 1
 
 	model := views.NewViewModel(nil, viewData)
-	views.RenderTemplate(w, "example_counter", model)
+	views.RenderWebpage(w, "example_counter", model)
 }
 
 func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +64,7 @@ func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 
 	model := views.NewViewModel(identity, viewData)
 
-	views.RenderTemplate(w, "example_passgen", model)
+	views.RenderWebpage(w, "example_passgen", model)
 }
 
 func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +75,7 @@ func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 
 	model := views.NewViewModel(identity, viewData)
 
-	views.RenderTemplate(w, "example_database", model)
+	views.RenderWebpage(w, "example_database", model)
 }
 
 func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +111,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 
 	model := views.NewViewModel(nil, viewData)
 
-	views.RenderTemplate(w, "example_adduser", model)
+	views.RenderWebpage(w, "example_adduser", model)
 }
 
 func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +122,7 @@ func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 
 	model := views.NewViewModel(nil, viewData)
 
-	views.RenderTemplate(w, "example_adduser", model)
+	views.RenderWebpage(w, "example_adduser", model)
 }
 
 func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -166,7 +167,7 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	model := views.NewViewModel(nil, viewData)
-	views.RenderTemplate(w, "example_upload", model)
+	views.RenderWebpage(w, "example_upload", model)
 }
 
 func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
@@ -174,13 +175,24 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["Title"] = "Email client"
 
 	if r.Method == http.MethodPost {
+		recipients := r.FormValue("to")
+		subject := r.FormValue("subject")
+
+		var b bytes.Buffer
+
+		mailViewData := make(map[string]interface{})
+		mailViewData["Paragraph"] = r.FormValue("body")
+		mailModel := views.NewViewModel(nil, mailViewData)
+
+		views.RenderBytes(&b, "email", mailModel)
+
 		message := snailmail.Email{
-			Recipients: []string{r.FormValue("to")},
-			Subject: r.FormValue("subject"),
-			Body:  r.FormValue("body"),
+			Recipients: []string{recipients},
+			Subject:    subject,
+			Body:       &b,
 		}
 
-		err := snailmail.SendPlaintextMail(message)
+		err := snailmail.SendMail(message, snailmail.TYPE_HTML)
 
 		if err != nil {
 			viewData["Error"] = "Error sending mail"
@@ -189,12 +201,12 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		model := views.NewViewModel(nil, viewData)
-		views.RenderTemplate(w, "example_mail", model)
+		views.RenderWebpage(w, "example_mail", model)
 		return
 	}
 
 	model := views.NewViewModel(nil, viewData)
-	views.RenderTemplate(w, "example_mail", model)
+	views.RenderWebpage(w, "example_mail", model)
 }
 
 // Struct for deserializing json from 3rd party API
@@ -253,5 +265,5 @@ func exampleFetchHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["Data"] = jsonOutput
 
 	model := views.NewViewModel(nil, viewData)
-	views.RenderTemplate(w, "api_fetch", model)
+	views.RenderWebpage(w, "api_fetch", model)
 }

@@ -15,7 +15,7 @@ func accountSessionHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["IdentityList"] = identityList
 
 	model := views.NewViewModel(identity, viewData)
-	views.RenderTemplate(w, "account_sessions", model)
+	views.RenderWebpage(w, "account_sessions", model)
 }
 
 func accountInfoHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,5 +28,5 @@ func accountInfoHandler(w http.ResponseWriter, r *http.Request) {
 	viewData["IdentityList"] = identityList
 
 	model := views.NewViewModel(identity, viewData)
-	views.RenderTemplate(w, "account_info", model)
+	views.RenderWebpage(w, "account_info", model)
 }
