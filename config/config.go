@@ -33,6 +33,7 @@ type configuration struct {
 	SmtpPort string `json:"SmtpPort"`
 	SmtpUsername string `json:"SmtpUsername"`
 	SmtpPassword string `json:"SmtpPassword"`
+	SmtpRequireAuth bool `json:"SmtpRequireAuth"`
 }
 
 const defaultConfig string = `{
@@ -42,7 +43,8 @@ const defaultConfig string = `{
     "SmtpServer": "smtp.example.com",
     "SmtpPort": "587",
     "SmtpUsername": "user@example.com",
-    "SmtpPassword": "password"
+    "SmtpPassword": "password",
+    "SmtpRequireAuth": true
 }
 `
 

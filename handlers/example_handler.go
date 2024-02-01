@@ -1,18 +1,17 @@
 package handlers
 
 import (
-	"gohttp/config"
 	"encoding/json"
 	"fmt"
 	"gohttp/auth"
 	"gohttp/database"
 	"gohttp/views"
+	"gohttp/snailmail"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/mail"
-	"net/smtp"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -171,29 +170,19 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
-	config := config.GetConfiguration()
-
 	viewData := make(map[string]interface{})
 	viewData["Title"] = "Email client"
 
 	if r.Method == http.MethodPost {
-		to := r.FormValue("to")
-		subject := r.FormValue("subject")
-		body := r.FormValue("body")
+		message := snailmail.Email{
+			Recipients: []string{r.FormValue("to")},
+			Subject: r.FormValue("subject"),
+			Body:  r.FormValue("body"),
+		}
 
-		from := config.SmtpUsername
-		password := config.SmtpPassword
+		err := snailmail.SendPlaintextMail(message)
 
-		smtpMessage := []byte("From: " + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n" + body)
-
-		smtpHost := config.SmtpServer
-		smtpPort := config.SmtpPort
-
-		auth := smtp.PlainAuth("", from, password, smtpHost)
-
-		err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, smtpMessage)
 		if err != nil {
-			log.Println(err)
 			viewData["Error"] = "Error sending mail"
 		} else {
 			viewData["Success"] = "Mail sent successfully"
