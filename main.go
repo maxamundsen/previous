@@ -13,7 +13,7 @@ import (
 // Entry point for the application, initializes package globals
 // such as the database connections, http multiplexer, config, etc.
 func main() {
-	fmt.Println("Go HTTP Server Test")
+	fmt.Println("WebDawgEngine Initialized")
 
 	if build.DEVEL {
 		fmt.Println("*DEVELOPMENT BUILD")
