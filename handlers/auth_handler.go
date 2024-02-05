@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"gohttp/auth"
-	"gohttp/views"
+	"webdawgengine/auth"
+	"webdawgengine/views"
 	"log"
 	"net/http"
 	"strconv"

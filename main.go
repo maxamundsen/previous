@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"gohttp/build"
-	"gohttp/config"
-	"gohttp/database"
-	"gohttp/handlers"
+	"webdawgengine/build"
+	"webdawgengine/config"
+	"webdawgengine/database"
+	"webdawgengine/handlers"
 	"log"
 	"net/http"
 )

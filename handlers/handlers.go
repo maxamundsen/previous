@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"gohttp/auth"
+	"webdawgengine/auth"
 	"time"
 )
 

@@ -3,8 +3,8 @@ package views
 import (
 	"bytes"
 	"embed"
-	"gohttp/auth"
-	"gohttp/build"
+	"webdawgengine/auth"
+	"webdawgengine/build"
 	"html/template"
 	"log"
 	"net/http"

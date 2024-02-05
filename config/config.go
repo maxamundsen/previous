@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"gohttp/build"
+	"webdawgengine/build"
 	"io"
 	"log"
 	"os"

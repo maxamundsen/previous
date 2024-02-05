@@ -3,7 +3,7 @@ package auth
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"gohttp/config"
+	"webdawgengine/config"
 	"log"
 	"net/http"
 	"time"
