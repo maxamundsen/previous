@@ -17,9 +17,6 @@ import (
 // typically the configuration is read from `config.json`, however
 // when the `devel` build tag is set, the options are read from `config.devel.json`
 
-// the config is automatically generated if it does not exist on the file system, else
-// the program will exit if it cannot be created
-
 // the config struct is not exported, and must be retrieved via the GetConfiguration() function.
 // because of this, you cannot modify the values inside configuration from anywhere in the program
 // (except the `config` package directly)
@@ -36,19 +33,6 @@ type configuration struct {
 	SmtpPassword     string `json:"SmtpPassword"`
 	SmtpRequireAuth  bool   `json:"SmtpRequireAuth"`
 }
-
-const defaultConfig string = `{
-    "Host": "localhost:8080",
-    "CookieExpiryDays": 30,
-    "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example?parseTime=true",
-    "SmtpServer": "smtp.example.com",
-    "SmtpPort": "587",
-    "SmtpUsername": "user@example.com",
-    "SmtpDisplayFrom": "SMTP Server",
-    "SmtpPassword": "password",
-    "SmtpRequireAuth": true
-}
-`
 
 var config configuration
 
@@ -80,16 +64,7 @@ func ReadConfiguration() {
 	}
 
 	if err != nil {
-		err = os.WriteFile("config.json", []byte(defaultConfig), 0644)
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			configFile, err = os.Open("config.json")
-
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+		log.Fatal(err)
 	}
 
 	configBytes, readErr := io.ReadAll(configFile)

@@ -28,12 +28,7 @@ func main() {
 	handlers.SessionInit(config.CookieExpiryDays)
 	mux := http.NewServeMux()
 
-	if build.EMBED {
-		handlers.MapStaticAssetsEmbed(mux, &staticAssets)
-	} else {
-		handlers.MapStaticAssets(mux)
-	}
-
+	handlers.MapStaticAssets(mux)
 	handlers.MapDynamicRoutes(mux)
 
 	log.Println("Listening on http://" + config.Host)

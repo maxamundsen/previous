@@ -20,6 +20,7 @@ Completed:
 - Session based authentication
     > get all sessions containing current user (see all logins)
     > delete all sessions containing the current user (logout all)
-- Embedded files 
-    > view templates for release builds
-    > *Optional* embedded static assets for release builds
+- Embedded files
+    > view templates embedded for release builds
+- Email
+	> SMTP client support for sending mail

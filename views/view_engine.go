@@ -2,6 +2,7 @@ package views
 
 import (
 	"bytes"
+	"embed"
 	"gohttp/auth"
 	"gohttp/build"
 	"html/template"
@@ -22,6 +23,9 @@ var (
 	templates *template.Template
 	once      sync.Once
 )
+
+//go:embed *.html
+var embeddedTemplates embed.FS
 
 type ViewModel struct {
 	Identity *auth.Identity
