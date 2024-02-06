@@ -36,6 +36,7 @@ WebDawgEngine includes the following functionality out of the box:
 - **Configuration File** (`config.json`)
   - Program configuration parsed at runtime during program startup
   - Optional `config.devel.json` options for debug builds.
+  - Console warnings for missing configuration values
 
 Each of these modules are extremely simple, and can be modified, or removed depending on the needs of the application.
 
