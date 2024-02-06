@@ -21,19 +21,18 @@ func main() {
 		fmt.Println("*RELEASE BUILD")
 	}
 
-	config.ReadConfiguration()
-	config := config.GetConfiguration()
+	config.ParseConfigFile()
+	database.InitializeDb()
+	handlers.SessionInit()
 
-	database.InitializeDb(config.ConnectionString)
-	handlers.SessionInit(config.CookieExpiryDays)
 	mux := http.NewServeMux()
 
 	handlers.MapStaticAssets(mux)
 	handlers.MapDynamicRoutes(mux)
 
-	log.Println("Listening on http://" + config.Host)
+	log.Println("Listening on http://" + config.GetHost())
 
-	err := http.ListenAndServe(config.Host, mux)
+	err := http.ListenAndServe(config.GetHost(), mux)
 
 	if err != nil {
 		log.Fatal(err)

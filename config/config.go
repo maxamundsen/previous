@@ -7,99 +7,95 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"fmt"
 )
 
 // the config package allows the use of runtime configuration options from a file.
 // the config options live in a global, non-exported struct called 'config'.
-// the InitConfiguration() function reads data from a config file, and
+// the ParseConfigFile() function reads data from a config file, and
 // populates this struct. This function should be called once when the program
 // starts.
+
+// To use the config, you must call a getter function that has been exported
+// since the configuration struct is 'private' to the config package
+
+// If the config file is not valid JSON, the program will throw an error, and exit.
+// If you are missing any value from the config file, the missing value will
+// be printed to the console, with the expected type.
 
 // typically the configuration is read from `config.json`, however
 // when the `devel` build tag is set, the options are read from `config.devel.json`
 
-// the config struct is not exported, and must be retrieved via the GetConfiguration() function.
-// because of this, you cannot modify the values inside configuration from anywhere in the program
-// (except the `config` package directly)
 
 // define all configuration options here
 type configuration struct {
-	Host             string `json:"Host"`
-	CookieExpiryDays string `json:"CookieExpiryDays"`
-	ConnectionString string `json:"ConnectionString"`
-	SmtpServer       string `json:"SmtpServer"`
-	SmtpPort         string `json:"SmtpPort"`
-	SmtpUsername     string `json:"SmtpUsername"`
-	SmtpDisplayFrom  string `json:"SmtpDisplayFrom"`
-	SmtpPassword     string `json:"SmtpPassword"`
-	SmtpRequireAuth  string `json:"SmtpRequireAuth"`
+	Host             *string `json:"Host"`
+	CookieExpiryDays *int    `json:"CookieExpiryDays"`
+	ConnectionString *string `json:"ConnectionString"`
+	SmtpServer       *string `json:"SmtpServer"`
+	SmtpPort         *string `json:"SmtpPort"`
+	SmtpUsername     *string `json:"SmtpUsername"`
+	SmtpDisplayFrom  *string `json:"SmtpDisplayFrom"`
+	SmtpPassword     *string `json:"SmtpPassword"`
+	SmtpRequireAuth  *bool   `json:"SmtpRequireAuth"`
 }
 
 var config configuration
 
-
-// log warning if provided struct member is not present in json config
-func warnMissingMember(member interface{}) {
-	log.Printf("Configuration warning: missing option: `%s`, type: `%s`.", getConfigFieldName(member), reflect.TypeOf(member))
+// getter functions
+func GetHost() string {
+	return *config.Host
 }
 
-// pretty terrible way to check, but this language has poor meta-programming ¯\_(ツ)_/¯
-func getConfigFieldName(member interface{}) string {
-    structType := reflect.TypeOf(config)
-    for i := 0; i < structType.NumField(); i++ {
-        field := structType.Field(i)
-        fieldValue := reflect.ValueOf(config).Field(i).Interface()
-        if reflect.DeepEqual(fieldValue, member) {
-            return field.Name
-        }
-    }
-    return ""
+func GetCookieExpiryDays() int {
+	return *config.CookieExpiryDays
 }
 
-// specify default values if none are specified in the config file
-func setDefaultValues() {
-	if config.Host == "" {
-		warnMissingMember(config.Host)
-		config.Host = "localhost:8080"
-	}
+func GetConnectionString() string {
+	return *config.ConnectionString
+}
 
-	if config.CookieExpiryDays == "" {
-		warnMissingMember(config.CookieExpiryDays)
-		config.CookieExpiryDays = "7"
-	}
+func GetSmtpServer() string {
+	return *config.SmtpServer
+}
 
-	if config.ConnectionString == "" {
-		warnMissingMember(config.ConnectionString)
-	}
+func GetSmtpPort() string {
+	return *config.SmtpPort
+}
 
-	if config.SmtpServer == "" {
-		warnMissingMember(config.SmtpServer)
-	}
+func GetSmtpUsername() string {
+	return *config.SmtpUsername
+}
 
-	if config.SmtpPort == "" {
-		warnMissingMember(config.SmtpPort)
-	}
+func GetSmtpDisplayFrom() string {
+	return *config.SmtpDisplayFrom
+}
 
-	if config.SmtpUsername == "" {
-		warnMissingMember(config.SmtpUsername)
-	}
+func GetSmtpPassword() string {
+	return *config.SmtpPassword
+}
 
-	if config.SmtpDisplayFrom == "" {
-		warnMissingMember(config.SmtpDisplayFrom)
-	}
-
-	if config.SmtpPassword == "" {
-		warnMissingMember(config.SmtpPassword)
-	}
-
-	if config.SmtpRequireAuth == "" {
-		warnMissingMember(config.SmtpRequireAuth)
-		config.SmtpRequireAuth = "true"
-	}
+func GetSmtpRequireAuth() bool {
+	return *config.SmtpRequireAuth
 }
 
 
-func ReadConfiguration() {
+// "metaprogramming" :D
+func checkMissingFields(parsed configuration, expected configuration) {
+	expectedType := reflect.TypeOf(expected)
+
+	for i := 0; i < expectedType.NumField(); i++ {
+		field := expectedType.Field(i)
+		fieldType := field.Type.Elem()
+
+		// Check if the field is the zero value for its type in the parsed struct
+		if reflect.ValueOf(parsed).Field(i).IsNil() {
+			log.Fatalf("Configuration error: missing option: `%s`, expecting type: `%s`", field.Tag.Get("json"), fieldType)
+		}
+	}
+}
+
+func ParseConfigFile() {
 	var configFile *os.File
 	var err error
 
@@ -127,14 +123,13 @@ func ReadConfiguration() {
 
 	defer configFile.Close()
 
-	json.Unmarshal(configBytes, &config)
+	jsonErr := json.Unmarshal(configBytes, &config)
 
-	setDefaultValues()
+	if jsonErr != nil {
+		log.Fatal(fmt.Errorf("Configuration error: %v", jsonErr))
+	}
+
+	checkMissingFields(config, configuration{})
+
 	log.Println("Loaded configuration file [" + configFile.Name() + "]")
-}
-
-// return a COPY of the configuration to ensure that
-// config options cannot be modified globally
-func GetConfiguration() configuration {
-	return config
 }
