@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "cwd": "${workspaceFolder}",
+    "command": "go",
+    "tasks": [
+        {
+            "label": "Build Release",
+            "args": [
+                "build",
+            ],
+            "group": "build"
+        }
+    ]
+}
