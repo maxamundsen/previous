@@ -49,7 +49,7 @@ go build
 
 You should now have a binary called `webdawgengine.exe`. Compiling this way will yield a "Release mode" binary, which is ready for deployment.
 
-Note that a `config.json` file is required for the application to start. If you use the included , it also requires the `/wwwroot` directory to be present.
+Note that a `config.json` file is required for the application to start. When initializing static routes, `/wwwroot` must also be present.
 
 ### Debug Build
 If you want to build a debug binary, install the dlv debugger, and execute the following from the project directory:
@@ -61,9 +61,25 @@ dlv debug --build-flags "-tags=devel"
 ## Basic Usage & Project Structure
 Once you have the build environment setup, you can begin customizing the project for your specific needs.
 
+Inspecting `main.go`, you will find calls to initialize structures such as the http multiplexer, routes, configuration, and database objects.
+
+The `handlers` package contains `dynamic_routes.go` and `static_routes.go`. These contain functions that map URLs to HTTP handler functions. Any asset that lives in `/wwwroot/assets` will get mapped by the static route handler. All http handler functions should live inside this package as well.
+
 HTTP handler functions are extremely simple, and can manipulate an HTTP request, and response writer directly. The response writer can be passed to the View Engine™ to easily integrate HTML templates into your HTTP response.
 
-The code is well commented, and is very simple.
+Features such as `snailmail` (the SMTP server), or `database` live in their own package, and directory in the project. There is no enforced structure here, so any package can call out to any other package. Typically you will want to call a package such as `auth` or `database` from an HTTP handler in the handlers package. Example structure provided here:
+
+```
+1.
+HTTP request -> handler function -> feature package -> view engine -> write to http response and return from handler function -> request completed
+
+2.
+Fetch user request -> handlers.userHandler() -> database.getUsers() ->  views.RenderWebpage() -> return response
+```
+
+The example handlers demonstrate simple tasks that are typically managed by handler functions.
+
+The source code is extremely easy to read, and includes comments to provide additional context when necessary.
 ## Dependencies
 
 _NOTE: All dependencies are already included in this repository._
