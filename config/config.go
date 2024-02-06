@@ -79,7 +79,8 @@ func GetSmtpRequireAuth() bool {
 	return *config.SmtpRequireAuth
 }
 
-
+// when the config file is parsed, each field in the config struct is checked for nil.
+// any field that is nil is logged as such to the console using reflection
 // "metaprogramming" :D
 func checkMissingFields(parsed configuration, expected configuration) {
 	expectedType := reflect.TypeOf(expected)
