@@ -1,11 +1,11 @@
 {
     "Host": "localhost:8080",
-    "CookieExpiryDays": 30,
+    "CookieExpiryDays": "30",
     "ConnectionString": "root:1qazXSW@@tcp(localhost:3306)/example?parseTime=true",
     "SmtpServer": "smtp.example.com",
     "SmtpPort": "587",
     "SmtpUsername": "user@example.com",
     "SmtpDisplayFrom": "SMTP Server",
-    "SmtpPassword": "",
-    "SmtpRequireAuth": true
+    "SmtpPassword": "password",
+    "SmtpRequireAuth": "true"
 }

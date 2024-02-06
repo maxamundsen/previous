@@ -3,6 +3,7 @@ package handlers
 import (
 	"webdawgengine/auth"
 	"time"
+	"strconv"
 )
 
 // the handlers package contains definitions for each HTTP endpoint,
@@ -18,9 +19,11 @@ import (
 
 var sessionStore auth.SessionStore
 
-func SessionInit(cookieExpiryDays int) {
+func SessionInit(cookieExpiryDays string) {
+	cookieExpiryInt, _ := strconv.Atoi(cookieExpiryDays)
+
 	// sessionStore = &auth.MemorySessionStore{}
 	sessionStore = &auth.MySqlSessionStore{}
-	cookieExpiry := time.Duration(time.Hour * 24 * time.Duration(cookieExpiryDays))
+	cookieExpiry := time.Duration(time.Hour * 24 * time.Duration(cookieExpiryInt))
 	sessionStore.InitStore("id", cookieExpiry, true, "/auth/login", "/auth/logout", "/example")
 }

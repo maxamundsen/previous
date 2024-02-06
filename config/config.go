@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"reflect"
 )
 
 // the config package allows the use of runtime configuration options from a file.
@@ -24,28 +25,79 @@ import (
 // define all configuration options here
 type configuration struct {
 	Host             string `json:"Host"`
-	CookieExpiryDays int    `json:"CookieExpiryDays"`
+	CookieExpiryDays string `json:"CookieExpiryDays"`
 	ConnectionString string `json:"ConnectionString"`
 	SmtpServer       string `json:"SmtpServer"`
 	SmtpPort         string `json:"SmtpPort"`
 	SmtpUsername     string `json:"SmtpUsername"`
 	SmtpDisplayFrom  string `json:"SmtpDisplayFrom"`
 	SmtpPassword     string `json:"SmtpPassword"`
-	SmtpRequireAuth  bool   `json:"SmtpRequireAuth"`
+	SmtpRequireAuth  string `json:"SmtpRequireAuth"`
 }
 
 var config configuration
 
+
+// log warning if provided struct member is not present in json config
+func warnMissingMember(member interface{}) {
+	log.Printf("Configuration warning: missing option: `%s`, type: `%s`.", getConfigFieldName(member), reflect.TypeOf(member))
+}
+
+// pretty terrible way to check, but this language has poor meta-programming ¯\_(ツ)_/¯
+func getConfigFieldName(member interface{}) string {
+    structType := reflect.TypeOf(config)
+    for i := 0; i < structType.NumField(); i++ {
+        field := structType.Field(i)
+        fieldValue := reflect.ValueOf(config).Field(i).Interface()
+        if reflect.DeepEqual(fieldValue, member) {
+            return field.Name
+        }
+    }
+    return ""
+}
+
 // specify default values if none are specified in the config file
 func setDefaultValues() {
-	if config.CookieExpiryDays == 0 {
-		config.CookieExpiryDays = 7
-	}
-
 	if config.Host == "" {
+		warnMissingMember(config.Host)
 		config.Host = "localhost:8080"
 	}
+
+	if config.CookieExpiryDays == "" {
+		warnMissingMember(config.CookieExpiryDays)
+		config.CookieExpiryDays = "7"
+	}
+
+	if config.ConnectionString == "" {
+		warnMissingMember(config.ConnectionString)
+	}
+
+	if config.SmtpServer == "" {
+		warnMissingMember(config.SmtpServer)
+	}
+
+	if config.SmtpPort == "" {
+		warnMissingMember(config.SmtpPort)
+	}
+
+	if config.SmtpUsername == "" {
+		warnMissingMember(config.SmtpUsername)
+	}
+
+	if config.SmtpDisplayFrom == "" {
+		warnMissingMember(config.SmtpDisplayFrom)
+	}
+
+	if config.SmtpPassword == "" {
+		warnMissingMember(config.SmtpPassword)
+	}
+
+	if config.SmtpRequireAuth == "" {
+		warnMissingMember(config.SmtpRequireAuth)
+		config.SmtpRequireAuth = "true"
+	}
 }
+
 
 func ReadConfiguration() {
 	var configFile *os.File

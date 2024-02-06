@@ -11,6 +11,7 @@ import (
 	"net/smtp"
 	"strings"
 	"time"
+	"strconv"
 )
 
 const (
@@ -52,7 +53,9 @@ func SendMail(message Email, mailtype int) error {
 
 	var auth smtp.Auth = nil
 
-	if config.SmtpRequireAuth {
+	requireAuth, _ := strconv.ParseBool(config.SmtpRequireAuth)
+
+	if requireAuth {
 		auth = smtp.PlainAuth("", config.SmtpUsername, config.SmtpPassword, config.SmtpServer)
 	}
 
