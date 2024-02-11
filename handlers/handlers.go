@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"time"
 	"webdawgengine/auth"
 	"webdawgengine/config"
-	"time"
 )
 
 // the handlers package contains definitions for each HTTP endpoint,

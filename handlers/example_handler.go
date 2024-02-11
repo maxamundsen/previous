@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/mail"
@@ -161,7 +160,7 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		defer dst.Close()
 
-		fileBytes, err := ioutil.ReadAll(file)
+		fileBytes, err := io.ReadAll(file)
 		if err != nil {
 			log.Println(err)
 		}
