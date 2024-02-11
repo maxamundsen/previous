@@ -11,7 +11,6 @@ import (
 	"net/smtp"
 	"strings"
 	"time"
-	"strconv"
 )
 
 const (
@@ -26,10 +25,8 @@ type Email struct {
 }
 
 func SendMail(message Email, mailtype int) error {
-	config := config.GetConfiguration()
-
 	recipientString := strings.Join(message.Recipients, ",")
-	from := mail.Address{config.SmtpDisplayFrom, config.SmtpUsername}
+	from := mail.Address{config.GetSmtpDisplayFrom(), config.GetSmtpUsername()}
 
 	header := make(map[string]string)
 	header["To"] = recipientString
@@ -53,13 +50,11 @@ func SendMail(message Email, mailtype int) error {
 
 	var auth smtp.Auth = nil
 
-	requireAuth, _ := strconv.ParseBool(config.SmtpRequireAuth)
-
-	if requireAuth {
-		auth = smtp.PlainAuth("", config.SmtpUsername, config.SmtpPassword, config.SmtpServer)
+	if config.GetSmtpRequireAuth() {
+		auth = smtp.PlainAuth("", config.GetSmtpUsername(), config.GetSmtpPassword(), config.GetSmtpServer())
 	}
 
-	err := smtp.SendMail(config.SmtpServer+":"+config.SmtpPort, auth, config.SmtpUsername, message.Recipients, []byte(email))
+	err := smtp.SendMail(config.GetSmtpServer() + ":" + config.GetSmtpPort(), auth, config.GetSmtpUsername(), message.Recipients, []byte(email))
 	if err != nil {
 		log.Println(err)
 		return err

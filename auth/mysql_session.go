@@ -31,11 +31,9 @@ func (st *MySqlSessionStore) InitStore(name string,
 	st.base.LogoutPath = logoutPath
 	st.base.DefaultPath = defaultPath
 
-	config := config.GetConfiguration()
-
 	var err error
 
-	st.db, err = sql.Open("mysql", config.ConnectionString)
+	st.db, err = sql.Open("mysql", config.GetConnectionString())
 
 	if err != nil {
 		panic(err.Error())
