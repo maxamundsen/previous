@@ -4,10 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"webdawgengine/auth"
-	"webdawgengine/database"
-	"webdawgengine/snailmail"
-	"webdawgengine/views"
 	"io"
 	"io/ioutil"
 	"log"
@@ -17,13 +13,17 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+	"webdawgengine/auth"
+	"webdawgengine/database"
+	"webdawgengine/snailmail"
+	"webdawgengine/views"
 )
 
 func exampleHandler(w http.ResponseWriter, r *http.Request) {
 	identity := sessionStore.GetIdentityFromCtx(r)
 
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "Example Page"
+	viewData["title"] = "Example Page"
 
 	model := views.NewViewModel(identity, viewData)
 	views.RenderWebpage(w, "example", model)
@@ -45,7 +45,13 @@ func exampleCounterHandler(w http.ResponseWriter, r *http.Request) {
 func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 	identity := sessionStore.GetIdentityFromCtx(r)
 
-	if identity.Claims["CanGeneratePasswords"] != "true" {
+	req := make(map[string]string)
+	req["can_generate_passwords"] = "true"
+
+	viewData := make(map[string]interface{})
+
+	if !auth.EnsureHasClaims(identity, req) {
+		viewData["error_msg"] = auth.UnauthorizedMessage
 		return
 	}
 
@@ -59,8 +65,7 @@ func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 		password, _ = auth.HashPassword(val1)
 	}
 
-	viewData := make(map[string]interface{})
-	viewData["Password"] = password
+	viewData["password"] = password
 
 	model := views.NewViewModel(identity, viewData)
 
@@ -71,7 +76,7 @@ func exampleDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 	identity := sessionStore.GetIdentityFromCtx(r)
 
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "Database Example"
+	viewData["title"] = "Database Example"
 
 	model := views.NewViewModel(identity, viewData)
 
@@ -84,7 +89,7 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 
 	users := database.FetchUsers()
 	if len(users) >= 5 {
-		viewData["TooMany"] = true
+		viewData["too_many"] = true
 		toomany = true
 	}
 
@@ -94,20 +99,20 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := mail.ParseAddress(email)
 
 		if err != nil {
-			viewData["Error"] = err
+			viewData["error"] = err
 		} else {
 			database.AddUser(email)
-			viewData["SuccessMsg"] = "Successfully added user " + email + ". ✓"
+			viewData["success_msg"] = "Successfully added user " + email + ". ✓"
 		}
 	}
 
 	users = database.FetchUsers()
 	if len(users) >= 5 {
-		viewData["TooMany"] = true
+		viewData["too_many"] = true
 		toomany = true
 	}
 
-	viewData["Users"] = users
+	viewData["users"] = users
 
 	model := views.NewViewModel(nil, viewData)
 
@@ -118,7 +123,7 @@ func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 
 	database.DeleteAllUsers()
-	viewData["SuccessMsg"] = "Successfully deleted all users. ✓"
+	viewData["success_msg"] = "Successfully deleted all users. ✓"
 
 	model := views.NewViewModel(nil, viewData)
 
@@ -127,7 +132,7 @@ func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
 
 func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "File Upload"
+	viewData["title"] = "File Upload"
 
 	if r.Method == http.MethodPost {
 		r.ParseMultipartForm(10 << 20)
@@ -163,7 +168,7 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		dst.Write(fileBytes)
 
-		viewData["UploadSuccessMsg"] = "Successfully uploaded file."
+		viewData["upload_success_msg"] = "Successfully uploaded file."
 	}
 
 	model := views.NewViewModel(nil, viewData)
@@ -172,7 +177,7 @@ func exampleUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "Email client"
+	viewData["title"] = "Email client"
 
 	if r.Method == http.MethodPost {
 		recipients := r.FormValue("to")
@@ -181,7 +186,7 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
 
 		mailViewData := make(map[string]interface{})
-		mailViewData["Paragraph"] = r.FormValue("body")
+		mailViewData["paragraph"] = r.FormValue("body")
 		mailModel := views.NewViewModel(nil, mailViewData)
 
 		views.RenderBytes(&b, "email", mailModel)
@@ -195,9 +200,9 @@ func exampleMailHandler(w http.ResponseWriter, r *http.Request) {
 		err := snailmail.SendMail(message, snailmail.TYPE_HTML)
 
 		if err != nil {
-			viewData["Error"] = "Error sending mail"
+			viewData["error"] = "Error sending mail"
 		} else {
-			viewData["Success"] = "Mail sent successfully"
+			viewData["success"] = "Mail sent successfully"
 		}
 
 		model := views.NewViewModel(nil, viewData)
@@ -261,8 +266,8 @@ func exampleFetchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "3rd Party Api Fetch"
-	viewData["Data"] = jsonOutput
+	viewData["title"] = "3rd Party Api Fetch"
+	viewData["data"] = jsonOutput
 
 	model := views.NewViewModel(nil, viewData)
 	views.RenderWebpage(w, "api_fetch", model)

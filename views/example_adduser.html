@@ -1,6 +1,6 @@
-{{ $error := index .ViewData "Error" }}
-{{ $successmsg := index .ViewData "SuccessMsg" }}
-{{ $toomany := index .ViewData "TooMany" }}
+{{ $error := index .ViewData "error" }}
+{{ $successmsg := index .ViewData "success_msg" }}
+{{ $toomany := index .ViewData "too_many" }}
 
 <div id="adduser">
 	{{if $toomany}}
@@ -24,7 +24,7 @@
 	</form>
 	<br />
 	
-	{{ $users := index .ViewData "Users" }}
+	{{ $users := index .ViewData "users" }}
 	
 	{{ if $users }}
 		<table class="table table-striped">

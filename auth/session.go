@@ -41,7 +41,7 @@ type SessionStore interface {
 	DeleteSession(w http.ResponseWriter, r *http.Request)
 	DeleteSessionByKey(sessionKey string)
 	DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity)
-	LoadSession(next http.Handler, requireAuth bool) http.Handler
+	LoadSession(h http.HandlerFunc, requireAuth bool) http.HandlerFunc
 	GetIdentityFromCtx(r *http.Request) *Identity
 	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity
 	GetAllIdentities(id *Identity) []Identity

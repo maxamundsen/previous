@@ -13,3 +13,12 @@ type Identity struct {
 	IpAddr          string
 	LoginTime       time.Time
 }
+
+func EnsureHasClaims(identity *Identity, req map[string]string) bool {
+	for key, value := range req {
+		if identity.Claims[key] != value {
+			return false
+		}
+	}
+	return true
+}

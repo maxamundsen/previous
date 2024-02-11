@@ -2,11 +2,12 @@ package auth
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"webdawgengine/config"
 	"log"
 	"net/http"
 	"time"
+	"webdawgengine/config"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Implements a SessionStore interface
@@ -43,13 +44,13 @@ func (st *MySqlSessionStore) InitStore(name string,
 	log.Printf("Initialized MySQL session authentication [redirects: %t]\n", willRedirect)
 }
 
-func (st *MySqlSessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
+func (st *MySqlSessionStore) LoadSession(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 	var id *Identity
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id = st.GetIdentityFromRequest(w, r)
 
-		handler := st.base.loadSession(next, id, requireAuth)
+		handler := st.base.loadSession(h, id, requireAuth)
 		handler.ServeHTTP(w, r)
 	})
 }

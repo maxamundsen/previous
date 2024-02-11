@@ -32,13 +32,13 @@ func (st *MemorySessionStore) InitStore(name string,
 	log.Printf("Initialized in-memory session authentication [redirects: %t]\n", willRedirect)
 }
 
-func (st *MemorySessionStore) LoadSession(next http.Handler, requireAuth bool) http.Handler {
+func (st *MemorySessionStore) LoadSession(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 	var id *Identity
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id = st.GetIdentityFromRequest(w, r)
 
-		handler := st.base.loadSession(next, id, requireAuth)
+		handler := st.base.loadSession(h, id, requireAuth)
 		handler.ServeHTTP(w, r)
 	})
 }

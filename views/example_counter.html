@@ -5,12 +5,12 @@
         </div>
 		<div class="card-body">
             <form method="get" action="/example/counter" hx-get="/example/counter" hx-target="#htmx-counter" hx-swap="outerHTML" autocomplete="off">
-                <input type="hidden" name="number" value="{{index .ViewData "Number" }}">
+                <input type="hidden" name="number" value="{{index .ViewData "number" }}">
                 <button class="btn btn-primary">Increment Number</button>
             </form>
             <br />
             <p>Output:</p>
-            <code>{{index .ViewData "Number" }}</code>
+            <code>{{index .ViewData "number" }}</code>
         </div>
     </div>
 </div>

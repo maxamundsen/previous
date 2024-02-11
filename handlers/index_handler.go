@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"webdawgengine/views"
 	"net/http"
+	"webdawgengine/views"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
-	viewData["Title"] = "Index"
+	viewData["title"] = "Index"
 
 	model := views.NewViewModel(nil, viewData)
 
@@ -15,9 +15,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// the URL is actually '/' or else 404
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
-		model.ViewData["Title"] = "An error has occurred."
-		model.ViewData["ErrorCode"] = "Error 404"
-		model.ViewData["ErrorMsg"] = "Page not found."
+		model.ViewData["title"] = "An error has occurred."
+		model.ViewData["error_code"] = "Error 404"
+		model.ViewData["error_msg"] = "Page not found."
 		views.RenderWebpage(w, "error", model)
 		return
 	}

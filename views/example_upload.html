@@ -1,7 +1,7 @@
 {{template "header" .}}
 {{template "navbar" .}}
 
-{{ $successmsg := index .ViewData "UploadSuccessMsg" }}
+{{ $successmsg := index .ViewData "upload_success_msg" }}
 
 <div class="container">
 	{{if $successmsg}}

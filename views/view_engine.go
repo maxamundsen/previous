@@ -3,12 +3,13 @@ package views
 import (
 	"bytes"
 	"embed"
-	"webdawgengine/auth"
-	"webdawgengine/build"
 	"html/template"
 	"log"
 	"net/http"
 	"sync"
+	"time"
+	"webdawgengine/auth"
+	"webdawgengine/build"
 )
 
 // The view engine is a wrapper around the standard html/template functions.
@@ -37,6 +38,10 @@ func NewViewModel(user *auth.Identity, viewData map[string]interface{}) ViewMode
 		user,
 		viewData,
 	}
+
+	// "primative" data provided to all templates
+	// should be prefixed with "p_"
+	viewData["p_current_year"] = time.Time.Year(time.Now())
 
 	return model
 }

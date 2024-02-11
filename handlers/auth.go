@@ -1,18 +1,18 @@
 package handlers
 
 import (
-	"webdawgengine/auth"
-	"webdawgengine/views"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+	"webdawgengine/auth"
+	"webdawgengine/views"
 )
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 
-	viewData["Title"] = "Login"
+	viewData["title"] = "Login"
 
 	model := views.NewViewModel(nil, viewData)
 
@@ -27,7 +27,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			log.Println("Failed login attempt. Username: " + username)
-			model.ViewData["Error"] = "Username or password incorrect."
+			model.ViewData["error"] = "Username or password incorrect."
 			views.RenderWebpage(w, "login", model)
 			return
 		}

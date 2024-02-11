@@ -32,8 +32,8 @@ func Authenticate(username string, password string) (*Identity, error) {
 		id.IsAuthenticated = true
 		id.UserId = username
 		id.Claims = make(map[string]string)
-		id.Claims["CanGeneratePasswords"] = "true"
-		id.Claims["SomeClaim"] = "somevalue"
+		id.Claims["can_generate_passwords"] = "true"
+		id.Claims["some_claim"] = "somevalue"
 	} else {
 		err = errors.New("invalid username or password")
 	}
