@@ -10,12 +10,12 @@
 		<fieldset {{ if $toomany }} disabled="disabled" {{end}}>
 		<label for="emailinput">Email:</label>
 		<input type="email" name="email" id="emailinput" autofocus/>
-		
+
 		<input class="btn btn-secondary" type="submit" value="Add new user"/>
 		{{ if $error }}
 			<span style="color: red;">Error: {{$error}}</span>
 		{{end}}
-		
+
 		{{ if $successmsg }}
 			<span style="color: green;">{{$successmsg}}</span>
 		{{end}}
@@ -23,9 +23,9 @@
 		</fieldset>
 	</form>
 	<br />
-	
+
 	{{ $users := index .ViewData "users" }}
-	
+
 	{{ if $users }}
 		<table class="table table-striped">
 			<thead>
@@ -34,20 +34,16 @@
 					<th>Email</th>
 				</tr>
 			</thead>
-			<tbody>		
+			<tbody>
 				{{ range $val := $users }}
 				<tr>
 					<td>{{$val.Id}}</td>
 					<td>{{$val.Email}}</td>
 				</tr>
-		
+
 				{{end}}
 			</tbody>
 		</table>
-		
-		<a class="btn btn-danger"href="/example/deleteall" hx-get="/example/deleteall" hx-target="#adduser" hx-swap="outerHTML">
-			Delete All
-		</a>
 	{{ else }}
 		<p>There are currently no users.</p>
 	{{end}}

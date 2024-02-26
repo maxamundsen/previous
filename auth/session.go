@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"webdawgengine/identity"
 	"context"
 	"net/http"
 	"net/url"
@@ -37,14 +38,14 @@ type SessionStore interface {
 		loginPath string,
 		logoutPath string,
 		defaultPath string)
-	PutSession(w http.ResponseWriter, r *http.Request, id *Identity)
+	PutSession(w http.ResponseWriter, r *http.Request, id *identity.Identity)
 	DeleteSession(w http.ResponseWriter, r *http.Request)
 	DeleteSessionByKey(sessionKey string)
-	DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity)
+	DeleteAllByEmail(w http.ResponseWriter, r *http.Request, id *identity.Identity)
 	LoadSession(h http.HandlerFunc, requireAuth bool) http.HandlerFunc
-	GetIdentityFromCtx(r *http.Request) *Identity
-	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity
-	GetAllIdentities(id *Identity) []Identity
+	GetIdentityFromCtx(r *http.Request) *identity.Identity
+	GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *identity.Identity
+	GetAllIdentities(id *identity.Identity) []identity.Identity
 	GetBase() *sessionStoreBase
 }
 
@@ -97,12 +98,12 @@ func (st *sessionStoreBase) removeCookie(w http.ResponseWriter, r *http.Request)
 
 // middleware for loading a provided auth session, and automatically
 // handling redirections
-func (st *sessionStoreBase) loadSession(next http.Handler,
-	id *Identity,
+func (st *sessionStoreBase) loadSession(h http.HandlerFunc,
+	id *identity.Identity,
 	requireAuth bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if id == nil {
-			blankIdentity := &Identity{IsAuthenticated: false}
+			blankIdentity := &identity.Identity{IsAuthenticated: false}
 
 			if requireAuth {
 				if st.willRedirect && st.LoginPath != r.URL.Path && st.LogoutPath != r.URL.Path {
@@ -117,7 +118,7 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 			}
 
 			ctx := context.WithValue(r.Context(), st.ctxKey, blankIdentity)
-			next.ServeHTTP(w, r.WithContext(ctx))
+			h.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
 
@@ -127,10 +128,10 @@ func (st *sessionStoreBase) loadSession(next http.Handler,
 		}
 
 		ctx := context.WithValue(r.Context(), st.ctxKey, id)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		h.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (st *sessionStoreBase) getIdentityFromCtx(r *http.Request) *Identity {
-	return r.Context().Value(st.ctxKey).(*Identity)
+func (st *sessionStoreBase) getIdentityFromCtx(r *http.Request) *identity.Identity {
+	return r.Context().Value(st.ctxKey).(*identity.Identity)
 }

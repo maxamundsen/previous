@@ -1,6 +1,6 @@
 CREATE TABLE `sessions` (
   `id` varchar(255) NOT NULL,
-  `userid` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `useragent` varchar(255) DEFAULT NULL,
   `ipaddr` varchar(45) DEFAULT NULL,
   `logintime` datetime DEFAULT NULL,

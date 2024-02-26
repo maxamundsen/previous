@@ -1,9 +1,10 @@
-package auth
+package identity
 
 import "time"
 
 type Identity struct {
-	UserId string
+	Id    string
+	Email string
 	// map[string]string instead of map[string]interface{} since claims can be stored in a database,
 	// which only permits one datatype per column
 	Claims          map[string]string
@@ -14,7 +15,7 @@ type Identity struct {
 	LoginTime       time.Time
 }
 
-func EnsureHasClaims(identity *Identity, req map[string]string) bool {
+func (identity *Identity) EnsureHasClaims(req map[string]string) bool {
 	for key, value := range req {
 		if identity.Claims[key] != value {
 			return false

@@ -1,13 +1,15 @@
 package auth
 
 import (
+	"webdawgengine/database"
+	"webdawgengine/identity"
 	"crypto/rand"
 	"errors"
 	"math/big"
 	"time"
 )
 
-func Authenticate(username string, password string) (*Identity, error) {
+func Authenticate(email string, password string) (*identity.Identity, error) {
 	// time attack partial mitigation
 	// adds up to 0.5 seconds to the response time
 
@@ -25,17 +27,24 @@ func Authenticate(username string, password string) (*Identity, error) {
 
 	time.Sleep(randomDuration)
 
-	id := &Identity{}
+	id := &identity.Identity{}
 	var err error
 
-	if username == "admin" && password == "admin" {
+	user, userErr := database.FetchUserByEmail(email)
+
+	if userErr != nil {
+		err = errors.New("invalid email")
+		// set user password to dummy password to keep timing consistent when validating password
+		user.Password = "$2a$14$KW5OO1wZqGGq3SrpBFj0Oema5DG8Ph7lZJvq0ECkkYBpNFom6b9vO"
+	}
+
+	if CheckPassword(password, user.Password) {
 		id.IsAuthenticated = true
-		id.UserId = username
-		id.Claims = make(map[string]string)
-		id.Claims["can_generate_passwords"] = "true"
-		id.Claims["some_claim"] = "somevalue"
+		id.Email = email
+
+		id.Claims, _ = database.FetchUserClaimsByIdAsMap(user.Id)
 	} else {
-		err = errors.New("invalid username or password")
+		err = errors.New("invalid password")
 	}
 
 	return id, err

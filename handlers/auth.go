@@ -59,16 +59,16 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	sessionStore.DeleteSession(w, r)
 
 	storeBase := sessionStore.GetBase()
-	log.Println("Successful logout. UserId: " + id.UserId)
+	log.Println("Successful logout. Email: " + id.Email)
 
 	http.Redirect(w, r, storeBase.LoginPath, http.StatusFound)
 }
 
 func logoutAllHandler(w http.ResponseWriter, r *http.Request) {
 	id := sessionStore.GetIdentityFromCtx(r)
-	sessionStore.DeleteAllByUserId(w, r, id)
+	sessionStore.DeleteAllByEmail(w, r, id)
 
-	log.Println("Successful all-session logout for UserId: " + id.UserId)
+	log.Println("Successful all-session logout for Email: " + id.Email)
 
 	storeBase := sessionStore.GetBase()
 	http.Redirect(w, r, storeBase.LoginPath, http.StatusFound)

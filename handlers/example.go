@@ -35,7 +35,7 @@ func exampleCounterHandler(w http.ResponseWriter, r *http.Request) {
 
 	num, _ := strconv.Atoi(formVal)
 
-	viewData["Number"] = num + 1
+	viewData["number"] = num + 1
 
 	model := views.NewViewModel(nil, viewData)
 	views.RenderWebpage(w, "example_counter", model)
@@ -49,7 +49,7 @@ func examplePassgenHandler(w http.ResponseWriter, r *http.Request) {
 
 	viewData := make(map[string]interface{})
 
-	if !auth.EnsureHasClaims(identity, req) {
+	if !identity.EnsureHasClaims(req) {
 		viewData["error_msg"] = auth.UnauthorizedMessage
 		return
 	}
@@ -86,7 +86,12 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 	viewData := make(map[string]interface{})
 	var toomany bool
 
-	users := database.FetchUsers()
+	users, err := database.FetchAllUsers()
+
+	if err != nil {
+		viewData["error"] = err
+	}
+
 	if len(users) >= 5 {
 		viewData["too_many"] = true
 		toomany = true
@@ -100,29 +105,26 @@ func exampleAdduserHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			viewData["error"] = err
 		} else {
-			database.AddUser(email)
+			user := database.User {
+				Email: email,
+			}
+			database.InsertUser(user)
 			viewData["success_msg"] = "Successfully added user " + email + ". ✓"
 		}
 	}
 
-	users = database.FetchUsers()
+	users, err  = database.FetchAllUsers()
+
+	if err != nil {
+		viewData["error"] = err
+	}
+
 	if len(users) >= 5 {
 		viewData["too_many"] = true
 		toomany = true
 	}
 
 	viewData["users"] = users
-
-	model := views.NewViewModel(nil, viewData)
-
-	views.RenderWebpage(w, "example_adduser", model)
-}
-
-func exampleDeleteallHandler(w http.ResponseWriter, r *http.Request) {
-	viewData := make(map[string]interface{})
-
-	database.DeleteAllUsers()
-	viewData["success_msg"] = "Successfully deleted all users. ✓"
 
 	model := views.NewViewModel(nil, viewData)
 

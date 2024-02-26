@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"webdawgengine/auth"
 )
 
 // Json endpoints for an API can be easily written with a handler.
@@ -13,7 +14,16 @@ import (
 // This will print information about the current Identity
 // via session access
 func apiIdentityHandler(w http.ResponseWriter, r *http.Request) {
-	user := sessionStore.GetIdentityFromCtx(r)
+	identity := sessionStore.GetIdentityFromCtx(r)
+
+	req := make(map[string]string)
+	req["developer"] = "true"
+
+	if !identity.EnsureHasClaims(req) {
+		http.Error(w, auth.UnauthorizedMessage, http.StatusUnauthorized)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(identity)
 }

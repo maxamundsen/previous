@@ -18,7 +18,6 @@ func MapDynamicRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/example/passgen", sessionStore.LoadSession(examplePassgenHandler, true))
 	mux.HandleFunc("/example/database", sessionStore.LoadSession(exampleDatabaseHandler, true))
 	mux.HandleFunc("/example/adduser", sessionStore.LoadSession(exampleAdduserHandler, true))
-	mux.HandleFunc("/example/deleteall", sessionStore.LoadSession(exampleDeleteallHandler, true))
 	mux.HandleFunc("/example/mail", sessionStore.LoadSession(exampleMailHandler, true))
 	mux.HandleFunc("/example/fetch", sessionStore.LoadSession(exampleFetchHandler, true))
 

@@ -5,12 +5,13 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"webdawgengine/identity"
 )
 
 // Implements a SessionStore interface
 type MemorySessionStore struct {
 	base     *sessionStoreBase
-	sessions map[string]*Identity
+	sessions map[string]*identity.Identity
 	lock     sync.RWMutex
 }
 
@@ -21,7 +22,7 @@ func (st *MemorySessionStore) InitStore(name string,
 	logoutPath string,
 	defaultPath string) {
 	st.base = &sessionStoreBase{}
-	st.sessions = make(map[string]*Identity)
+	st.sessions = make(map[string]*identity.Identity)
 	st.base.name = name
 	st.base.ctxKey = sessionKey{}
 	st.base.expiration = itemExpiry
@@ -33,7 +34,7 @@ func (st *MemorySessionStore) InitStore(name string,
 }
 
 func (st *MemorySessionStore) LoadSession(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
-	var id *Identity
+	var id *identity.Identity
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id = st.GetIdentityFromRequest(w, r)
@@ -43,7 +44,7 @@ func (st *MemorySessionStore) LoadSession(h http.HandlerFunc, requireAuth bool) 
 	})
 }
 
-func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request, id *Identity) {
+func (st *MemorySessionStore) PutSession(w http.ResponseWriter, r *http.Request, id *identity.Identity) {
 	cookieValue := randBase64String(cookieEntropy) // sets the entropy of the random string
 
 	// Delete the session from the store after expiration time
@@ -75,7 +76,7 @@ func (st *MemorySessionStore) DeleteSessionByKey(sessionKey string) {
 	st.lock.Unlock()
 }
 
-func (st *MemorySessionStore) GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *Identity {
+func (st *MemorySessionStore) GetIdentityFromRequest(w http.ResponseWriter, r *http.Request) *identity.Identity {
 	cookie, err := r.Cookie(st.base.name)
 
 	if err != nil {
@@ -89,16 +90,16 @@ func (st *MemorySessionStore) GetIdentityFromRequest(w http.ResponseWriter, r *h
 	return id
 }
 
-func (st *MemorySessionStore) GetIdentityFromCtx(r *http.Request) *Identity {
+func (st *MemorySessionStore) GetIdentityFromCtx(r *http.Request) *identity.Identity {
 	return st.base.getIdentityFromCtx(r)
 }
 
-func (st *MemorySessionStore) GetAllIdentities(id *Identity) []Identity {
-	identities := make([]Identity, 0)
+func (st *MemorySessionStore) GetAllIdentities(id *identity.Identity) []identity.Identity {
+	identities := make([]identity.Identity, 0)
 
 	// find all sessions that contain the input identity
 	for _, v := range st.sessions {
-		if v.UserId == id.UserId {
+		if v.Email == id.Email {
 			identities = append(identities, *v)
 		}
 	}
@@ -110,9 +111,9 @@ func (st *MemorySessionStore) GetBase() *sessionStoreBase {
 	return st.base
 }
 
-func (st *MemorySessionStore) DeleteAllByUserId(w http.ResponseWriter, r *http.Request, id *Identity) {
+func (st *MemorySessionStore) DeleteAllByEmail(w http.ResponseWriter, r *http.Request, id *identity.Identity) {
 	for i, v := range st.sessions {
-		if v.UserId == id.UserId {
+		if v.Email == id.Email {
 			st.lock.Lock()
 			delete(st.sessions, i)
 			st.lock.Unlock()

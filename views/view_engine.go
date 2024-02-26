@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
-	"webdawgengine/auth"
 	"webdawgengine/build"
+	"webdawgengine/identity"
 )
 
 // The view engine is a wrapper around the standard html/template functions.
@@ -29,11 +29,11 @@ var (
 var embeddedTemplates embed.FS
 
 type ViewModel struct {
-	Identity *auth.Identity
+	Identity *identity.Identity
 	ViewData map[string]interface{}
 }
 
-func NewViewModel(user *auth.Identity, viewData map[string]interface{}) ViewModel {
+func NewViewModel(user *identity.Identity, viewData map[string]interface{}) ViewModel {
 	model := ViewModel{
 		user,
 		viewData,

@@ -11,7 +11,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>UserId</th>
+                <th>Email</th>
                 <th>IP</th>
                 <th>User Agent</th>
                 <th>Login Time</th>
@@ -21,7 +21,7 @@
             {{$identityList := index .ViewData "identity_list"}}
             {{ range $value := $identityList }}
             <tr>
-                <td>{{ $value.UserId }}</td>
+                <td>{{ $value.Email }}</td>
                 <td>{{ $value.IpAddr }}</td>
                 <td>{{ $value.UserAgent }}</td>
                 <td>{{ $value.LoginTime }}</td>

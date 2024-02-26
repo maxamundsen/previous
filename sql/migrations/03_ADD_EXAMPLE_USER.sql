@@ -1,0 +1,1 @@
+INSERT INTO `example`.`users` (`email`, `firstname`, `lastname`, `password`) VALUES ('test@example.com', 'John', 'Doe', '$2a$14$ci2m8HyQH6YpN3gvEt6qZ.EwBSUzTVEpoaeCdDgiJ8TWsMpGpsEoK');
