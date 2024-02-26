@@ -68,14 +68,16 @@ The `handlers` package contains `dynamic_routes.go` and `static_routes.go`. Thes
 
 HTTP handler functions are extremely simple, and can manipulate an HTTP request, and response writer directly. The response writer can be passed to the View Engine™ to easily integrate HTML templates into your HTTP response.
 
+The `managers` package houses core business logic. Data fetched from the database should not be transformed within a handler, but rather in a manager.
+
 Features such as `snailmail` (the SMTP server), or `database` live in their own package, and directory in the project. There is no enforced structure here, so any package can call out to any other package. Typically you will want to call a package such as `auth` or `database` from an HTTP handler in the handlers package. Example structure provided here:
 
 ```
 1.
-HTTP request -> handler function -> feature package -> view engine -> write to http response and return from handler function -> request completed
+HTTP request -> handler function -> database -> manager -> view engine -> write to http response and return from handler function -> request completed
 
 2.
-Fetch user request -> handlers.userHandler() -> database.getUsers() ->  views.RenderWebpage() -> return response
+Fetch user request -> handlers.userHandler() -> database.GetAllUsers() ->  managers.UppercaseEmails() -> views.RenderWebpage() -> return response
 ```
 
 The example handlers demonstrate simple tasks that are typically managed by handler functions.
