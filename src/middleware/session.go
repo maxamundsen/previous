@@ -1,0 +1,80 @@
+package middleware
+
+import (
+	"context"
+	"log"
+	"net/http"
+	"time"
+	"webdawgengine/config"
+)
+
+type sessionKey struct{}
+
+func LoadSessionFromCookie(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var sessionMap map[string]interface{}
+
+		sessionCookie, err := r.Cookie(config.SESSION_COOKIE_NAME)
+		if err == nil {
+			sessionMap, _ = DecryptSession(sessionCookie.Value)
+		}
+
+		if sessionMap == nil {
+			sessionMap = make(map[string]interface{})
+		}
+
+		ctx := context.WithValue(r.Context(), sessionKey{}, sessionMap)
+		h.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func GetSession(r *http.Request) map[string]interface{} {
+	session := r.Context().Value(sessionKey{}).(map[string]interface{})
+	return session
+}
+
+func PutSessionCookie(w http.ResponseWriter, r *http.Request, session map[string]interface{}) {
+	cookies := r.Cookies()
+
+	// calculate total bytes used by other cookies
+	var totalBytes int
+	for _, cookie := range cookies {
+		if cookie.Name == config.SESSION_COOKIE_NAME {
+			continue
+		} else {
+			totalBytes += len(cookie.Value)
+		}
+	}
+
+	sessionString, err := EncryptSession(session)
+	if err != nil {
+		return
+	}
+
+	length := len(sessionString) + 8
+
+	if length+totalBytes > 4096 {
+		log.Println("Attempt to generate cookie exceeding size limit for this domain")
+		return
+	}
+
+	httpCookie := &http.Cookie{
+		Name:     config.SESSION_COOKIE_NAME,
+		Value:    sessionString,
+		HttpOnly: true,
+		Secure:   r.URL.Scheme == "https",
+		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	http.SetCookie(w, httpCookie)
+}
+
+func DeleteSessionCookie(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    config.SESSION_COOKIE_NAME,
+		MaxAge:  -1,
+		Expires: time.Now().Add(-100 * time.Hour),
+		Path:    "/",
+	})
+}

@@ -1,0 +1,26 @@
+html {
+  font-size: 14px;
+  font-family: sans-serif;
+}
+
+/* Containers */
+@media (min-width: 1200px) {
+  .container-lg {
+    max-width: 1800px;
+  }
+
+  .container {
+    max-width: 1200px;
+  }
+
+  .container-sm {
+    max-width: 500px;
+  }
+}
+
+
+@media (min-width: 600px) {
+  .container-sm {
+    max-width: 500px;
+  }
+}

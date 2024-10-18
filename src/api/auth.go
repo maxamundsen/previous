@@ -1,0 +1,40 @@
+package api
+
+import (
+	"net/http"
+	"webdawgengine/auth"
+	"webdawgengine/middleware"
+
+	"log"
+)
+
+type LoginInfo struct {
+	Username string
+	Password string
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	var loginInfo LoginInfo
+
+	err := ApiReadJSON(w, r, &loginInfo)
+	if err != nil {
+		println(err)
+	}
+
+	user, authResult := auth.Authenticate(loginInfo.Username, loginInfo.Password)
+	if !authResult {
+		log.Println("Failed login attempt via API call. Username: " + loginInfo.Username)
+		http.Error(w, "Invalid login information", http.StatusUnauthorized)
+		return
+	}
+
+	identity := middleware.NewIdentity(user.Id, user.SecurityStamp, true, false)
+
+	encrypted, err := middleware.EncryptIdentity(identity)
+	if err != nil {
+		http.Error(w, "An error occured while generating the api token.", http.StatusUnauthorized)
+		return
+	}
+
+	ApiWritePlaintext(w, encrypted)
+}
