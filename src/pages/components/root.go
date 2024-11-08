@@ -34,8 +34,11 @@ func Root(title string, children ...Node) Node {
 
 				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+				Link(Rel("stylesheet"), Href("/lib/highlight/dark.css")),
+				
 				Script(Src("/lib/htmx/htmx.min.js")),
 				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
+				Script(Src("/lib/highlight/highlight.min.js")),
 				Script(Src("/js/index.js?v="+js_hash)),
 			),
 			Group(children), // expected to provide body

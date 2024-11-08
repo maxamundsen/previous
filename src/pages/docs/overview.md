@@ -8,6 +8,8 @@ WebDawgEngine (WDE) is a project template / design methodology that provides sim
 WebDawgEngine is _not_ a framework, or library.
 WDE is a showcase of what is possible with procedural, data-oriented code, while avoiding needlessly overcomplicated abstractions.
 
+The name "WebDawgEngine" pays homage to [PyDawgEngine](https://github.com/RyDawg-Studios/PyDawgEngine), a high-level framework for quickly building games in Python.
+
 At the end of the day, your job as a web developer is to dynamically generate HTML, and serve it back to the requester.
 WDE was built to remove the friction that is common with popular, overengineered solutions, so you can focus on getting work done.
 

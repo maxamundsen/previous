@@ -36,7 +36,7 @@ func RegisterDocPage(doc Document) {
 
 func RegisterDocumentation() {
 	RegisterDocPage(Document{
-		Title: "Pre-Requisites",
+		Title: "Pre-requisites",
 		Slug: "prerequisites",
 	})
 
@@ -79,6 +79,7 @@ func RegisterDocumentation() {
 	RegisterDocPage(Document{
 		Title: "Views",
 		SubList: []Document {
+			{ Title: "Generating HTML", Slug: "generating-html" },
 			{ Title: "Component System", Slug: "component-system" },
 			{ Title: "Organizing Components", Slug: "organizing-components" },
 			{ Title: "Markdown Content", Slug:"markdown-content" },
@@ -183,7 +184,7 @@ func DocView(title string, displayId int, html string) Node {
 
 func DocLayout(title string, displayId int, children ...Node) Node {
 	return Root(title + " | WebDawgEngine Documentation",
-		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-boost", "true"), Class("bg-gray-50"),
+		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-boost", "true"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
 			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"),
 				Span(Class("sr-only"), Text("Open sidebar")),
 				Icon("menu", 24),
@@ -232,5 +233,8 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 				Group(children),
 			),
 		),
+		Script(Raw(`
+			hljs.highlightAll();
+		`)),
 	)
 }

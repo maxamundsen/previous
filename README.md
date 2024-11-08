@@ -44,7 +44,7 @@ Each of these modules are extremely simple, and can be modified, or removed depe
 ### Release Build
 To compile the application, install the go compiler, and execute the following from the project directory:
 
-```
+```sh
 go build
 ```
 
@@ -55,7 +55,7 @@ Note that a `config.json` file is required for the application to start. When in
 ### Debug Build
 If you want to build a debug binary, install the dlv debugger, and execute the following from the project directory:
 
-```
+```sh
 dlv debug --build-flags "-tags=devel"
 ```
 

@@ -1,7 +1,7 @@
 # Getting Started / Installation
 First to get started, you'll need to get started.
 Clone the WebDawgEngine repository to your local machine with the following command:
-```shell
+```sh
 git clone https://github.com/maxamundsen/WebDawgEngine.git
 ```
 
@@ -10,17 +10,17 @@ Building this repo requires invoking the Go compiler, which can be found [here](
 
 First, move to the `/src` directory.
 This is where our Go source code is located.
-```
+```sh
 cd ./src
 ```
 
 To build the demo site UNIX-like machines:
-```
+```sh
 sh build.sh
 ```
 
 For Windows machines:
-```
+```bat
 build.bat
 ```
 
@@ -30,12 +30,12 @@ This will output a statically-linked binary called `webdawgengine`, located in t
 To execute the program, run the `webdawgengine` executable.
 
 UXIX-like:
-```
+```sh
 ./webdawgengine
 ```
 
 Windows:
-```
+```batch
 webdawgengine.exe
 ```
 

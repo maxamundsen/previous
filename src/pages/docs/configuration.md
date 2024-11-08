@@ -5,8 +5,8 @@ You can read the contents of the configuration struct using the `config.GetConfi
 
 ```go
 type configuration struct {
-	Host                    string `json:"Host"`
-	Port                    string `json:"Port"`
+	Host string `json:"Host"`
+	Port string `json:"Port"`
 	...
 }
 

@@ -2,7 +2,7 @@
 
 ## Building
 WDE can be built by directly invoking the Go compiler from inside the `./src` directory:
-```
+```sh
 go build
 ```
 
