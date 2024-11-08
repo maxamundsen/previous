@@ -1,13 +1,15 @@
 package components
 
 import (
+	"webdawgengine/finance"
+
 	"fmt"
 	. "maragu.dev/gomponents"
 	"reflect"
 	"time"
 )
 
-func DisplayDateTime(utcTime time.Time) Node {
+func FormatDateTime(utcTime time.Time) Node {
 	// Convert to EST (Eastern Standard Time)
 	loc, _ := time.LoadLocation("America/New_York")
 	estTime := utcTime.In(loc)
@@ -18,7 +20,7 @@ func DisplayDateTime(utcTime time.Time) Node {
 	return Text(formattedTime)
 }
 
-func DisplayDate(utcTime time.Time) Node {
+func FormatDate(utcTime time.Time) Node {
 	// Convert to EST (Eastern Standard Time)
 	loc, _ := time.LoadLocation("America/New_York")
 	estTime := utcTime.In(loc)
@@ -27,6 +29,10 @@ func DisplayDate(utcTime time.Time) Node {
 	formattedTime := estTime.Format("01/02/06")
 
 	return Text(formattedTime)
+}
+
+func FormatMoney(m int64) Node {
+	return Text(finance.Int64ToMoney(m))
 }
 
 func ToString(i interface{}) string {

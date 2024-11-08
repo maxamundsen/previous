@@ -1,11 +1,11 @@
-	[6]  # Version number. Do not delete.
+[12]  # Version number. Do not delete.
 
 [[workspace]]
 ./
 
 [ignore]
 .git
-vendor**
+./src/vendor/**
 .build
 .vscode
 *.bak
@@ -13,14 +13,14 @@ vendor**
 *.min.css
 *.min.js.map
 *.min.css.map
-lib**
-fonts**
+./src/wwwroot/lib**
+./src/wwwroot/fonts**
 *.sqlite
 __debug*
 
 [[ settings ]]
 tab_size: 4
-insert_spaces_when_pressing_tab: false
+indent_using:                    tabs  # options: spaces, tabs
 
 [[ build commands ]]
 build_working_dir: ./src
@@ -30,8 +30,6 @@ clear_build_output_before_running:      true
 open_panel_on_build:                    true
 
 [Build Debug Macos]
-build_command: /usr/local/go/bin/go build -tags=debug
+build_command: sh build.sh
 key_binding:   Cmd-Shift-B
-
-[Fmt]
-build_command: /usr/local/go/bin/go fmt ./...
+run_command: ./webdawgengine

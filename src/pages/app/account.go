@@ -1,7 +1,6 @@
 package app
 
 import (
-	"webdawgengine/database"
 	"webdawgengine/middleware"
 	"webdawgengine/models"
 
@@ -14,32 +13,54 @@ import (
 
 func AccountController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
-	user, _ := database.FetchUserById(identity.UserId)
 
-	AccountView(user).Render(w)
+	AccountView(*identity).Render(w)
 }
 
-func AccountView(user models.User) Node {
-	return AppLayout("Account",
-		Div(Class("table-responsive"), Style("table-layout: fixed"),
-			Table(Class("table"),
+func AccountView(identity models.Identity) Node {
+	return AppLayout("Account", identity,
+		Div(Class("table-responsive"),
+			H4(Class("mb-3 text-lg font-bold"), Text("General Account Information")),
+			Hr(),
+			TableTW(
 				THead(),
 				TBody(
 					Tr(
-						Th(Text("UserID")),
-						Td(ToText(user.Id)),
+						ThTW(Text("UserID")),
+						TdTW(ToText(identity.User.Id)),
 					),
 					Tr(
-						Th(Text("Username")),
-						Td(ToText(user.Username)),
+						ThTW(Text("Username")),
+						TdTW(ToText(identity.User.Username)),
 					),
 					Tr(
-						Th(Text("Name")),
-						Td(ToText(user.Firstname+" "+user.Lastname)),
+						ThTW(Text("Name")),
+						TdTW(ToText(identity.User.Firstname+" "+identity.User.Lastname)),
 					),
 					Tr(
-						Th(Text("Email")),
-						Td(ToText(user.Email)),
+						ThTW(Text("Email")),
+						TdTW(ToText(identity.User.Email)),
+					),
+					Tr(
+						ThTW(Text("Last Login")),
+						TdTW(FormatDateTime(identity.User.LastLogin)),
+					),
+				),
+			),
+			Br(),
+			H4(Class("mb-3 text-lg font-bold"), Text("Permissions")),
+			Hr(),
+			TableTW(
+				THead(
+					Tr(
+						ThTW(Text("Permission")),
+						ThTW(Text("Value")),
+					),
+				),
+				TBodyTW(
+					Tr(
+						TdTW(Text("Admin")),
+						TdTW(Input(Type("checkbox"), If(identity.User.PermissionAdmin, Checked()), Disabled())),
 					),
 				),
 			),

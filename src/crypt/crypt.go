@@ -7,9 +7,39 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"log"
+	"os"
 
 	"golang.org/x/crypto/bcrypt"
+	"github.com/minio/highwayhash"
 )
+
+func QuickFileHash(filepath string) (string, error) {
+	key := []byte("01234567890123456789012345678901")
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		log.Println("Error opening style.css:", err)
+		return "", err
+	}
+	defer file.Close()
+
+	hasher, err := highwayhash.New(key)
+	if err != nil {
+		log.Println("Error generating hasher.")
+		return "", err
+	}
+
+	_, err = io.Copy(hasher, file)
+	if err != nil {
+		log.Println("Error hashing file:", err)
+		return "", err
+	}
+
+	hash := hasher.Sum(nil)
+
+	return base64.StdEncoding.EncodeToString(hash), nil
+}
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

@@ -5,6 +5,8 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
+	"webdawgengine/middleware"
+	"webdawgengine/models"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,13 +16,15 @@ import (
 )
 
 func UploadController(w http.ResponseWriter, r *http.Request) {
+	identity := middleware.GetIdentity(r)
+
 	if r.Method == http.MethodPost {
 		r.ParseMultipartForm(10 << 20)
 
 		file, fileHeader, err := r.FormFile("file")
 
 		if err != nil {
-			UploadView(err.Error(), "").Render(w)
+			UploadView(err.Error(), "", *identity).Render(w)
 			return
 		}
 
@@ -28,13 +32,13 @@ func UploadController(w http.ResponseWriter, r *http.Request) {
 
 		err = os.MkdirAll("./uploads", os.ModePerm)
 		if err != nil {
-			UploadView(err.Error(), "").Render(w)
+			UploadView(err.Error(), "", *identity).Render(w)
 			return
 		}
 
 		dst, err := os.Create(fmt.Sprintf("./uploads/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
 		if err != nil {
-			UploadView(err.Error(), "").Render(w)
+			UploadView(err.Error(), "", *identity).Render(w)
 			return
 		}
 
@@ -42,20 +46,20 @@ func UploadController(w http.ResponseWriter, r *http.Request) {
 
 		fileBytes, err := io.ReadAll(file)
 		if err != nil {
-			UploadView(err.Error(), "").Render(w)
+			UploadView(err.Error(), "", *identity).Render(w)
 			return
 		}
 
 		dst.Write(fileBytes)
 
-		UploadView("", "Successfully uploaded file").Render(w)
+		UploadView("", "Successfully uploaded file", *identity).Render(w)
 	} else {
-		UploadView("", "").Render(w)
+		UploadView("", "", *identity).Render(w)
 	}
 }
 
-func UploadView(errorMsg string, successMsg string) Node {
-	return AppLayout("Upload Example",
+func UploadView(errorMsg string, successMsg string, identity models.Identity) Node {
+	return AppLayout("Upload Example", identity,
 		If(errorMsg != "", Div(Class("alert alert-danger"), Text(errorMsg))),
 		If(successMsg != "", Div(Class("alert alert-success"), Text(successMsg))),
 		Form(Action("/app/examples/upload"), Method("post"), EncType("multipart/form-data"),

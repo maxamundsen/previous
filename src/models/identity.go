@@ -5,8 +5,7 @@ import (
 )
 
 type Identity struct {
-	UserId        int
-	SecurityStamp string
+    User          User
 	Authenticated bool
 	RememberMe    bool
 	Expiration    time.Time

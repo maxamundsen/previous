@@ -2,29 +2,59 @@ package components
 
 import (
 	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
+	"webdawgengine/crypt"
 )
-
 func Root(title string, children ...Node) Node {
-	return HTML5(HTML5Props{
-		Title:    title,
-		Language: "en",
-		Head: []Node{
-			Link(Rel("stylesheet"), Href("/lib/bootstrap/bootstrap.min.css")),
-			Link(Rel("stylesheet"), Href("/lib/bootstrap-icons/bootstrap-icons.min.css")),
-			Link(Rel("stylesheet"), Href("/css/style.css")),
-			Script(Src("/lib/htmx/htmx.min.js")),
-			Script(Src("/lib/bootstrap/bootstrap.bundle.min.js")),
-			Script(Src("/js/index.js")),
-		},
-		Body: Group(children),
-	})
+	// automatically invalidates cached css when file hash changes
+	css_hash, err := crypt.QuickFileHash("./wwwroot/css/style.css");
+	if err != nil {
+		return Text("Error hashing style.css")
+	}
+
+	// automatically invalidates cached js when file hash changes
+	js_hash, err := crypt.QuickFileHash("./wwwroot/js/index.js");
+	if err != nil {
+		return Text("Error hashing index.js")
+	}
+
+	return Doctype(
+		HTML(Class("h-full"),
+			Lang("en"),
+			Head(
+				Meta(Charset("utf-8")),
+				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
+				TitleEl(Text(title)),
+				Meta(Name("description"), Content("WebDawgEngine")),
+
+				Link(Rel("apple-touch-icon"), Attr("sizes", "180x180"), Href("/apple-touch-icon.png")),
+				Link(Rel("icon"), Type("image/png"), Attr("sizes", "32x32"), Href("/favicon-32x32.png")),
+				Link(Rel("icon"), Type("image/png"), Attr("sizes", "16x16"), Href("/favicon-16x16.png")),
+				Link(Rel("manifest"), Href("/site.webmanifest")),
+
+				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
+				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+				Script(Src("/lib/htmx/htmx.min.js")),
+				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
+				Script(Src("/js/index.js?v="+js_hash)),
+			),
+			Group(children), // expected to provide body
+		),
+	)
 }
 
 func EmailRoot(children ...Node) Node {
-	return HTML5(HTML5Props{
-		Language: "en",
-		Body:     Group(children),
-	})
+	return Doctype(
+		HTML(
+			Lang("en"),
+			Head(
+				Meta(Charset("utf-8")),
+				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
+				Meta(Name("description"), Content("WebDawgEngine")),
+			),
+			Body(
+				Group(children),
+			),
+		),
+	)
 }

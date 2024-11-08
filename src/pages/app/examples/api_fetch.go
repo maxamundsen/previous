@@ -5,6 +5,9 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
+	"webdawgengine/middleware"
+	"webdawgengine/models"
+
 	"encoding/json"
 	"io"
 	"net/http"
@@ -25,6 +28,8 @@ type person struct {
 }
 
 func ApiFetchController(w http.ResponseWriter, r *http.Request) {
+	identity := middleware.GetIdentity(r)
+
 	errorMsg := ""
 
 	client := http.Client{
@@ -63,29 +68,28 @@ func ApiFetchController(w http.ResponseWriter, r *http.Request) {
 		errorMsg = jsonErr.Error()
 	}
 
-	ApiFetchView(errorMsg, jsonOutput).Render(w)
+	ApiFetchView(errorMsg, *identity, jsonOutput).Render(w)
 }
 
-func ApiFetchView(errorMsg string, model astroModel) Node {
-	return AppLayout("API Fetch Example",
-		A(Href("http://api.open-notify.org/astros.json"), Text("http://api.open-notify.org/astros.json")),
+func ApiFetchView(errorMsg string, identity models.Identity, model astroModel) Node {
+	return AppLayout("API Fetch Example", identity,
+		PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
+		P(Class("my-5"), Text("Message:")),
+		Code(Class("text-pink-600"), ToText(model.Message)),
 		Br(),
-		P(Text("Message:")),
-		Code(ToText(model.Message)),
 		Br(),
-		Br(),
-		Table(Class("table"),
+		TableTW(
 			THead(
 				Tr(
-					Th(Text("Person")),
-					Th(Text("Spacecraft")),
+					ThTW(Text("Person")),
+					ThTW(Text("Spacecraft")),
 				),
 			),
-			TBody(
+			TBodyTW(
 				Map(model.People, func(p person) Node {
 					return Tr(
-						Td(Text(p.Name)),
-						Td(Text(p.Craft)),
+						TdTW(Text(p.Name)),
+						TdTW(Text(p.Craft)),
 					)
 				}),
 			),

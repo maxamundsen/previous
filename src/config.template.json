@@ -3,6 +3,7 @@
     "Port": "8080",
     "SessionPrivateKey": "key",
     "IdentityPrivateKey": "key",
+    "IdentityDefaultPassword": "password"
     "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/hotlap?parseTime=true",
     "SmtpServer": "server",
     "SmtpPort": "587",
@@ -10,5 +11,4 @@
     "SmtpDisplayFrom": "displayname",
     "SmtpPassword": "password",
     "SmtpRequireAuth": true,
-    "DefaultPassword": "hotlap1234"
 }

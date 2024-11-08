@@ -29,7 +29,7 @@ type Email struct {
 
 func SendMail(message Email, mailtype int) error {
 	recipientString := strings.Join(message.Recipients, ",")
-	from := mail.Address{Name: config.Config.SmtpDisplayFrom, Address: config.Config.SmtpUsername}
+	from := mail.Address{Name: config.GetConfig().SmtpDisplayFrom, Address: config.GetConfig().SmtpUsername}
 
 	header := make(map[string]string)
 	header["To"] = recipientString
@@ -53,11 +53,11 @@ func SendMail(message Email, mailtype int) error {
 
 	var auth smtp.Auth = nil
 
-	if config.Config.SmtpRequireAuth {
-		auth = smtp.PlainAuth("", config.Config.SmtpUsername, config.Config.SmtpPassword, config.Config.SmtpServer)
+	if config.GetConfig().SmtpRequireAuth {
+		auth = smtp.PlainAuth("", config.GetConfig().SmtpUsername, config.GetConfig().SmtpPassword, config.GetConfig().SmtpServer)
 	}
 
-	err := smtp.SendMail(config.Config.SmtpServer+":"+config.Config.SmtpPort, auth, config.Config.SmtpUsername, message.Recipients, []byte(email))
+	err := smtp.SendMail(config.GetConfig().SmtpServer+":"+config.GetConfig().SmtpPort, auth, config.GetConfig().SmtpUsername, message.Recipients, []byte(email))
 	if err != nil {
 		log.Println(err)
 		return err

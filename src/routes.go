@@ -10,6 +10,7 @@ import (
 	"webdawgengine/middleware"
 
 	"webdawgengine/pages/app"
+	"webdawgengine/pages/docs"
 	"webdawgengine/pages/app/examples"
 	"webdawgengine/pages/auth"
 	"webdawgengine/pages/components"
@@ -36,12 +37,31 @@ func mapPageRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/app/examples/api-fetch", id(sess(examples.ApiFetchController), true))
 	mux.HandleFunc("/app/examples/htmx", id(sess(examples.HtmxController), true))
 	mux.HandleFunc("/app/examples/htmx/counter/{count}", id(sess(examples.HtmxCounterController), true))
+	mux.HandleFunc("/app/examples/alpine", id(sess(examples.AlpineController), true))
 	mux.HandleFunc("/app/examples/upload", id(sess(examples.UploadController), true))
 	mux.HandleFunc("/app/examples/smtp", id(sess(examples.SmtpController), true))
 
+	mux.HandleFunc("/app/api-demo", id(sess(app.ApiDemoController), true))
+
 	mux.HandleFunc("/app/account", id(sess(app.AccountController), true))
 
-	mux.HandleFunc("/app/api-tester", id(sess(app.ApiTesterController), true))
+	// docs handlers
+	mux.HandleFunc("/docs", docs.IndexController)
+
+	// dynamically map documentation pages
+	for _, v := range docs.DocList {
+		if len(v.SubList) == 0 {
+			if v.Slug != "" {
+				mux.HandleFunc("/docs/" + v.Slug, docs.DocController)
+			}
+		} else {
+			for _, k := range v.SubList {
+				if k.Slug !=  "" {
+					mux.HandleFunc("/docs/" + k.Slug, docs.DocController)
+				}
+			}
+		}
+	}
 
 	log.Println("Mapped page routes")
 }

@@ -19,7 +19,24 @@ const (
 	UNAUTHORIZED_MESSAGE string = "Unauthorized access"
 )
 
-func Authenticate(username string, password string) (models.User, bool) {
+func NewIdentity(userid int, rememberMe bool) *models.Identity {
+	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
+	expiration := time.Now().Add(expirationDuration)
+
+	user, fetchErr := database.FetchUserById(userid)
+	if fetchErr != nil {
+		return nil
+	}
+
+	return &models.Identity{
+		User:          user,
+		Authenticated: true,
+		RememberMe:    rememberMe,
+		Expiration:    expiration,
+	}
+}
+
+func Authenticate(username string, password string) (int, bool) {
 	// time attack partial mitigation
 	// adds up to 0.5 seconds to the response time
 
@@ -43,7 +60,7 @@ func Authenticate(username string, password string) (models.User, bool) {
 		// set user password to dummy password to keep timing consistent when validating password
 		user.Password = "$2a$14$KW5OO1wZqGGq3SrpBFj0Oema5DG8Ph7lZJvq0ECkkYBpNFom6b9vO"
 		crypt.ComparePasswords(password, user.Password)
-		return user, false
+		return 0, false
 	}
 
 	result := crypt.ComparePasswords(password, user.Password)
@@ -56,7 +73,7 @@ func Authenticate(username string, password string) (models.User, bool) {
 		database.UpdateUser(user)
 	}
 
-	return user, result
+	return user.Id, result
 }
 
 func CheckPasswordCriteria(password string) error {
@@ -158,7 +175,7 @@ func ResetPasswordNoConfirm(userid int) (models.User, error) {
 		return user, err
 	}
 
-	hash, hashErr := crypt.HashPassword(config.Config.IdentityDefaultPassword)
+	hash, hashErr := crypt.HashPassword(config.GetConfig().IdentityDefaultPassword)
 	if hashErr != nil {
 		return user, hashErr
 	}

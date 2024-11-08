@@ -8,6 +8,9 @@ import (
 	"webdawgengine/build"
 	"webdawgengine/config"
 	"webdawgengine/database"
+
+	"webdawgengine/pages/docs"
+
 )
 
 // Entry point for the application, initializes package globals
@@ -28,6 +31,7 @@ func main() {
 
 	config.LoadConfig(configFile)
 
+	docs.RegisterDocumentation();
 	database.Init()
 
 	// create http multiplexer, map routes
@@ -36,9 +40,9 @@ func main() {
 	mapPageRoutes(mux)
 	mapApiRoutes(mux)
 
-	log.Println("Listening on http://" + config.Config.Host + ":" + config.Config.Port)
+	log.Println("Listening on http://" + config.GetConfig().Host + ":" + config.GetConfig().Port)
 
-	serveErr := http.ListenAndServe(config.Config.Host+":"+config.Config.Port, mux)
+	serveErr := http.ListenAndServe(config.GetConfig().Host+":"+config.GetConfig().Port, mux)
 
 	if serveErr != nil {
 		log.Fatal(serveErr)

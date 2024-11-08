@@ -21,14 +21,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		println(err)
 	}
 
-	user, authResult := auth.Authenticate(loginInfo.Username, loginInfo.Password)
+	userid, authResult := auth.Authenticate(loginInfo.Username, loginInfo.Password)
 	if !authResult {
 		log.Println("Failed login attempt via API call. Username: " + loginInfo.Username)
 		http.Error(w, "Invalid login information", http.StatusUnauthorized)
 		return
 	}
 
-	identity := middleware.NewIdentity(user.Id, user.SecurityStamp, true, false)
+	identity := auth.NewIdentity(userid, false)
 
 	encrypted, err := middleware.EncryptIdentity(identity)
 	if err != nil {

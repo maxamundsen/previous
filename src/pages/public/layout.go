@@ -8,7 +8,7 @@ import (
 
 func PublicLayout(title string, children ...Node) Node {
 	return Root(title,
-		Div(Class("container"),
+		Body(Class("bg-gray-50"),
 			Group(children),
 		),
 	)

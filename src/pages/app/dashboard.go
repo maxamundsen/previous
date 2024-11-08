@@ -5,7 +5,6 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
-	"webdawgengine/database"
 	"webdawgengine/middleware"
 	"webdawgengine/models"
 
@@ -14,13 +13,23 @@ import (
 
 func DashboardController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
-	user, _ := database.FetchUserById(identity.UserId)
-
-	DashboardView(user).Render(w)
+	DashboardView(*identity).Render(w)
 }
 
-func DashboardView(user models.User) Node {
-	return AppLayout("Dashboard",
-		H5(Text("Welcome back, "), Text(user.Firstname+" "+user.Lastname), Text(".")),
+func DashboardView(identity models.Identity) Node {
+	return AppLayout("Dashboard", identity,
+		H5(Class("font-bold"), Text("Welcome back, "), Text(identity.User.Firstname+" "+identity.User.Lastname), Text(".")),
+		P(
+			Text("This page requires a login!"),
+		),
+		If(identity.User.PermissionAdmin,
+			Div(
+				Div(Class("mt-10 p-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"),
+					P(Class("font-bold text-red-600"), Text("Admin only")),
+					P(Text("You can only see this if you have the admin permission")),
+				),
+			),
+
+		),
 	)
 }

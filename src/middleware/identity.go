@@ -14,19 +14,6 @@ import (
 
 type identityKey struct{}
 
-func NewIdentity(userid int, securityStamp string, authenticated bool, rememberMe bool) *models.Identity {
-	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
-	expiration := time.Now().Add(expirationDuration)
-
-	return &models.Identity{
-		UserId:        userid,
-		SecurityStamp: securityStamp,
-		Authenticated: authenticated,
-		RememberMe:    rememberMe,
-		Expiration:    expiration,
-	}
-}
-
 func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 	loginPath := config.IDENTITY_LOGIN_PATH
 	logoutPath := config.IDENTITY_LOGOUT_PATH
@@ -38,8 +25,11 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 		token := r.Header.Get("Authorization")
 
+		isToken := token != ""
+
 		// if bearer token present, use token auth, else use cookies
-		if token != "" {
+		if isToken {
+			redirect = false
 			splitToken := strings.Split(token, "Bearer ")
 
 			if len(splitToken) >= 2 {
@@ -59,20 +49,6 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 				h.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}
-
-			securityStamp, _ := database.FetchUserSecurityStamp(identity.UserId)
-
-			securityCheckFailed := securityStamp != identity.SecurityStamp
-			notAuthenticated := requireAuth && !identity.Authenticated
-			identityExpired := identity.Expiration.Before(time.Now())
-
-			if securityCheckFailed || notAuthenticated || identityExpired {
-				http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
-				return
-			}
-
-			ctx := context.WithValue(r.Context(), identityKey{}, identity)
-			h.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			identityCookie, err := r.Cookie(config.IDENTITY_COOKIE_NAME)
 			if err == nil {
@@ -98,27 +74,32 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 				h.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}
+		}
 
-			securityStamp, _ := database.FetchUserSecurityStamp(identity.UserId)
+		latestUser, _ := database.FetchUserById(identity.User.Id)
 
-			securityCheckFailed := securityStamp != identity.SecurityStamp
-			notAuthenticated := requireAuth && !identity.Authenticated
-			identityExpired := identity.Expiration.Before(time.Now())
+		securityCheckFailed := latestUser.SecurityStamp != identity.User.SecurityStamp
+		notAuthenticated := requireAuth && !identity.Authenticated
+		identityExpired := identity.Expiration.Before(time.Now())
 
-			if securityCheckFailed || notAuthenticated || identityExpired {
+		if securityCheckFailed || notAuthenticated || identityExpired {
+			if isToken {
+				http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
+				return
+			} else {
 				DeleteIdentityCookie(w, r)
 				http.Redirect(w, r, loginPath, http.StatusFound)
 				return
 			}
-
-			if redirect && loginPath == r.URL.Path {
-				http.Redirect(w, r, defaultPath, http.StatusFound)
-				return
-			}
-
-			ctx := context.WithValue(r.Context(), identityKey{}, identity)
-			h.ServeHTTP(w, r.WithContext(ctx))
 		}
+
+		if redirect && loginPath == r.URL.Path {
+			http.Redirect(w, r, defaultPath, http.StatusFound)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), identityKey{}, identity)
+		h.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

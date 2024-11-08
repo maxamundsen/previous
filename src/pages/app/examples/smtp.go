@@ -6,12 +6,16 @@ import (
 	. "webdawgengine/pages/components"
 
 	"webdawgengine/snailmail"
+	"webdawgengine/middleware"
+	"webdawgengine/models"
 
 	"bytes"
 	"net/http"
 )
 
 func SmtpController(w http.ResponseWriter, r *http.Request) {
+	identity := middleware.GetIdentity(r)
+
 	if r.Method == http.MethodPost {
 		recipients := r.FormValue("to")
 		subject := r.FormValue("subject")
@@ -30,30 +34,30 @@ func SmtpController(w http.ResponseWriter, r *http.Request) {
 		err := snailmail.SendMail(message, snailmail.TYPE_HTML)
 
 		if err != nil {
-			SmtpView(err.Error(), "").Render(w)
+			SmtpView(err.Error(), "", *identity).Render(w)
 		} else {
-			SmtpView("", "Successfully sent mail!").Render(w)
+			SmtpView("", "Successfully sent mail!", *identity).Render(w)
 		}
 	} else {
-		SmtpView("", "").Render(w)
+		SmtpView("", "", *identity).Render(w)
 	}
 }
 
-func SmtpView(errorMsg string, successMsg string) Node {
-	return AppLayout("SMTP Client Example",
-		If(errorMsg != "", Div(Class("alert alert-danger"), Text(errorMsg))),
-		If(successMsg != "", Div(Class("alert alert-success"), Text(successMsg))),
+func SmtpView(errorMsg string, successMsg string, identity models.Identity) Node {
+	return AppLayout("SMTP Client Example", identity,
+		If(errorMsg != "", P(Class("text-red-600"), Text(errorMsg))),
+		If(successMsg != "", P(Class("text-red-600"), Text(successMsg))),
 		Form(Method("post"), AutoComplete("off"),
-			Label(Class("form-label"), Text("To:")),
-			Input(Class("form-control"), Type("email"), Name("to")),
+			FormLabel(Text("To:")),
+			FormInput(Type("email"), Name("to")),
 			Br(),
-			Label(Class("form-label"), Text("Subject:")),
-			Input(Class("form-control"), Type("text"), Name("subject")),
+			FormLabel(Text("Subject:")),
+			FormInput(Type("text"), Name("subject")),
 			Br(),
-			Label(Class("form-label"), Text("Body:")),
-			Textarea(Class("form-control"), Name("body")),
+			FormLabel(Text("Body:")),
+			FormTextarea(Name("body")),
 			Br(),
-			Button(Type("submit"), Class("btn btn-primary"), Text("Send mail")),
+			ButtonGray(Type("submit"), Class("btn btn-primary"), Text("Send mail")),
 		),
 	)
 }

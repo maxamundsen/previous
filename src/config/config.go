@@ -49,7 +49,11 @@ type configuration struct {
 	SmtpRequireAuth         bool   `json:"SmtpRequireAuth"`
 }
 
-var Config configuration
+var config configuration
+
+func GetConfig() configuration {
+	return config
+}
 
 func LoadConfig(configFile *os.File) {
 	configBytes, readErr := io.ReadAll(configFile)
@@ -60,7 +64,7 @@ func LoadConfig(configFile *os.File) {
 
 	defer configFile.Close()
 
-	jsonErr := json.Unmarshal(configBytes, &Config)
+	jsonErr := json.Unmarshal(configBytes, &config)
 
 	if jsonErr != nil {
 		log.Fatal(fmt.Errorf("configuration error: %v", jsonErr))

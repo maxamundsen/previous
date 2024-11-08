@@ -33,7 +33,7 @@ func EncryptSession(data map[string]interface{}) (string, error) {
 	}
 
 	// encrypt
-	sessionString, err := crypt.EncryptSecret(b.Bytes(), config.Config.IdentityPrivateKey)
+	sessionString, err := crypt.EncryptSecret(b.Bytes(), config.GetConfig().IdentityPrivateKey)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func EncryptSession(data map[string]interface{}) (string, error) {
 func DecryptSession(sessionString string) (map[string]interface{}, error) {
 	session := make(map[string]interface{})
 
-	secret, err := crypt.DecryptSecret(sessionString, config.Config.IdentityPrivateKey)
+	secret, err := crypt.DecryptSecret(sessionString, config.GetConfig().IdentityPrivateKey)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func EncryptIdentity(data *models.Identity) (string, error) {
 	}
 
 	// encrypt
-	auth, err := crypt.EncryptSecret(b.Bytes(), config.Config.IdentityPrivateKey)
+	auth, err := crypt.EncryptSecret(b.Bytes(), config.GetConfig().IdentityPrivateKey)
 	if err != nil {
 		return "", err
 	}
@@ -84,7 +84,7 @@ func DecryptIdentity(authString string) (*models.Identity, error) {
 	cookie := models.Identity{}
 
 	// decrypt
-	secret, err := crypt.DecryptSecret(authString, config.Config.IdentityPrivateKey)
+	secret, err := crypt.DecryptSecret(authString, config.GetConfig().IdentityPrivateKey)
 	if err != nil {
 		return nil, err
 	}
