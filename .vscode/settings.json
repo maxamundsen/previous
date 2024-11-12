@@ -1,0 +1,7 @@
+{
+    "search.exclude": {
+        "**/.git": true,
+        "**/wwwroot/lib": true,
+        "**/vendor": true
+    },
+}

@@ -5,9 +5,9 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
-	"webdawgengine/snailmail"
 	"webdawgengine/middleware"
 	"webdawgengine/models"
+	"webdawgengine/snailmail"
 
 	"bytes"
 	"net/http"

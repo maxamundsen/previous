@@ -2,23 +2,24 @@ package docs
 
 import (
 	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	. "maragu.dev/gomponents/components"
+	. "maragu.dev/gomponents/html"
 
 	. "webdawgengine/pages/components"
+
 	"github.com/gomarkdown/markdown"
 
+	"io/ioutil"
 	"net/http"
 	"path"
-	"io/ioutil"
 )
 
 type Document struct {
-	DisplayId int
+	DisplayId    int
 	SubDisplayId int
-	Title string
-	Slug string
-	SubList []Document
+	Title        string
+	Slug         string
+	SubList      []Document
 }
 
 var DocList []Document
@@ -26,7 +27,7 @@ var DocList []Document
 func RegisterDocPage(doc Document) {
 	doc.DisplayId = len(DocList) + 1
 
-	for i, _ := range doc.SubList {
+	for i := range doc.SubList {
 		doc.SubList[i].DisplayId = len(DocList) + 1
 	}
 
@@ -36,119 +37,116 @@ func RegisterDocPage(doc Document) {
 func RegisterDocumentation() {
 	RegisterDocPage(Document{
 		Title: "Prerequisites",
-		Slug: "prerequisites",
+		Slug:  "prerequisites",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Getting Started",
-		Slug: "getting-started",
+		Slug:  "getting-started",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Build System",
 		SubList: []Document{
-			{ Title: "How the build system works", Slug: "build-system" },
-			{ Title: "Running Locally", Slug: "running-locally" },
-			{ Title: "Testing & Benchmarking", Slug: "testing-benchmarking" },
-			{ Title: "Deploying", Slug: "deploying" },
+			{Title: "How the build system works", Slug: "build-system"},
+			{Title: "Running Locally", Slug: "running-locally"},
+			{Title: "Testing & Benchmarking", Slug: "testing-benchmarking"},
+			{Title: "Deploying", Slug: "deploying"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Program Entrypoint",
-		Slug: "program-entrypoint",
+		Slug:  "program-entrypoint",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Configuration",
-		Slug: "configuration",
+		Slug:  "configuration",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Routing",
-		SubList: []Document{
-			{ Title: "Static Routing", Slug: "static-routing" },
-			{ Title: "Dynamic Routing", Slug: "dynamic-routing" },
-		},
+		Slug:  "routing",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Controllers",
-		SubList: []Document {
-			{ Title: "Page Controllers", Slug: "page-controllers" },
-			{ Title: "API Controllers", Slug: "api-controllers" },
+		SubList: []Document{
+			{Title: "Page Controllers", Slug: "page-controllers"},
+			{Title: "API Controllers", Slug: "api-controllers"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Views",
-		SubList: []Document {
-			{ Title: "Generating HTML", Slug: "generating-html" },
-			{ Title: "Component System", Slug: "component-system" },
-			{ Title: "Organizing Components", Slug: "organizing-components" },
-			{ Title: "Markdown Content", Slug:"markdown-content" },
+		SubList: []Document{
+			{Title: "Generating HTML", Slug: "generating-html"},
+			{Title: "Component System", Slug: "component-system"},
+			{Title: "Organizing Components", Slug: "organizing-components"},
+			{Title: "Markdown Content", Slug: "markdown-content"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Styling",
 		SubList: []Document{
-			{ Title: "Tailwind Integration", Slug: "tailwind-integration" },
-			{ Title: "Icons", Slug: "icons" },
+			{Title: "Tailwind Integration", Slug: "tailwind-integration"},
+			{Title: "Icons", Slug: "icons"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Interactivity",
 		SubList: []Document{
-			{ Title: "HTMX", Slug: "htmx" },
-			{ Title: "Alpine.js", Slug: "alpine" },
-			{ Title: "Component Integration", Slug: "interactive-components" },
+			{Title: "HTMX", Slug: "htmx"},
+			{Title: "Alpine.js", Slug: "alpine"},
+			{Title: "Component Integration", Slug: "interactive-components"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Database Interaction",
 		SubList: []Document{
-			{ Title: "DB Connections", Slug: "db-connections" },
-			{ Title: "SQL Compiler", Slug: "sql-compiler" },
+			{Title: "DB Connections", Slug: "db-connections"},
+			{Title: "SQL Compiler", Slug: "sql-compiler"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Auth Flow",
 		SubList: []Document{
-			{  Title: "Authentication", Slug: "authentication" },
-			{  Title: "Authorization", Slug: "authorization" },
+			{Title: "Authentication", Slug: "authentication"},
+			{Title: "Authorization", Slug: "authorization"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Middleware",
 		SubList: []Document{
-			{  Title: "Middleware Chains", Slug: "middleware-chains" },
-			{  Title: "Auth / Identity", Slug: "middleware-identity" },
-			{  Title: "Sessions", Slug: "middleware-sessions" },
+			{Title: "Middleware Chains", Slug: "middleware-chains"},
+			{Title: "Auth / Identity", Slug: "middleware-identity"},
+			{Title: "Sessions", Slug: "middleware-sessions"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Extras / Helpers",
 		SubList: []Document{
-			{  Title: "SMTP Client", Slug: "smtp-client" },
-			{  Title: "View Helpers / Formatters", Slug: "view-helpers" },
-			{  Title: "Financial Helpers", Slug: "financial-helpers" },
+			{Title: "SMTP Client", Slug: "smtp-client"},
+			{Title: "View Helpers / Formatters", Slug: "view-helpers"},
+			{Title: "Financial Helpers", Slug: "financial-helpers"},
 		},
 	})
 
 	RegisterDocPage(Document{
 		Title: "Editor Support",
-		Slug: "editor-support",
+		Slug:  "editor-support",
 	})
 
 	RegisterDocPage(Document{
 		Title: "Examples",
-		Slug: "examples",
+		Slug:  "examples",
 	})
 }
 
@@ -196,7 +194,7 @@ func DocView(title string, displayId int, html string) Node {
 }
 
 func DocLayout(title string, displayId int, children ...Node) Node {
-	return Root(title + " | WebDawgEngine Documentation",
+	return Root(title+" | WebDawgEngine Documentation",
 		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-boost", "true"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
 			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-100 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"),
 				Span(Class("sr-only"), Text("Open sidebar")),
@@ -221,7 +219,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 										Ul(Class("mt-2 space-y-1 px-4"),
 											Map(doc.SubList, func(subdoc Document) Node {
 												return Li(
-													A(Href("/docs/" + subdoc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100": true, "hover:bg-red-900": title != subdoc.Title, "bg-red-900": title == subdoc.Title}, Text(subdoc.Title)),
+													A(Href("/docs/"+subdoc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100": true, "hover:bg-red-900": title != subdoc.Title, "bg-red-900": title == subdoc.Title}, Text(subdoc.Title)),
 												)
 											}),
 										),
@@ -229,7 +227,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 								)
 							} else {
 								return Li(
-									A(Href("/docs/" + doc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100 hover:bg-red-900": true, "bg-red-900": displayId == doc.DisplayId}, Text(doc.Title)),
+									A(Href("/docs/"+doc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100 hover:bg-red-900": true, "bg-red-900": displayId == doc.DisplayId}, Text(doc.Title)),
 								)
 							}
 						}),

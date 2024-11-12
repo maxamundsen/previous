@@ -10,10 +10,10 @@ import (
 	"webdawgengine/middleware"
 
 	"webdawgengine/pages/app"
-	"webdawgengine/pages/docs"
 	"webdawgengine/pages/app/examples"
 	"webdawgengine/pages/auth"
 	"webdawgengine/pages/components"
+	"webdawgengine/pages/docs"
 	"webdawgengine/pages/public"
 
 	"webdawgengine/api"
@@ -52,12 +52,12 @@ func mapPageRoutes(mux *http.ServeMux) {
 	for _, v := range docs.DocList {
 		if len(v.SubList) == 0 {
 			if v.Slug != "" {
-				mux.HandleFunc("/docs/" + v.Slug, docs.DocController)
+				mux.HandleFunc("/docs/"+v.Slug, docs.DocController)
 			}
 		} else {
 			for _, k := range v.SubList {
-				if k.Slug !=  "" {
-					mux.HandleFunc("/docs/" + k.Slug, docs.DocController)
+				if k.Slug != "" {
+					mux.HandleFunc("/docs/"+k.Slug, docs.DocController)
 				}
 			}
 		}

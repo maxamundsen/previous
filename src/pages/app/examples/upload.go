@@ -5,14 +5,14 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+	"webdawgengine/middleware"
+	"webdawgengine/models"
 )
 
 func UploadController(w http.ResponseWriter, r *http.Request) {

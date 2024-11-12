@@ -1,10 +1,10 @@
 package public
 
 import (
-	. "webdawgengine/pages/components"
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	"net/http"
+	. "webdawgengine/pages/components"
 )
 
 func IndexController(w http.ResponseWriter, r *http.Request) {

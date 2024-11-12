@@ -26,8 +26,28 @@ build.bat
 ```
 
 ### Build Constants
-The Go programming language can conditionally include code at _compile time_ by providing a condition in a comment at the top of a file.
+The Go programming language can conditionally include code at _compile time_ by including a special comment at the top of a file.
+This feature is similar to the static `#if` in Jai, or `#ifdef` in C/C++, although significantly less ergonomic.
+
+WDE provides a `build` package, which only exists to set the `DEBUG` constant at compile time.
+
+When compiling the program with the following command, the `DEBUG` constant is true. Else, it is false.
 
 ```sh
 go build -tags=debug
+```
+
+```go
+func main() {
+	if build.DEBUG {
+		fmt.Println("DEBUG BUILD")
+	} else {
+		fmt.Println("RELEASE BUILD")
+	}
+}
+```
+
+Program Output:
+```
+> DEBUG BUILD
 ```

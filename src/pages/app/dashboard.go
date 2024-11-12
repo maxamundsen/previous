@@ -29,7 +29,6 @@ func DashboardView(identity models.Identity) Node {
 					P(Text("You can only see this if you have the admin permission")),
 				),
 			),
-
 		),
 	)
 }

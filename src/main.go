@@ -9,7 +9,6 @@ import (
 	"webdawgengine/database"
 
 	"webdawgengine/pages/docs"
-
 )
 
 // Entry point for the application, initializes package globals
@@ -25,7 +24,7 @@ func main() {
 
 	config.LoadConfig()
 
-	docs.RegisterDocumentation();
+	docs.RegisterDocumentation()
 	database.Init()
 
 	// create http multiplexer, map routes

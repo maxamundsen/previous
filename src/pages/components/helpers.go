@@ -25,4 +25,3 @@ func IffElse(condition bool, t func() Node, f func() Node) Node {
 		return f()
 	}
 }
-

@@ -69,7 +69,7 @@ func ApiDemoView(identity models.Identity) Node {
 				FormLabel(Text("Username:")),
 				FormInput(Type("text"), Attr("x-model", "username")),
 				FormLabel(Text("Password:")),
-				FormInput(Type("password"),  Attr("x-model", "password")),
+				FormInput(Type("password"), Attr("x-model", "password")),
 				Br(),
 				ButtonRed(Type("submit"), Text("Generate Token")),
 				Div(Class("mt-7 text-red-500"), Attr("x-text", "error")),

@@ -1,0 +1,88 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "TailwindCSS Compile - MacOS",
+            "command": "./tailwindcss-macos-arm64 -i styles/global.css -o wwwroot/css/style.css --minify",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },         
+        },
+        {
+            "type": "shell",
+            "label": "Go Format",
+            "command": "go fmt ./...",
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        },
+        {
+            "type": "go",
+            "label": "Build Release",
+            "command": "build",
+            "args": [
+                "./..."
+            ],
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        },
+        {
+            "type": "go",
+            "label": "Build Debug",
+            "command": "build",
+            "args": [
+                "-tags=debug",
+                "./...",
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        },
+        {
+            "type": "go",
+            "label": "Run Tests",
+            "command": "test",
+            "args": [
+                "-v",
+                "./...",
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        },
+        {
+            "type": "go",
+            "label": "Run Benchmarks",
+            "command": "test",
+            "args": [
+                "-bench=.",
+                "./...",
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Deploy Staging",
+            "command": "./deploy_staging.bat",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+        }
+    ]
+}

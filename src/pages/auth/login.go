@@ -86,7 +86,6 @@ func LoginView(errorMsg string) Node {
 						),
 					),
 					P(Class("mt-10 text-sm text-gray-500"), Text("© "), ToText(currentYear), Text(" Max Amundsen")),
-
 				),
 			),
 		),

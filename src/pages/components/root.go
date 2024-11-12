@@ -5,15 +5,16 @@ import (
 	. "maragu.dev/gomponents/html"
 	"webdawgengine/crypt"
 )
+
 func Root(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
-	css_hash, err := crypt.QuickFileHash("./wwwroot/css/style.css");
+	css_hash, err := crypt.QuickFileHash("./wwwroot/css/style.css")
 	if err != nil {
 		return Text("Error hashing style.css")
 	}
 
 	// automatically invalidates cached js when file hash changes
-	js_hash, err := crypt.QuickFileHash("./wwwroot/js/index.js");
+	js_hash, err := crypt.QuickFileHash("./wwwroot/js/index.js")
 	if err != nil {
 		return Text("Error hashing index.js")
 	}

@@ -10,8 +10,8 @@ import (
 	"log"
 	"os"
 
-	"golang.org/x/crypto/bcrypt"
 	"github.com/minio/highwayhash"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func QuickFileHash(filepath string) (string, error) {

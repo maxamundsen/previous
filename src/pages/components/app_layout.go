@@ -1,13 +1,13 @@
 package components
 
 import (
-	"webdawgengine/models"
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
+	"webdawgengine/models"
 )
 
 func AppLayout(title string, identity models.Identity, children ...Node) Node {
-	return Root(title + " | WebDawgEngine",
+	return Root(title+" | WebDawgEngine",
 		Body(Attr("hx-boost", "true"), Class("bg-gray-50 h-full"),
 			Div(Attr("x-data", "{ profileDropdownOpen: false, mobileMenuOpen: false }"), Class("min-h-full"),
 				Nav(Class("bg-red-800"),
@@ -15,7 +15,7 @@ func AppLayout(title string, identity models.Identity, children ...Node) Node {
 						Div(Class("flex h-16 items-center justify-between"),
 							Div(Class("flex items-center"),
 								Div(Class("flex-shrink-0"),
-									A(Href("/"),Img(Class("h-8 w-8"), Src("/images/logo_white.svg"), Alt("WebDawgEngine"))),
+									A(Href("/"), Img(Class("h-8 w-8"), Src("/images/logo_white.svg"), Alt("WebDawgEngine"))),
 								),
 								Div(Attr("x-data", "{ examplesDropdownOpen: false }"), Class("hidden md:block"),
 									Div(Class("ml-10 flex items-baseline space-x-4"),
@@ -73,7 +73,7 @@ func AppLayout(title string, identity models.Identity, children ...Node) Node {
 									Img(Class("h-10 w-10 rounded-full"), Src("/images/profile_picture.png"), Alt("profile picture")),
 								),
 								Div(Class("ml-3"),
-									Div(Class("text-base/5 font-medium text-white"), Text(identity.User.Firstname + " " + identity.User.Lastname)),
+									Div(Class("text-base/5 font-medium text-white"), Text(identity.User.Firstname+" "+identity.User.Lastname)),
 									Div(Class("text-sm font-medium text-gray-400"), Text(identity.User.Email)),
 								),
 							),

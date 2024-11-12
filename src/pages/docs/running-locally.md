@@ -1,4 +1,4 @@
-# Running a WDE Server Locally
+# Running the WDE Server Locally
 
 After building the WDE project, you can run the server locally by executing the following inside a terminal:
 
