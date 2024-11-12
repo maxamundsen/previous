@@ -24,7 +24,7 @@ func DashboardView(identity models.Identity) Node {
 		),
 		If(identity.User.PermissionAdmin,
 			Div(
-				Div(Class("mt-10 p-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"),
+				Div(Class("mt-10 p-10 bg-white border border-gray-200 rounded-lg shadow"),
 					P(Class("font-bold text-red-600"), Text("Admin only")),
 					P(Text("You can only see this if you have the admin permission")),
 				),

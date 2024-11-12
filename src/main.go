@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"webdawgengine/build"
 	"webdawgengine/config"
 	"webdawgengine/database"
@@ -24,12 +23,7 @@ func main() {
 		fmt.Println("RELEASE BUILD")
 	}
 
-	configFile, err := os.Open("config.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	config.LoadConfig(configFile)
+	config.LoadConfig()
 
 	docs.RegisterDocumentation();
 	database.Init()

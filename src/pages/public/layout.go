@@ -9,7 +9,9 @@ import (
 func PublicLayout(title string, children ...Node) Node {
 	return Root(title,
 		Body(Class("bg-gray-50"),
-			Group(children),
+			Container(
+				Group(children),
+			),
 		),
 	)
 }

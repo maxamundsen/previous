@@ -1,7 +1,24 @@
 # Global Configuration
 
-In WDE, the configuration is a global structure that lives in the `config` package.
-You can read the contents of the configuration struct using the `config.GetConfig()` function.
+"Configuration" in WDE is loosely defined as a set of global variables, and constants that can be accessed from anywhere, to set certain settings within the WDE server.
+For example, you want to specify the maximum number of login attempts, or set the global database credentials.
+Really anything that could be a read-only global variable constitutes itself as a "configuration option".
+
+
+Out of the box, WDE comes with all of the necessary configuration options needed to configure the included features / examples.
+You can add your own options, or remove ones you don't need.
+
+
+## Runtime Configuration
+
+Runtime configuration options are designed to be set by the system administrator deploying the WDE server executable.
+Setting these options does _not_ require rebuilding the application, or access to the source code, as they are set at runtime.
+
+Example: You want to set different database credentials on your local machine, than on the production server.
+
+The runtime config is defined as a struct of type `configuration` in the `config` package shown below.
+A private instance of this struct is defined at the top level of the package, and can be accessed from other packages using the `config.GetConfig()` function.
+The runtime configuration is retrived using a getter function to prevent the consumer from accidentally overriding its members.
 
 ```go
 type configuration struct {
@@ -17,46 +34,31 @@ func GetConfig() configuration {
 }
 ```
 
-To avoid any potential mishaps, the configuration struct can only be modified within the `config` package.
-`config.GetConfig()` returns a _copy_ of a `configuration` struct, to avoid overwriting the contents of the struct.
+### Reading the config file
 
-Example usage:
-```go
-package yourpackage
+In order to populate the `config` struct, `config.LoadConfig()` is called from `main()`.
 
-import "webdawgengine/config"
+This function attempts to parse `config.json` located in the `/src` directory of the project upon program start.
+If the config file is not found, one will be generated for you.
+JSON keys must match the struct tags found on the `configuration` struct definition.
 
-func printHostAddress() {
-	println(config.GetConfig().Host)
-}
-```
-## Runtime Configuration
-Many web applications require specific runtime settings.
-You may use this for configuring a production environment differently than a local development environment, for instance.
-
-WDE ships with a configuration parser that reads from `config.json`, found in the `/src` directory of the project.
-When you first download the project template, you will not find a `config.json` file.
-This is because only a `config.template.json` file is stored in git.
-`config.json` is _specifically added to the `.gitignore` file to avoid leaking secrets in source control_.
-
+The config file looks something like this:
 ```json
 {
     "Host": "localhost",
     "Port": "8080",
-    "SessionPrivateKey": "key",
-    "IdentityPrivateKey": "key",
-    "IdentityDefaultPassword": "password"
-    "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/hotlap?parseTime=true",
-    "SmtpServer": "server",
-    "SmtpPort": "587",
-    "SmtpUsername": "username",
-    "SmtpDisplayFrom": "displayname",
-    "SmtpPassword": "password",
-    "SmtpRequireAuth": true,
+	...
 }
 ```
 
+_Note: `config.json` is deliberately added to `.gitignore` to avoid leaking secrets in source control_.
+
 ## Compile-time Configuration
+
+Unlike the runtime options, compile-time options are specifically intended to be set by the _developer_ (that's you!).
+
+These are just plain global constants.
+They are intentially located in the `config` package (and not elsewhere) to keep all configuration related constants in one place.
 
 ```go
 const (
@@ -64,21 +66,27 @@ const (
 	SESSION_COOKIE_EXPIRY_DAYS int = 100
 	SESSION_COOKIE_ENTROPY     int = 33
 
-	IDENTITY_COOKIE_NAME        string = "_webdawgengine_identity"
-	IDENTITY_COOKIE_EXPIRY_DAYS int    = 30
-	IDENTITY_TOKEN_EXPIRY_DAYS  int    = 30
-	IDENTITY_COOKIE_ENTROPY     int    = 33
-	IDENTITY_LOGIN_PATH         string = "/auth/login"
-	IDENTITY_LOGOUT_PATH        string = "/auth/logout"
-	IDENTITY_DEFAULT_PATH       string = "/app/dashboard"
-	IDENTITY_AUTH_REDIRECT      bool   = true
-
-	PASSWORD_MIN_LENGTH         int = 8
-	PASSWORD_REQUIRED_UPPERCASE int = 1
-	PASSWORD_REQUIRED_LOWERCASE int = 1
-	PASSWORD_REQUIRED_NUMBERS   int = 1
-	PASSWORD_REQUIRED_SYMBOLS   int = 0
-
-	MAX_LOGIN_ATTEMPTS int = 5
+	...
 )
+```
+
+
+## Example usage
+To use the config, import `webdawgengine/config` from any package to get your config options.
+
+```go
+package yourpackage
+
+import "webdawgengine/config"
+
+func connectToDatabase() {
+	// runtime config
+	db, err := sql.Connect("dbengine", config.GetConfig().DbConnectionString)
+	...
+}
+
+func printSessionName() {
+	// compile-time constant config
+	println(config.SESSION_COOKIE_NAME)
+}
 ```

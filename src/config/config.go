@@ -49,26 +49,62 @@ type configuration struct {
 	SmtpRequireAuth         bool   `json:"SmtpRequireAuth"`
 }
 
+const DEFAULT_CONFIG = `{
+    "Host": "localhost",
+    "Port": "8080",
+    "SessionPrivateKey": "key",
+    "IdentityPrivateKey": "key",
+    "IdentityDefaultPassword": "password",
+    "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/example?parseTime=true",
+    "SmtpServer": "server",
+    "SmtpPort": "587",
+    "SmtpUsername": "username",
+    "SmtpDisplayFrom": "displayname",
+    "SmtpPassword": "password",
+    "SmtpRequireAuth": true
+}`
+
 var config configuration
 
 func GetConfig() configuration {
 	return config
 }
 
-func LoadConfig(configFile *os.File) {
-	configBytes, readErr := io.ReadAll(configFile)
+func LoadConfig() {
+	configFile, err := os.Open("config.json")
 
-	if readErr != nil {
-		log.Fatal(readErr)
+	var configBytes []byte
+	var readErr error
+
+	if configFile != nil && err == nil {
+		configBytes, readErr = io.ReadAll(configFile)
+		defer configFile.Close()
+
+		if readErr != nil {
+			log.Fatal(readErr)
+		}
+		log.Println("Config file loaded from disk.")
+	} else {
+		//attempt to generate default config
+		log.Println("Config file not found, attempting to generate a default.")
+		configBytes = []byte(DEFAULT_CONFIG)
+
+		f, err := os.Create("config.json")
+		if err != nil {
+			log.Fatal("Error generating default config file. Aborting.")
+		}
+
+		defer f.Close()
+
+		_, err = f.Write(configBytes)
+		if err != nil {
+			log.Fatal("Error writing the default config to disk. Aborting")
+		}
 	}
-
-	defer configFile.Close()
 
 	jsonErr := json.Unmarshal(configBytes, &config)
 
 	if jsonErr != nil {
-		log.Fatal(fmt.Errorf("configuration error: %v", jsonErr))
+		log.Fatal(fmt.Errorf("Config error: %v", jsonErr))
 	}
-
-	log.Println("Loaded configuration file [" + configFile.Name() + "]")
 }

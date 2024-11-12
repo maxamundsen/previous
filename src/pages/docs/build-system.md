@@ -6,10 +6,28 @@ WDE can be built by directly invoking the Go compiler from inside the `./src` di
 go build
 ```
 
-This will generate an executable in the same directory called `webdawgengine`.
+This will generate a statically-linked executable in the same directory called `webdawgengine`.
 Modifying the first line in the `go.mod` file (located in the `./src` directory) will change the module name, and thus the executable name.
 
-### Build Constants
-The Go programming language does not have in-depth compile-time execution, so
+### Build Script
+By default WDE ships with build scripts, `build.bat` and `build.sh`, located in the `/src` directory.
+These scripts are useful for running multiple build commands (if necessary).
 
-## Deploying
+To build with the build script, run:
+
+MacOS / Linux:
+```sh
+sh build.sh
+```
+
+Windows:
+```
+build.bat
+```
+
+### Build Constants
+The Go programming language can conditionally include code at _compile time_ by providing a condition in a comment at the top of a file.
+
+```sh
+go build -tags=debug
+```

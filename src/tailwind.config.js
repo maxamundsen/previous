@@ -60,13 +60,6 @@ module.exports = {
   			DEFAULT: 'var(--shadow)',
   			// other shadows
   		},
-  		typography: {
-  			DEFAULT: {
-  				css: {
-  					maxWidth: '100%',
-  				}
-  			}
-  		}
   	},
   },
   plugins: [
