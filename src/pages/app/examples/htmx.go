@@ -5,6 +5,7 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "webdawgengine/pages/components"
 
+	. "webdawgengine/basic"
 	"webdawgengine/middleware"
 	"webdawgengine/models"
 

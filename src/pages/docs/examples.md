@@ -1,4 +1,6 @@
 # Examples
+This entire site (including all documentation) is included in the WDE distribution
+
 An interactive example demonstrating an example application using the WDE system can be found
 [here](/auth/login).
 

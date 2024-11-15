@@ -1,6 +1,8 @@
 package docs
 
 import (
+	"os"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
@@ -9,7 +11,6 @@ import (
 
 	"github.com/gomarkdown/markdown"
 
-	"io/ioutil"
 	"net/http"
 	"path"
 )
@@ -172,7 +173,7 @@ func FindDocumentationByURL(url string) Document {
 
 func IndexController(w http.ResponseWriter, r *http.Request) {
 	path := "./pages/docs/overview.md"
-	mdContent, _ := ioutil.ReadFile(path)
+	mdContent, _ := os.ReadFile(path)
 	html := markdown.ToHTML(mdContent, nil, nil)
 
 	DocView("Overview", 0, string(html)).Render(w)
@@ -181,7 +182,7 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 func DocController(w http.ResponseWriter, r *http.Request) {
 	doc := FindDocumentationByURL(path.Base(r.URL.Path))
 	path := "./pages/docs/" + doc.Slug + ".md"
-	mdContent, _ := ioutil.ReadFile(path)
+	mdContent, _ := os.ReadFile(path)
 	html := markdown.ToHTML(mdContent, nil, nil)
 
 	DocView(doc.Title, doc.DisplayId, string(html)).Render(w)

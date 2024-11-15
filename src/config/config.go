@@ -51,7 +51,7 @@ type configuration struct {
 
 const DEFAULT_CONFIG = `{
     "Host": "localhost",
-    "Port": "8080",
+    "Port": "9090",
     "SessionPrivateKey": "key",
     "IdentityPrivateKey": "key",
     "IdentityDefaultPassword": "password",

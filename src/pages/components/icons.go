@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "webdawgengine/basic"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	"strconv"
