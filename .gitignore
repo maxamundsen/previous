@@ -33,5 +33,4 @@ config.json
 
 # build
 .build
-webdawgengine
 .DS_Store
