@@ -14,12 +14,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func HighwayHash(in string) (string, error) {
+	key := []byte("01234567890123456789012345678901")
+
+	hasher, err := highwayhash.New(key)
+	if err != nil {
+		log.Println("Error generating hasher.")
+		return "", err
+	}
+
+	hash := hasher.Sum(nil)
+
+	return base64.StdEncoding.EncodeToString(hash), nil
+}
+
 func QuickFileHash(filepath string) (string, error) {
 	key := []byte("01234567890123456789012345678901")
 
 	file, err := os.Open(filepath)
 	if err != nil {
-		log.Println("Error opening style.css:", err)
+		log.Println("Error opening file", err)
 		return "", err
 	}
 	defer file.Close()

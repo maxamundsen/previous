@@ -46,7 +46,7 @@ The config file looks something like this:
 ```json
 {
     "Host": "localhost",
-    "Port": "8080",
+    "Port": "9090",
 	...
 }
 ```

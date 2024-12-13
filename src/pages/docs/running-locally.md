@@ -12,7 +12,7 @@ Windows:
 webdawgengine.exe
 ```
 
-By default, WDE will run on port `8080`.
+By default, WDE will run on port `9090`.
 This can be modified in the configuration file, which is discussed in a later chapter.
 
 ## Debugging

@@ -27,7 +27,7 @@ build.bat
 
 ### Build Constants
 The Go programming language can conditionally include code at _compile time_ by including a special comment at the top of a file.
-This feature is similar to the static `#if` in Jai, or `#ifdef` in C/C++, although significantly less ergonomic.
+This feature is similar to the static `#if` in Jai, or `#ifdef` in C/C++, although less ergonomic.
 
 WDE provides a `build` package, which only exists to set the `DEBUG` constant at compile time.
 

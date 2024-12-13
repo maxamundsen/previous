@@ -46,6 +46,5 @@ func Icon(icon string, size int) Node {
 func BrandIcon(icon string, size int) Node {
 	size_string := strconv.Itoa(size)
 
-	println(brandIcons[icon])
 	return SVG(Height(size_string), Width(size_string), Raw(brandIcons[icon]))
 }
