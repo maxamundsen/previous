@@ -3,7 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
 	"fmt"
 	"io"
@@ -11,8 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 )
 
 func UploadController(w http.ResponseWriter, r *http.Request) {

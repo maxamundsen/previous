@@ -13,7 +13,7 @@ import (
 	"net/smtp"
 	"strings"
 	"time"
-	"webdawgengine/config"
+	"saral/config"
 )
 
 const (

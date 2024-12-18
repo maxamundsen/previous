@@ -3,10 +3,10 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 
 	"encoding/json"
 	"io"

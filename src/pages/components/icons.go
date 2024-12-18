@@ -1,7 +1,7 @@
 package components
 
 import (
-	. "webdawgengine/basic"
+	. "saral/basic"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"

@@ -6,7 +6,7 @@ import (
 )
 
 func Card(header string, body ...Node) Node {
-	return Div(Class("mt-5 p-10 bg-white border border-gray-200 rounded-lg shadow"),
+	return Div(Class("mt-5 p-10 bg-white border border-gray-200 shadow"),
 		H5(Class("mb-2 text-2xl font-bold text-gray-900"), Text(header)),
 		Group(body),
 	)

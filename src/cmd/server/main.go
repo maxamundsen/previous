@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"webdawgengine/build"
-	"webdawgengine/config"
-	"webdawgengine/database"
+	"saral/build"
+	"saral/config"
+	"saral/database"
 
-	"webdawgengine/pages/docs"
+	"saral/pages/docs"
 )
 
 // Entry point for the application, initializes package globals
 // such as the database connections, http multiplexer, config, etc.
 func main() {
-	fmt.Println("WebDawgEngine V2")
+	fmt.Println("Saral V2")
 
 	if build.DEBUG {
 		fmt.Println("DEBUG BUILD")

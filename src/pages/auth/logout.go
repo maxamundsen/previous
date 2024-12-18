@@ -2,8 +2,8 @@ package auth
 
 import (
 	"net/http"
-	"webdawgengine/config"
-	"webdawgengine/middleware"
+	"saral/config"
+	"saral/middleware"
 )
 
 func LogoutController(w http.ResponseWriter, r *http.Request) {

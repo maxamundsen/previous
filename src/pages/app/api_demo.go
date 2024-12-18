@@ -3,10 +3,10 @@ package app
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 
 	"net/http"
 )
@@ -71,7 +71,7 @@ func ApiDemoView(identity models.Identity) Node {
 				FormLabel(Text("Password:")),
 				FormInput(Type("password"), Attr("x-model", "password")),
 				Br(),
-				ButtonRed(Type("submit"), Text("Generate Token")),
+				ButtonGray(Type("submit"), Text("Generate Token")),
 				Div(Class("mt-7 text-red-500"), Attr("x-text", "error")),
 			),
 			Hr(),
@@ -85,7 +85,7 @@ func ApiDemoView(identity models.Identity) Node {
 				FormLabel(Text("Bearer token:")),
 				FormInput(Attr("x-model", "token")),
 				Br(),
-				ButtonRed(Type("submit"), Text("Submit Request")),
+				ButtonGray(Type("submit"), Text("Submit Request")),
 			),
 			Br(),
 			FormLabel(Text("Result:")),

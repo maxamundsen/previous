@@ -3,10 +3,10 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 
 	"net/http"
 )
@@ -22,9 +22,9 @@ func AlpineView(identity models.Identity) Node {
 			P(Class("mb-5"),
 				Text("Click the button to increase the counter. This interaction relies on client-side scripting."),
 				Text(" Alpine.js allows for simple DOM manipulation using HTML attributes."),
-				Text(" Although WebDawgEngine isn't built using JavaScript, it is still sometimes necessary for features such as clickable dropdown menues, or modal dialogs."),
+				Text(" Although Saral isn't built using JavaScript, it is still sometimes necessary for features such as clickable dropdown menues, or modal dialogs."),
 			),
-			ButtonRed(Attr("x-text", `"Counter: " + count`), Attr("x-on:click", "count+=1")),
+			ButtonGray(Attr("x-text", `"Counter: " + count`), Attr("x-on:click", "count+=1")),
 			P(Class("mt-5"),
 				Text("To learn more about Alpine.js, click "), PageLink("https://alpinejs.dev", Text("here"), true), Text("."),
 			),

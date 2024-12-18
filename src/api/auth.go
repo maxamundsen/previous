@@ -2,8 +2,8 @@ package api
 
 import (
 	"net/http"
-	"webdawgengine/auth"
-	"webdawgengine/middleware"
+	"saral/auth"
+	"saral/middleware"
 
 	"log"
 )

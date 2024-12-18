@@ -6,7 +6,8 @@ module.exports = {
   darkMode: "class",
   theme: {
   	fontFamily: {
-  		'sans': ['Inter', 'system-ui']
+  		'sans': ['Inter', 'system-ui'],
+  		'serif': ['Lora', 'serif']
   	},
     extend: {
   		borderRadius: {

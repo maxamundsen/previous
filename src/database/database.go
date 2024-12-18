@@ -2,9 +2,9 @@ package database
 
 import (
 	"time"
-	"webdawgengine/config"
-	"webdawgengine/crypt"
-	"webdawgengine/models"
+	"saral/config"
+	"saral/crypt"
+	"saral/models"
 )
 
 var users []models.User

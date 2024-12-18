@@ -1,7 +1,7 @@
 package database
 
 import (
-	"webdawgengine/crypt"
+	"saral/crypt"
 )
 
 type Migration struct {
@@ -48,9 +48,9 @@ func ConcatAllMigrations() string {
 }
 
 func MigrateUp() error {
-
+	return nil
 }
 
 func GetLatestMigrationFromConnectedDB() Migration {
-
+	return Migration{}
 }

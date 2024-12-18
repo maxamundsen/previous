@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"webdawgengine/models"
+	"saral/models"
 )
 
 func FetchUserById(userid int) (models.User, error) {

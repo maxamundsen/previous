@@ -3,11 +3,11 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
-	"webdawgengine/snailmail"
+	"saral/middleware"
+	"saral/models"
+	"saral/snailmail"
 
 	"bytes"
 	"net/http"

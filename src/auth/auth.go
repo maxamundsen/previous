@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 	"unicode"
-	"webdawgengine/config"
-	"webdawgengine/crypt"
-	"webdawgengine/database"
-	"webdawgengine/models"
+	"saral/config"
+	"saral/crypt"
+	"saral/database"
+	"saral/models"
 )
 
 const (

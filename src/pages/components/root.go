@@ -3,7 +3,7 @@ package components
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	"webdawgengine/crypt"
+	"saral/crypt"
 )
 
 func Root(title string, children ...Node) Node {
@@ -26,7 +26,7 @@ func Root(title string, children ...Node) Node {
 				Meta(Charset("utf-8")),
 				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
 				TitleEl(Text(title)),
-				Meta(Name("description"), Content("WebDawgEngine")),
+				Meta(Name("description"), Content("Saral")),
 
 				Link(Rel("apple-touch-icon"), Attr("sizes", "180x180"), Href("/apple-touch-icon.png")),
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "32x32"), Href("/favicon-32x32.png")),
@@ -34,6 +34,7 @@ func Root(title string, children ...Node) Node {
 				Link(Rel("manifest"), Href("/site.webmanifest")),
 
 				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
+				Link(Rel("stylesheet"), Href("/fonts/lora.css")),
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
@@ -54,7 +55,7 @@ func EmailRoot(children ...Node) Node {
 			Head(
 				Meta(Charset("utf-8")),
 				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
-				Meta(Name("description"), Content("WebDawgEngine")),
+				Meta(Name("description"), Content("Saral")),
 			),
 			Body(
 				Group(children),

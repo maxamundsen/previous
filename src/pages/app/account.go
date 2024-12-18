@@ -1,12 +1,12 @@
 package app
 
 import (
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
 	"net/http"
 )

@@ -3,10 +3,10 @@ package app
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/middleware"
-	"webdawgengine/models"
+	"saral/middleware"
+	"saral/models"
 
 	"net/http"
 )
@@ -24,8 +24,8 @@ func DashboardView(identity models.Identity) Node {
 		),
 		If(identity.User.PermissionAdmin,
 			Div(
-				Div(Class("mt-10 p-10 bg-white border border-gray-200 rounded-lg shadow"),
-					P(Class("font-bold text-red-600"), Text("Admin only")),
+				Div(Class("mt-10 p-10 bg-white border border-gray-200 shadow"),
+					P(Class("font-bold text-blue-600"), Text("Admin only")),
 					P(Text("You can only see this if you have the admin permission")),
 				),
 			),

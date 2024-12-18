@@ -3,9 +3,9 @@ package middleware
 import (
 	"bytes"
 	"encoding/gob"
-	"webdawgengine/config"
-	"webdawgengine/crypt"
-	"webdawgengine/models"
+	"saral/config"
+	"saral/crypt"
+	"saral/models"
 )
 
 // A cookie serializer is a better way to handle session data. they are still

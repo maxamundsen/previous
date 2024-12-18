@@ -7,7 +7,7 @@ import (
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
 
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
 	"github.com/gomarkdown/markdown"
 
@@ -37,28 +37,18 @@ func RegisterDocPage(doc Document) {
 
 func RegisterDocumentation() {
 	RegisterDocPage(Document{
-		Title: "Prerequisites",
-		Slug:  "prerequisites",
-	})
-
-	RegisterDocPage(Document{
 		Title: "Getting Started",
 		Slug:  "getting-started",
 	})
 
 	RegisterDocPage(Document{
-		Title: "Build System",
-		SubList: []Document{
-			{Title: "How the build system works", Slug: "build-system"},
-			{Title: "Running Locally", Slug: "running-locally"},
-			{Title: "Testing & Benchmarking", Slug: "testing-benchmarking"},
-			{Title: "Deploying", Slug: "deploying"},
-		},
+		Title: "Applications",
+		Slug:  "applications",
 	})
 
 	RegisterDocPage(Document{
-		Title: "Program Entrypoint",
-		Slug:  "program-entrypoint",
+		Title: "Build System",
+		Slug:  "build-system",
 	})
 
 	RegisterDocPage(Document{
@@ -73,10 +63,7 @@ func RegisterDocumentation() {
 
 	RegisterDocPage(Document{
 		Title: "Controllers",
-		SubList: []Document{
-			{Title: "Page Controllers", Slug: "page-controllers"},
-			{Title: "API Controllers", Slug: "api-controllers"},
-		},
+		Slug: "controllers",
 	})
 
 	RegisterDocPage(Document{
@@ -167,7 +154,7 @@ func FindDocumentationByURL(url string) Document {
 }
 
 func IndexController(w http.ResponseWriter, r *http.Request) {
-	path := "./pages/docs/overview.md"
+	path := "../README.md"
 	mdContent, _ := os.ReadFile(path)
 	html := markdown.ToHTML(mdContent, nil, nil)
 
@@ -190,23 +177,23 @@ func DocView(title string, displayId int, html string) Node {
 }
 
 func DocLayout(title string, displayId int, children ...Node) Node {
-	return Root(title+" | WebDawgEngine Documentation",
+	return Root(title+" | Saral Documentation",
 		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-boost", "true"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
-			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-100 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"),
+			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-100 sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"),
 				Span(Class("sr-only"), Text("Open sidebar")),
 				Icon("menu", 24),
 			),
-			Aside(Class("border-r border-gray-200 shadow-sm bg-gradient-to-b from-red-900 to-red-800 fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
+			Aside(Class("border-r border-gray-200 shadow-sm bg-gradient-to-b from-gray-900 to-gray-800 fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
 				Div(Class("px-4 overflow-y-auto py-6"),
-					A(Attr("hx-boost", "false"), Href("/"), Img(Class("mx-auto h-10 w-auto"), Src("/images/logo_white.svg"), Alt("WebDawgEngine"))),
-					H5(Class("mt-3 mb-5 text-center text-gray-50 "), Text("WebDawgEngine Documentation")),
+					A(Attr("hx-boost", "false"), Href("/"), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo_white.svg"), Alt("Saral"))),
+					H5(Class("mt-3 mb-5 text-center text-gray-50 "), Text("Saral Codebase Documentation")),
 					Ul(Class("mt-6 space-y-1"),
-						A(Href("/docs"), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100 hover:bg-red-950": true, "bg-red-900": displayId == 0}, Text("Overview")),
+						A(Href("/docs"), Classes{"block px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-950": true, "bg-gray-950": displayId == 0}, Text("Overview")),
 						Map(DocList, func(doc Document) Node {
 							if len(doc.SubList) > 0 {
 								return Li(
 									Details(Class("group [&_summary::-webkit-details-marker]:hidden"), If(doc.DisplayId == displayId, Attr("open")),
-										Summary(Class("flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-100 hover:bg-red-950"),
+										Summary(Class("flex cursor-pointer items-center justify-between px-4 py-2 text-gray-100 hover:bg-gray-950"),
 											Span(Class("text-sm font-medium"), Text(doc.Title)),
 											Span(Class("shrink-0 transition duration-300 group-open:-rotate-180"),
 												Icon("chevron-down", 16),
@@ -215,7 +202,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 										Ul(Class("mt-2 space-y-1 px-4"),
 											Map(doc.SubList, func(subdoc Document) Node {
 												return Li(
-													A(Href("/docs/"+subdoc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100": true, "hover:bg-red-950": title != subdoc.Title, "bg-red-900": title == subdoc.Title}, Text(subdoc.Title)),
+													A(Href("/docs/"+subdoc.Slug), Classes{"block px-4 py-2 text-sm font-medium text-gray-100": true, "hover:bg-gray-950": title != subdoc.Title, "bg-gray-950": title == subdoc.Title}, Text(subdoc.Title)),
 												)
 											}),
 										),
@@ -223,14 +210,14 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 								)
 							} else {
 								return Li(
-									A(Href("/docs/"+doc.Slug), Classes{"block rounded-lg px-4 py-2 text-sm font-medium text-gray-100 hover:bg-red-950": true, "bg-red-900": displayId == doc.DisplayId}, Text(doc.Title)),
+									A(Href("/docs/"+doc.Slug), Classes{"block px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-950": true, "bg-gray-950": displayId == doc.DisplayId}, Text(doc.Title)),
 								)
 							}
 						}),
 					),
 				),
 			),
-			Div(Attr("hx-boost", "false"), Class("m-5 rounded-xl p-10 sm:ml-72 prose prose-pre:text-gray-700 prose-pre:bg-gray-100 max-w-none bg-white ring-1 ring-inset ring-gray-200 prose-img:rounded-xl prose-a:text-red-800"),
+			Div(Attr("hx-boost", "false"), Class("m-5 p-10 sm:ml-72 prose prose-pre:rounded-none prose-pre:text-gray-700 prose-pre:bg-gray-100 max-w-none bg-white ring-1 ring-inset ring-gray-200 rose-a:text-gray-800  prose-headings:text-blue-950 prose-headings:font-serif"),
 				Group(children),
 			),
 		),

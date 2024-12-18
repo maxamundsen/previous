@@ -1,41 +1,29 @@
 # Build System
 
 ## Building
-WDE can be built by directly invoking the Go compiler from inside the `./src` directory:
+To build the project, simply run the included build script.
+By default, it will build a release build, with all debug symbols removed.
 ```sh
-go build
+sh build_server.sh
 ```
 
-This will generate a statically-linked executable in the same directory called `webdawgengine`.
+This will generate a statically-linked executable in the same directory called `saral`.
 Modifying the first line in the `go.mod` file (located in the `./src` directory) will change the module name, and thus the executable name.
-
-### Build Script
-By default WDE ships with build scripts, `build.bat` and `build.sh`, located in the `/src` directory.
-These scripts are useful for running multiple build commands (if necessary).
-
-To build with the build script, run:
-
-MacOS / Linux:
-```sh
-sh build.sh
-```
-
-Windows:
-```
-build.bat
-```
 
 ### Build Constants
 The Go programming language can conditionally include code at _compile time_ by including a special comment at the top of a file.
-This feature is similar to the static `#if` in Jai, or `#ifdef` in C/C++, although less ergonomic.
+To use code in these specially commented files, you must pass the specified flag to the compiler.
+This feature is similar to the static `#if` in Jai, or `#ifdef` in C/C++.
 
-WDE provides a `build` package, which only exists to set the `DEBUG` constant at compile time.
+In order to make using this feature ergonomic, the codebase includes a `build` package, which exists to set the value of the `DEBUG` constant at _compile time_.
 
-When compiling the program with the following command, the `DEBUG` constant is true. Else, it is false.
+To build the server application in debug mode, use the following command:
 
 ```sh
-go build -tags=debug
+sh build_server.sh debug
 ```
+
+This code example demonstrates how to use the compile time `DEBUG` constant:
 
 ```go
 func main() {
@@ -50,4 +38,19 @@ func main() {
 Program Output:
 ```
 > DEBUG BUILD
+```
+
+## Testing & Benchmarking Your Project
+
+Go offers out-of-the-box tooling for testing and benchmarking your code.
+Any source file suffixed with `_test` will be considered when running the test suite.
+
+To run all tests:
+```sh
+go test -v ./...
+```
+
+To run all benchmarks:
+```sh
+go test -bench=. ./...
 ```

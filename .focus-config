@@ -21,13 +21,3 @@ __debug*
 [[ settings ]]
 tab_size: 4
 indent_using:                    tabs  # options: spaces, tabs
-
-[[build commands]]
-build_working_dir: ./src
-run_working_dir: ./src
-error_regex: ^(?P<file>.*):(?P<line>\d+):(?P<col>\d+): (?P<msg>.*)$
-clear_build_output_before_running: true
-
-[Debug Build]
-build_command: sh build_server.sh debug
-key_binding: Cmd-Shift-B

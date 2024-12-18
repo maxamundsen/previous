@@ -1,8 +1,8 @@
 package components
 
 import (
-	. "webdawgengine/basic"
-	"webdawgengine/finance"
+	. "saral/basic"
+	"saral/finance"
 
 	. "maragu.dev/gomponents"
 

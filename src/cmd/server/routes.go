@@ -1,22 +1,21 @@
 package main
 
 import (
-	// "webdawgengine/middleware"
+	// "saral/middleware"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
-	"webdawgengine/middleware"
+	"saral/middleware"
 
-	"webdawgengine/pages/app"
-	"webdawgengine/pages/app/examples"
-	"webdawgengine/pages/auth"
-	"webdawgengine/pages/components"
-	"webdawgengine/pages/docs"
-	"webdawgengine/pages/public"
+	"saral/pages/app"
+	"saral/pages/app/examples"
+	"saral/pages/auth"
+	"saral/pages/components"
+	"saral/pages/docs"
 
-	"webdawgengine/api"
+	"saral/api"
 )
 
 func mapPageRoutes(mux *http.ServeMux) {
@@ -67,7 +66,6 @@ func mapPageRoutes(mux *http.ServeMux) {
 }
 
 func mapApiRoutes(mux *http.ServeMux) {
-	// cid := middleware.LoadIdentityFromCookie
 	id := middleware.LoadIdentity
 
 	mux.HandleFunc("POST /api/auth/login", api.Login)
@@ -81,9 +79,9 @@ func mapApiRoutes(mux *http.ServeMux) {
 func mapIndex(mux *http.ServeMux) {
 	fs := http.FileServer(http.Dir("wwwroot"))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// serve home page if route is literally '/'
+		// serve docs page if route is literally '/'
 		if r.URL.Path == "/" {
-			public.IndexController(w, r)
+			http.Redirect(w, r, "/docs", http.StatusFound)
 			return
 		}
 

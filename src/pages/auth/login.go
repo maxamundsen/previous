@@ -3,11 +3,11 @@ package auth
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "webdawgengine/pages/components"
+	. "saral/pages/components"
 
-	"webdawgengine/auth"
-	"webdawgengine/config"
-	"webdawgengine/middleware"
+	"saral/auth"
+	"saral/config"
+	"saral/middleware"
 
 	"log"
 	"net/http"
@@ -59,7 +59,7 @@ func LoginView(errorMsg string) Node {
 		Body(Attr("x-data", "{ clickedLogin: false }"), Class("h-full bg-gray-50"),
 			Div(Class("flex flex-col justify-normal px-6 py-5 lg:px-8 pt-24"),
 				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm mb-3"),
-					A(Href("/"), Img(Class("mx-auto h-32 w-auto"), Src("/images/logo.svg"), Alt("WebDawgEngine"))),
+					A(Href("/"), Img(Class("mx-auto h-32 w-auto"), Src("/images/logo.svg"), Alt("Saral"))),
 				),
 				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm"),
 					If(errorMsg != "",
@@ -68,21 +68,21 @@ func LoginView(errorMsg string) Node {
 						),
 					),
 					Form(Attr("x-on:submit", "clickedLogin = true;"), Class("mt-5 space-y-6"), Action(""), Method("POST"), AutoComplete("off"),
-						H2(Class("mt-10 font-bold text-2xl/9 tracking-tight text-gray-900"), Text("Log In")),
+						H2(Class("mt-10 font-bold text-2xl/9 tracking-tight text-blue-950 font-serif"), Text("Log In")),
 						Div(
 							Label(For("username"), Class("block text-sm/6 font-medium text-gray-900"), Text("Username")),
 							Div(Class("mt-2"),
-								Input(Placeholder("admin"), Name("username"), Type("text"), Required(), Class("block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm/6")),
+								Input(Placeholder("admin"), Name("username"), Type("text"), Required(), Class("block w-full border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm/6")),
 							),
 						),
 						Div(
 							Label(For("password"), Class("block text-sm/6 font-medium text-gray-900"), Text("Password")),
 							Div(Class("mt-2"),
-								Input(Placeholder("admin"), Name("password"), Type("password"), Required(), Class("block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm/6")),
+								Input(Placeholder("admin"), Name("password"), Type("password"), Required(), Class("block w-full border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm/6")),
 							),
 						),
 						Div(
-							Button(Attr("x-text", `clickedLogin ? "Authenticating..." : $el.innerText`), Attr("x-bind:disabled", "clickedLogin"), Type("submit"), Class("flex w-full justify-center rounded-md bg-red-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"), Text("Log in")),
+							Button(Attr("x-text", `clickedLogin ? "Authenticating..." : $el.innerText`), Attr("x-bind:disabled", "clickedLogin"), Type("submit"), Class("flex w-full justify-center bg-blue-950 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"), Text("Log in")),
 						),
 					),
 					P(Class("mt-10 text-sm text-gray-500"), Text("© "), ToText(currentYear), Text(" Max Amundsen")),
