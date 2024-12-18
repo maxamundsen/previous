@@ -13,7 +13,7 @@ type LoginInfo struct {
 	Password string
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func LoginController(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 
 	err := ApiReadJSON(w, r, &loginInfo)

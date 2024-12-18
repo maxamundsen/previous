@@ -1,9 +1,14 @@
 # Routing
+A `route` is a mapping between a specified URL, and a `controller`.
+A controller is a function that handles an HTTP request.
 
-The codebase keeps routing simple by placing all routes in a single file `routes.go`.
+You can think of a `route` as the answer to the question: "What code is executed when I navigate to this URL?".
+
+The codebase keeps routing simple by placing all route mappings in a single file: `routes.go`.
 This allows routes (and subsequently the code behind the route) to be looked up with one search in your editor.
+If you prefer to separate
 
-A basic routes file looks something like this:
+A basic `routes.go` file looks something like this:
 ```go
 package main
 
@@ -16,17 +21,32 @@ func mapPageRoutes(mux *http.ServeMux) {
 }
 ```
 
-The function `mapPageRoutes()` is called from the `main()` function inside `main.go`.
+The function `mapPageRoutes()` is called from the `main()` function inside `main.go`, which maps user-defined routes.
 
 ## Index / Static Content
 
-The route for the site root `/` is special, since it also handles `Status 404` errors, and serving static files.
+The route for the site root `/` is unique, because it handles `404 not found` errors, and static assets.
 There is a builtin `mapIndex()` function for this special case that is called from `mapPageRoutes()`.
 
-This route will first check if the URL is literally `/`.
-If that is the case, it will call the controller, or redirect specified.
-If the route is not `/`, it will search the `/src/wwwroot` directory for the specified file, with the path matching the route, and serve that file.
-If there is no such file (or there is an error reading the file), the error page is shown.
+Routes matching `/` literally, will call the index controller.
+If the route does not match `/`, or any of the previously mapped routes, it will try to serve a file from `/src/wwwroot` directory, matching the route specified.
+If the requested static asset is not found, this route will call the "404 page not found" controller.
+
+Example:
+
+Suppose `/app/dashboard` is mapped to a controller.
+The route `/app/test` is unmapped.
+Requests to `/app/test` are captured by the index route.
+Since `/app/test` does not match the literal `/` route, the server attempts to serve the file located in `/src/wwwroot/app/test`.
+Because there is no file found here, it will respond with a 404 page instead.
+
+## Middleware
+Controllers can be _composed_ to allow additional "preflight" logic before sending the final response.
+This is known as a "middleware chain".
+You can add as many controllers as you want to the chain, to "forward" the request to the next controller in the chain.
+
+The most notable use of middleware is authentication.
+If you want to "protect" many routes from non-authenticated users, you would need to include the authentication logic in each controller that you want to .
 
 ## API Routes
 

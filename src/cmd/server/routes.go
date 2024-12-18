@@ -9,6 +9,7 @@ import (
 
 	"saral/middleware"
 
+	"saral/pages"
 	"saral/pages/app"
 	"saral/pages/app/examples"
 	"saral/pages/auth"
@@ -33,6 +34,7 @@ func mapPageRoutes(mux *http.ServeMux) {
 	// app handlers
 	mux.HandleFunc("/app/dashboard", id(sess(app.DashboardController), true))
 
+	mux.HandleFunc("/app/examples/forms", id(sess(examples.FormController), true))
 	mux.HandleFunc("/app/examples/api-fetch", id(sess(examples.ApiFetchController), true))
 	mux.HandleFunc("/app/examples/htmx", id(sess(examples.HtmxController), true))
 	mux.HandleFunc("/app/examples/htmx/counter/{count}", id(sess(examples.HtmxCounterController), true))
@@ -68,7 +70,7 @@ func mapPageRoutes(mux *http.ServeMux) {
 func mapApiRoutes(mux *http.ServeMux) {
 	id := middleware.LoadIdentity
 
-	mux.HandleFunc("POST /api/auth/login", api.Login)
+	mux.HandleFunc("POST /api/auth/login", api.LoginController)
 
 	mux.HandleFunc("/api/test", api.TestController)
 	mux.HandleFunc("/api/account", id(api.AccountController, true))
@@ -81,7 +83,7 @@ func mapIndex(mux *http.ServeMux) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// serve docs page if route is literally '/'
 		if r.URL.Path == "/" {
-			http.Redirect(w, r, "/docs", http.StatusFound)
+			pages.IndexController(w, r)
 			return
 		}
 

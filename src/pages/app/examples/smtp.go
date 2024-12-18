@@ -57,7 +57,7 @@ func SmtpView(errorMsg string, successMsg string, identity models.Identity) Node
 			FormLabel(Text("Body:")),
 			FormTextarea(Name("body")),
 			Br(),
-			ButtonGray(Type("submit"), Class("btn btn-primary"), Text("Send mail")),
+			ButtonGray(Type("submit"), Text("Send mail")),
 		),
 	)
 }

@@ -37,11 +37,6 @@ func RegisterDocPage(doc Document) {
 
 func RegisterDocumentation() {
 	RegisterDocPage(Document{
-		Title: "Getting Started",
-		Slug:  "getting-started",
-	})
-
-	RegisterDocPage(Document{
 		Title: "Applications",
 		Slug:  "applications",
 	})
@@ -71,7 +66,6 @@ func RegisterDocumentation() {
 		SubList: []Document{
 			{Title: "Generating HTML", Slug: "generating-html"},
 			{Title: "Component System", Slug: "component-system"},
-			{Title: "Organizing Components", Slug: "organizing-components"},
 			{Title: "Markdown Content", Slug: "markdown-content"},
 		},
 	})
