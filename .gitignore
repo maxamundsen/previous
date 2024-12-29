@@ -9,6 +9,8 @@
 *.dylib
 __debug*
 *.pdb
+src/server
+src/metagen
 
 # editor stuff
 *.sublime-workspace
