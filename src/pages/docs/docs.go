@@ -64,26 +64,11 @@ func RegisterDocumentation() {
 	RegisterDocPage(Document{
 		Title: "Views",
 		SubList: []Document{
-			{Title: "Generating HTML", Slug: "generating-html"},
 			{Title: "Component System", Slug: "component-system"},
+			{Title: "Interactivity", Slug: "interactivity" },
 			{Title: "Markdown Content", Slug: "markdown-content"},
-		},
-	})
-
-	RegisterDocPage(Document{
-		Title: "Styling",
-		SubList: []Document{
 			{Title: "Tailwind Integration", Slug: "tailwind-integration"},
 			{Title: "Icons", Slug: "icons"},
-		},
-	})
-
-	RegisterDocPage(Document{
-		Title: "Interactivity",
-		SubList: []Document{
-			{Title: "HTMX", Slug: "htmx"},
-			{Title: "Alpine.js", Slug: "alpine"},
-			{Title: "Component Integration", Slug: "interactive-components"},
 		},
 	})
 
@@ -172,14 +157,14 @@ func DocView(title string, displayId int, html string) Node {
 
 func DocLayout(title string, displayId int, children ...Node) Node {
 	return Root(title+" | Saral Documentation",
-		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-boost", "true"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
+		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
 			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-100 sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"),
 				Span(Class("sr-only"), Text("Open sidebar")),
 				Icon("menu", 24),
 			),
 			Aside(Class("border-r border-gray-200 shadow-sm bg-gradient-to-b from-gray-900 to-gray-800 fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
 				Div(Class("px-4 overflow-y-auto py-6"),
-					A(Attr("hx-boost", "false"), Href("/"), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo_white.svg"), Alt("Saral"))),
+					A(Href("/"), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo_white.svg"), Alt("Saral"))),
 					H5(Class("mt-3 mb-5 text-center text-gray-50 "), Text("Saral Codebase Documentation")),
 					Ul(Class("mt-6 space-y-1"),
 						A(Href("/docs"), Classes{"block px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-950": true, "bg-gray-950": displayId == 0}, Text("Overview")),
@@ -211,7 +196,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 					),
 				),
 			),
-			Div(Attr("hx-boost", "false"), Class("m-5 p-10 sm:ml-72 prose prose-pre:rounded-none prose-pre:text-gray-700 prose-pre:bg-gray-100 max-w-none bg-white ring-1 ring-inset ring-gray-200 rose-a:text-gray-800  prose-headings:text-blue-950 prose-headings:font-serif"),
+			Div(Class("m-5 p-10 sm:ml-72 prose prose-pre:rounded-none prose-pre:text-gray-700 prose-pre:bg-gray-100 max-w-none bg-white ring-1 ring-inset ring-gray-200 rose-a:text-gray-800  prose-headings:text-blue-950 prose-headings:font-serif"),
 				Group(children),
 			),
 		),

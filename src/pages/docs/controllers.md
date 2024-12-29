@@ -93,8 +93,14 @@ func LoginController(w http.ResponseWriter, r *http.Request) {
 ```
 ## File System & Naming Convention
 
-Unlike other approaches, there is no enforced binding between controllers, routes, and the file system.
+There is no enforced binding between controllers, routes, and the file system.
 You are free to call any controller, from any route, where the controller lives in any package, anywhere in the file system.
 
-However, to keep things tidy, the codebase follows a standard convention.
+However, to keep things tidy, the codebase follows a standard convention:
+
+- All routes are mapped in the `routes.go` file.
+- Page controllers live in the `/src/pages/{PAGE_GROUP}/{SPECIFIC_PAGE}.go` file.
+	- Ex: A login controller would be located in `/src/pages/auth/login.go`
+- HTTP handler functions have the word "Controller" suffixed.
+	- Ex: `IndexController`, `LogoutController`, `DashboardController`
 

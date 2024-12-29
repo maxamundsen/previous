@@ -8,7 +8,7 @@ import (
 
 func AppLayout(title string, identity models.Identity, children ...Node) Node {
 	return Root(title+" | Saral",
-		Body(Attr("hx-boost", "true"), Class("bg-gray-50 h-full"),
+		Body(Class("bg-gray-50 h-full"),
 			Div(Attr("x-data", "{ profileDropdownOpen: false, mobileMenuOpen: false }"), Class("min-h-full"),
 				Nav(Class("bg-gray-800"),
 					Div(Class("mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"),
@@ -50,7 +50,7 @@ func AppLayout(title string, identity models.Identity, children ...Node) Node {
 										),
 										Div(Attr("x-cloak"), Attr("x-show", "profileDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
 											A(Href("/app/account"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), ID("user-menu-item-0"), Text("Your Profile")),
-											A(Attr("hx-boost", "false"), Href("/auth/logout"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), ID("user-menu-item-2"), Text("Log out")),
+											A(Href("/auth/logout"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), ID("user-menu-item-2"), Text("Log out")),
 										),
 									),
 								),
@@ -80,7 +80,7 @@ func AppLayout(title string, identity models.Identity, children ...Node) Node {
 							),
 							Div(Class("mt-3 space-y-1 px-2"),
 								A(Href("/app/account"), Class("block px-3 py-2 text-base font-medium text-gray-200 hover:bg-blue-900 hover:text-white"), Text("Your Profile")),
-								A(Attr("hx-boost", "false"), Href("/auth/logout"), Class("block px-3 py-2 text-base font-medium text-gray-200 hover:bg-blue-900 hover:text-white"), Text("Log out")),
+								A(Href("/auth/logout"), Class("block px-3 py-2 text-base font-medium text-gray-200 hover:bg-blue-900 hover:text-white"), Text("Log out")),
 							),
 						),
 					),

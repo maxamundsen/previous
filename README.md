@@ -36,7 +36,7 @@ Navigate to the `/docs` page to read the full codebase documentation.
 Any third party dependencies are included in the project.
 This includes fonts, icons, Go libraries, and JS libraries.
 Go libraries are vendored, and their source code is compiled alongside user-level code.
-Javascript dependencies are bundled and minified.
+JavaScript dependencies are bundled and minified.
 
 ## Why not another solution?
 Other tools and frameworks sell the promise of a "good developer experience" without any efforts towards robustness, longevity, or "real" simplicity.

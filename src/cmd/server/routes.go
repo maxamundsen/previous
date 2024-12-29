@@ -24,9 +24,6 @@ func mapPageRoutes(mux *http.ServeMux) {
 	id := middleware.LoadIdentity
 	sess := middleware.LoadSessionFromCookie
 
-	// root (index) handler
-	mapIndex(mux)
-
 	// auth handlers
 	mux.HandleFunc("/auth/login", id(auth.LoginController, false))
 	mux.HandleFunc("/auth/logout", id(auth.LogoutController, true))
@@ -78,7 +75,7 @@ func mapApiRoutes(mux *http.ServeMux) {
 	log.Println("Mapped API routes")
 }
 
-func mapIndex(mux *http.ServeMux) {
+func mapIndexRoute(mux *http.ServeMux) {
 	fs := http.FileServer(http.Dir("wwwroot"))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// serve docs page if route is literally '/'

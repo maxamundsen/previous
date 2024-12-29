@@ -6,7 +6,6 @@ You can think of a `route` as the answer to the question: "What code is executed
 
 The codebase keeps routing simple by placing all route mappings in a single file: `routes.go`.
 This allows routes (and subsequently the code behind the route) to be looked up with one search in your editor.
-If you prefer to separate
 
 A basic `routes.go` file looks something like this:
 ```go
@@ -38,15 +37,16 @@ Suppose `/app/dashboard` is mapped to a controller.
 The route `/app/test` is unmapped.
 Requests to `/app/test` are captured by the index route.
 Since `/app/test` does not match the literal `/` route, the server attempts to serve the file located in `/src/wwwroot/app/test`.
-Because there is no file found here, it will respond with a 404 page instead.
+Because there is no file found here, it will respond with a`404` page instead.
 
 ## Middleware
-Controllers can be _composed_ to allow additional "preflight" logic before sending the final response.
+Controllers can be _composed_ to allow additional "preflight" logic before sending the final response to the requester.
 This is known as a "middleware chain".
 You can add as many controllers as you want to the chain, to "forward" the request to the next controller in the chain.
 
-The most notable use of middleware is authentication.
-If you want to "protect" many routes from non-authenticated users, you would need to include the authentication logic in each controller that you want to .
+The most common use of middleware is authentication logic.
+If you want to "protect" many routes from non-authenticated users, you would need to include the authentication logic in each controller.
+With middleware, individual routes do not need to include this boilerplate, since you can call them _after_ the authentication middleware route.
 
 ## API Routes
 

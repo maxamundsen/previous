@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"saral/build"
 	"saral/config"
 	"saral/database"
 
@@ -16,7 +15,7 @@ import (
 func main() {
 	fmt.Println("Saral V2")
 
-	if build.DEBUG {
+	if config.DEBUG {
 		fmt.Println("DEBUG BUILD")
 	} else {
 		fmt.Println("RELEASE BUILD")
@@ -30,6 +29,7 @@ func main() {
 	// create http multiplexer, map routes
 	mux := http.NewServeMux()
 
+	mapIndexRoute(mux)
 	mapPageRoutes(mux)
 	mapApiRoutes(mux)
 

@@ -65,7 +65,7 @@ func ApiDemoView(identity models.Identity) Node {
 					},
 				}
 			`),
-			Form(Attr("hx-boost", "false"), Attr("x-on:submit.prevent", "getToken()"), AutoComplete("off"),
+			Form(Attr("x-on:submit.prevent", "getToken()"), AutoComplete("off"),
 				FormLabel(Text("Username:")),
 				FormInput(Type("text"), Attr("x-model", "username")),
 				FormLabel(Text("Password:")),
@@ -75,7 +75,7 @@ func ApiDemoView(identity models.Identity) Node {
 				Div(Class("mt-7 text-red-500"), Attr("x-text", "error")),
 			),
 			Hr(),
-			Form(Attr("hx-boost", "false"), Attr("x-on:submit.prevent", "sendRequest()"), AutoComplete("off"),
+			Form(Attr("x-on:submit.prevent", "sendRequest()"), AutoComplete("off"),
 				FormLabel(Text("Local route:")),
 				FormSelect(Attr("x-model", "route"),
 					Option(Value("/api/test"), Text("/api/test"), Selected()),

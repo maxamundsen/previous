@@ -22,6 +22,16 @@ func DashboardView(identity models.Identity) Node {
 		P(
 			Text("This page requires a login!"),
 		),
+		Br(),
+		P(
+			Text("Here are some icons:"),
+		),
+		Span(Class("text-blue-500"),
+			Icon("go", 24),
+			Icon("globe", 24),
+			Icon("htmx", 24),
+			Icon("github", 24),
+		),
 		If(identity.User.PermissionAdmin,
 			Div(
 				Div(Class("mt-10 p-10 bg-white border border-gray-200 shadow"),
