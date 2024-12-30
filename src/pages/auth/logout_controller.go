@@ -6,6 +6,9 @@ import (
 	"saral/middleware"
 )
 
+// @Identity
+// @Protected
+// @Session
 func LogoutController(w http.ResponseWriter, r *http.Request) {
 	middleware.DeleteIdentityCookie(w, r)
 	middleware.DeleteSessionCookie(w, r)

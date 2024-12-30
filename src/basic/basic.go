@@ -44,3 +44,12 @@ func DateToString(utcTime time.Time) string {
 	// Format the time as mm/dd/yy hh:mm AM/PM
 	return estTime.Format("01/02/06")
 }
+
+func Contains[T comparable](s []T, e T) bool {
+    for _, v := range s {
+        if v == e {
+            return true
+        }
+    }
+    return false
+}

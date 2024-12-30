@@ -3,7 +3,7 @@ package auth
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/pages/components"
+	. "saral/components"
 
 	"saral/auth"
 	"saral/config"
@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+// @Identity
+// @Session
 func LoginController(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		LoginView("").Render(w)

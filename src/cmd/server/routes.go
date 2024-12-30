@@ -7,42 +7,12 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"saral/middleware"
-
-	"saral/pages"
-	"saral/pages/app"
-	"saral/pages/app/examples"
-	"saral/pages/auth"
-	"saral/pages/components"
-	"saral/pages/docs"
-
-	"saral/api"
+	"saral/docs"
+	"saral/components"
 )
 
-func mapPageRoutes(mux *http.ServeMux) {
-	// create aliases for middleware so binding routes is easier
-	id := middleware.LoadIdentity
-	sess := middleware.LoadSessionFromCookie
-
-	// auth handlers
-	mux.HandleFunc("/auth/login", id(auth.LoginController, false))
-	mux.HandleFunc("/auth/logout", id(auth.LogoutController, true))
-
-	// app handlers
-	mux.HandleFunc("/app/dashboard", id(sess(app.DashboardController), true))
-
-	mux.HandleFunc("/app/examples/forms", id(sess(examples.FormController), true))
-	mux.HandleFunc("/app/examples/api-fetch", id(sess(examples.ApiFetchController), true))
-	mux.HandleFunc("/app/examples/htmx", id(sess(examples.HtmxController), true))
-	mux.HandleFunc("/app/examples/htmx/counter/{count}", id(sess(examples.HtmxCounterController), true))
-	mux.HandleFunc("/app/examples/alpine", id(sess(examples.AlpineController), true))
-	mux.HandleFunc("/app/examples/upload", id(sess(examples.UploadController), true))
-	mux.HandleFunc("/app/examples/smtp", id(sess(examples.SmtpController), true))
-
-	mux.HandleFunc("/app/api-demo", id(sess(app.ApiDemoController), true))
-
-	mux.HandleFunc("/app/account", id(sess(app.AccountController), true))
-
+// manually mapped routes->controllers go here.
+func mapControllers(mux *http.ServeMux) {
 	// docs handlers
 	mux.HandleFunc("/docs", docs.IndexController)
 
@@ -61,26 +31,16 @@ func mapPageRoutes(mux *http.ServeMux) {
 		}
 	}
 
-	log.Println("Mapped page routes")
+	log.Println("Mapped manually-specified routes")
 }
 
-func mapApiRoutes(mux *http.ServeMux) {
-	id := middleware.LoadIdentity
-
-	mux.HandleFunc("POST /api/auth/login", api.LoginController)
-
-	mux.HandleFunc("/api/test", api.TestController)
-	mux.HandleFunc("/api/account", id(api.AccountController, true))
-
-	log.Println("Mapped API routes")
-}
-
+// index controller is handled specially
 func mapIndexRoute(mux *http.ServeMux) {
 	fs := http.FileServer(http.Dir("wwwroot"))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// serve docs page if route is literally '/'
 		if r.URL.Path == "/" {
-			pages.IndexController(w, r)
+			http.Redirect(w, r, "/docs", http.StatusFound)
 			return
 		}
 

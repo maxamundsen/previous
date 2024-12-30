@@ -3,7 +3,7 @@ package app
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/pages/components"
+	. "saral/components"
 
 	"saral/middleware"
 	"saral/models"
@@ -11,6 +11,9 @@ import (
 	"net/http"
 )
 
+// @Identity
+// @Protected
+// @Session
 func DashboardController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	DashboardView(*identity).Render(w)

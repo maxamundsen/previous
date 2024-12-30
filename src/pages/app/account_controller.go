@@ -6,11 +6,14 @@ import (
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/pages/components"
+	. "saral/components"
 
 	"net/http"
 )
 
+// @Identity
+// @Protected
+// @Session
 func AccountController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

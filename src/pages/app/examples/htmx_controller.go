@@ -3,7 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/pages/components"
+	. "saral/components"
 
 	. "saral/basic"
 	"saral/middleware"
@@ -13,6 +13,9 @@ import (
 	"strconv"
 )
 
+// @Identity
+// @Protected
+// @Session
 func HtmxController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	HtmxView(*identity).Render(w)

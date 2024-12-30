@@ -13,6 +13,7 @@ type LoginInfo struct {
 	Password string
 }
 
+// @Identity
 func LoginController(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 

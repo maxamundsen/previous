@@ -4,6 +4,7 @@ import (
 	"net/http"
 )
 
+// @Session
 func TestController(w http.ResponseWriter, r *http.Request) {
 	type model struct {
 		Field1 int

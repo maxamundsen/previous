@@ -7,7 +7,7 @@ import (
 	"saral/config"
 	"saral/database"
 
-	"saral/pages/docs"
+	"saral/docs"
 )
 
 // Entry point for the application, initializes package globals
@@ -30,8 +30,9 @@ func main() {
 	mux := http.NewServeMux()
 
 	mapIndexRoute(mux)
-	mapPageRoutes(mux)
-	mapApiRoutes(mux)
+	mapAutoRoutes(mux)
+	// mapPageRoutes(mux)
+	// mapApiRoutes(mux)
 
 	log.Println("Listening on http://" + config.GetConfig().Host + ":" + config.GetConfig().Port)
 

@@ -7,7 +7,7 @@ import (
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
 
-	. "saral/pages/components"
+	. "saral/components"
 
 	"github.com/gomarkdown/markdown"
 
