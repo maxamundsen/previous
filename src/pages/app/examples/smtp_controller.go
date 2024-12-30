@@ -13,6 +13,10 @@ import (
 	"net/http"
 )
 
+
+// @Identity
+// @Protected
+// @Session
 func SmtpController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

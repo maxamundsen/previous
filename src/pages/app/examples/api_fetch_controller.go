@@ -27,6 +27,9 @@ type person struct {
 	Craft string `json:"craft"`
 }
 
+// @Identity
+// @Protected
+// @Session
 func ApiFetchController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

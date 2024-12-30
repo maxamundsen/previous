@@ -237,7 +237,8 @@ func generateHTTPRoutes() {
 					lastDir := filepath.Base(dirPath)
 
 					// Combine last directory and function name
-					ri.URL = relativePath
+					// Also replace underscore characters "_" with hyphen characters "-"
+					ri.URL = strings.ReplaceAll(relativePath, "_", "-")
 					ri.Controller = fmt.Sprintf("%s.%s", lastDir, funcDecl.Name.Name)
 
 					import_name := module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))

@@ -1,5 +1,4 @@
 package examples
-
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -11,6 +10,9 @@ import (
 	"net/http"
 )
 
+// @Identity
+// @Protected
+// @Session
 func AlpineController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	AlpineView(*identity).Render(w)

@@ -15,6 +15,9 @@ import (
 	"saral/models"
 )
 
+// @Identity
+// @Protected
+// @Session
 func UploadController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

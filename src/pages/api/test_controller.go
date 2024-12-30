@@ -4,6 +4,8 @@ import (
 	"net/http"
 )
 
+// @Identity
+// @Protected
 // @Session
 func TestController(w http.ResponseWriter, r *http.Request) {
 	type model struct {
