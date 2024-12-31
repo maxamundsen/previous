@@ -140,7 +140,7 @@ const (
 	// open file and write code to it
 	in := []byte(code)
 
-	err := os.WriteFile("./config/debug.go", in, 0644)
+	err := os.WriteFile("./config/debug.metagen.go", in, 0644)
 	handleErr(err)
 
 	printStatus(true)
@@ -290,7 +290,7 @@ func mapAutoRoutes(mux *http.ServeMux) {
 
 	in := []byte(code)
 
-	fileErr := os.WriteFile("./cmd/server/generated_routes.go", in, 0644)
+	fileErr := os.WriteFile("./cmd/server/generated_routes.metagen.go", in, 0644)
 	handleErr(fileErr)
 
 	printStatus(true)

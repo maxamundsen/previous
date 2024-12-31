@@ -36,3 +36,6 @@ config.json
 # build
 .build
 .DS_Store
+
+# metaprogram files
+*.metagen.go

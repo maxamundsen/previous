@@ -1,11 +1,8 @@
 # Routing
-A `route` is a mapping between a specified URL, and a `controller`.
-A controller is a function that handles an HTTP request.
-
+A `route` is a mapping between a specified URL, and a `controller`, wher a controller is a function that handles an HTTP request.
 You can think of a `route` as the answer to the question: "What code is executed when I navigate to this URL?".
 
-The codebase keeps routing simple by placing all route mappings in a single file: `routes.go`.
-This allows routes (and subsequently the code behind the route) to be looked up with one search in your editor.
+Routes can be either be specified manually, or automatically, via the filesystem (generated from `metagen`).
 
 A basic `routes.go` file looks something like this:
 ```go

@@ -42,8 +42,8 @@ func RegisterDocumentation() {
 	})
 
 	RegisterDocPage(Document{
-		Title: "Build System",
-		Slug:  "build-system",
+		Title: "Metaprogram",
+		Slug:  "metaprogram",
 	})
 
 	RegisterDocPage(Document{
