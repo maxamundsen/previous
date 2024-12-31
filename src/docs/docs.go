@@ -142,7 +142,7 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 
 func DocController(w http.ResponseWriter, r *http.Request) {
 	doc := FindDocumentationByURL(path.Base(r.URL.Path))
-	path := "./pages/docs/" + doc.Slug + ".md"
+	path := "./docs/" + doc.Slug + ".md"
 	mdContent, _ := os.ReadFile(path)
 	html := markdown.ToHTML(mdContent, nil, nil)
 

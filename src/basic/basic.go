@@ -1,3 +1,4 @@
+// General purpose "utilities" that act as my own "standard library"
 package basic
 
 import (

@@ -2,17 +2,16 @@ package main
 
 import (
 	// "saral/middleware"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
-	"saral/docs"
 	"saral/components"
+	"saral/docs"
 )
 
 // manually mapped routes->controllers go here.
-func mapControllers(mux *http.ServeMux) {
+func mapDocumentationRoutes(mux *http.ServeMux) {
 	// docs handlers
 	mux.HandleFunc("/docs", docs.IndexController)
 
@@ -30,8 +29,6 @@ func mapControllers(mux *http.ServeMux) {
 			}
 		}
 	}
-
-	log.Println("Mapped manually-specified routes")
 }
 
 // index controller is handled specially

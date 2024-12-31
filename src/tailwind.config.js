@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./pages/**/*.go",
     "./components/**/*.go",
+    "./docs/**/*.go",
   ],
   darkMode: "class",
   theme: {
