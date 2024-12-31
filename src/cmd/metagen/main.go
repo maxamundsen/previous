@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
@@ -87,12 +88,11 @@ func compileServer() {
 	var out []byte
 	var err error
 
-	fmt.Printf("[GO COMPILER] Compiling Server Binary")
-
-	// golang imports are horrible so you need this external tool to fix things (unless you want to waste a ton of time cleaning these up yourself). sad!
-	// if you dont have this installed, use this:
-	// go install golang.org/x/tools/cmd/goimports@latest
+	fmt.Printf("[PREPROCESSOR] Managing imports")
 	handleCmdOutput(exec.Command("goimports", "-w", "./cmd/server").CombinedOutput())
+	println("")
+
+	fmt.Printf("[GO COMPILER] Compiling Server Binary")
 
 	if DEBUG {
 		// include extra flags for the GC
@@ -170,20 +170,20 @@ func generateHTTPRoutes() {
 	var importList []string
 
 	// Walk the filesystem recursively
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(root, func(pathStr string, info os.FileInfo, err error) error {
 		handleErr(err)
 
 		// Only process .go files
 		if strings.HasSuffix(info.Name(), "_controller.go") {
 			// Open the file
-			file, err := os.Open(path)
+			file, err := os.Open(pathStr)
 			handleErr(err)
 
 			defer file.Close()
 
 			// Parse the file using the go/parser package
 			fs := token.NewFileSet()
-			node, err := parser.ParseFile(fs, path, file, parser.ParseComments)
+			node, err := parser.ParseFile(fs, pathStr, file, parser.ParseComments)
 			handleErr(err)
 
 			// Traverse the file and find the first function that ends in "Controller"
@@ -210,7 +210,7 @@ func generateHTTPRoutes() {
 
 					handleErr(parseNotesFromDocComment(decl, file, &ri))
 
-					relativePath := strings.TrimPrefix(path, root)
+					relativePath := strings.TrimPrefix(pathStr, root)
 					relativePath = strings.TrimSuffix(relativePath, "_controller.go")
 
 					// Extract the last directory name
@@ -221,6 +221,16 @@ func generateHTTPRoutes() {
 					// Also replace underscore characters "_" with hyphen characters "-"
 					ri.URL = strings.ReplaceAll(relativePath, "_", "-")
 					ri.Controller = fmt.Sprintf("%s.%s", lastDir, funcDecl.Name.Name)
+
+					// strip names from route and use the base package name if file is index
+					if strings.HasSuffix(pathStr, "/index_controller.go") {
+						ri.URL = path.Dir(ri.URL)
+					}
+
+					// if the route is in the "root" folder, make sure it imports the correct package.
+					if strings.HasPrefix(ri.Controller, "/.") {
+						ri.Controller = strings.ReplaceAll(ri.Controller, "/", "pages")
+					}
 
 					import_name := module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
 
@@ -233,7 +243,7 @@ func generateHTTPRoutes() {
 			}
 
 			if !found {
-				return fmt.Errorf("\nAttempted to generate route, but no `Controller` function defined in: `%s`", file.Name())
+				return fmt.Errorf("\n`%s`: Attempted to generate route, but no `Controller` found.", file.Name())
 			}
 		}
 

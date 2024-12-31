@@ -6,7 +6,7 @@ import (
 )
 
 func ErrorPage(status int) Node {
-	return Root("An error has occurred.",
+	return RootLayout("An error has occurred.",
 		Section(Class("bg-white"),
 			Div(Class("py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6"),
 				Div(Class("mx-auto max-w-screen-sm text-center"),

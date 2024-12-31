@@ -156,7 +156,7 @@ func DocView(title string, displayId int, html string) Node {
 }
 
 func DocLayout(title string, displayId int, children ...Node) Node {
-	return Root(title+" | Saral Documentation",
+	return RootLayout(title+" | Saral Documentation",
 		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-swap", "innerHTML show:unset"), Class("bg-gray-50"),
 			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-100 sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"),
 				Span(Class("sr-only"), Text("Open sidebar")),

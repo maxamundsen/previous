@@ -7,7 +7,7 @@ import (
 )
 
 func AppLayout(title string, identity models.Identity, children ...Node) Node {
-	return Root(title+" | Saral",
+	return RootLayout(title+" | Saral",
 		Body(Class("bg-gray-50 h-full"),
 			Div(Attr("x-data", "{ profileDropdownOpen: false, mobileMenuOpen: false }"), Class("min-h-full"),
 				Nav(Class("bg-gray-800"),
@@ -25,6 +25,7 @@ func AppLayout(title string, identity models.Identity, children ...Node) Node {
 												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Attr("x-on:click.outside", "examplesDropdownOpen = false"), Class("relative flex px-3 py-2 text-sm font-medium text-gray-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon("chevron-down", 16))),
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
+												A(Href("/app/examples"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), Text("Example Index Page")),
 												A(Href("/app/examples/forms"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), Text("Form Submission")),
 												A(Href("/app/examples/htmx"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), Text("HTMX")),
 												A(Href("/app/examples/alpine"), Class("block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"), TabIndex("-1"), Text("Alpine.js")),

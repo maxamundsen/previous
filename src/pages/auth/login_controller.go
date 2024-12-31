@@ -57,7 +57,7 @@ func LoginController(w http.ResponseWriter, r *http.Request) {
 func LoginView(errorMsg string) Node {
 	currentYear := time.Time.Year(time.Now())
 
-	return Root("Login",
+	return RootLayout("Login",
 		Body(Attr("x-data", "{ clickedLogin: false }"), Class("h-full bg-gray-50"),
 			Div(Class("flex flex-col justify-normal px-6 py-5 lg:px-8 pt-24"),
 				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm mb-3"),

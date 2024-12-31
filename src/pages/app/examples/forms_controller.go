@@ -19,6 +19,7 @@ type FormViewModel struct {
 
 // @Identity
 // @Protected
+// @Session
 func FormController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

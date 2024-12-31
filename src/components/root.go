@@ -6,7 +6,7 @@ import (
 	"saral/crypt"
 )
 
-func Root(title string, children ...Node) Node {
+func RootLayout(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
 	css_hash, err := crypt.QuickFileHash("./wwwroot/css/style.css")
 	if err != nil {

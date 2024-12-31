@@ -5,12 +5,10 @@ import (
 	. "maragu.dev/gomponents/html"
 	. "saral/components"
 
-	. "saral/basic"
 	"saral/middleware"
 	"saral/models"
 
 	"net/http"
-	"strconv"
 )
 
 // @Identity
@@ -31,23 +29,4 @@ func HtmxView(identity models.Identity) Node {
 			Text(" This example only demonstrates functionality, and not utility. Check out the examples on the HTMX website for better uses of HTMX."),
 		),
 	)
-}
-
-func HtmxCounterController(w http.ResponseWriter, r *http.Request) {
-	count, _ := strconv.Atoi(r.PathValue("count"))
-	count += 1
-
-	CounterButton(count).Render(w)
-}
-
-func CounterButton(count int) Node {
-	if count == 10 {
-		return ButtonBlue(Text("Counter reached 10"))
-	} else {
-		return ButtonGray(
-			Attr("hx-get", "/app/examples/htmx/counter/"+ToString(count)),
-			Attr("hx-swap", "outerHTML"),
-			Text("Counter: "), ToText(count),
-		)
-	}
 }
