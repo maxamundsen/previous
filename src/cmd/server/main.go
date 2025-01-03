@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"saral/config"
-	"saral/database"
+	"previous/config"
+	"previous/database"
 
-	"saral/docs"
+	"previous/docs"
 )
 
 // Entry point for the application, initializes package globals
 // such as the database connections, http multiplexer, config, etc.
 func main() {
-	fmt.Println("Saral V2")
+	fmt.Println("Previous: A simple web codebase.\n")
 
 	if config.DEBUG {
 		fmt.Println("DEBUG BUILD")

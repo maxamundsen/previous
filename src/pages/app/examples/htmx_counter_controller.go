@@ -2,9 +2,9 @@ package examples
 
 import (
 	. "maragu.dev/gomponents"
-	. "saral/components"
+	. "previous/components"
 
-	. "saral/basic"
+	. "previous/basic"
 	
 	"net/http"
 	"strconv"

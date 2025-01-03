@@ -1,7 +1,7 @@
 package database
 
 import (
-	"saral/crypt"
+	"previous/crypt"
 )
 
 type Migration struct {

@@ -1,19 +1,19 @@
 package app
 
 import (
-	"saral/middleware"
-	"saral/models"
+	"previous/middleware"
+	"previous/models"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/components"
+	. "previous/components"
 
 	"net/http"
 )
 
 // @Identity
 // @Protected
-// @Session
+// @CookieSession
 func AccountController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

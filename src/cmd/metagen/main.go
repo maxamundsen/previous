@@ -12,8 +12,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
-	. "saral/basic"
 	"strings"
+	"regexp"
+	"reflect"
+	. "previous/basic"
 )
 
 var DEBUG bool
@@ -59,12 +61,15 @@ func main() {
 	compileTailwindCSS()
 	compileServer()
 	compileMigrator()
+
+	// warnings
+	checkProjectForDeprecatedFuncs()
 }
 
 func compileTailwindCSS() {
 	tailwindcmd := ""
 
-	fmt.Printf("[PREPROCESSOR] Compiling TailwindCSS")
+	fmt.Printf("[PREPROCESSOR] Generating TailwindCSS stylesheet(s)")
 
 	if OS == "windows" {
 		log.Fatal("OS unsupported. Compilation failed.")
@@ -87,10 +92,6 @@ func compileTailwindCSS() {
 func compileServer() {
 	var out []byte
 	var err error
-
-	fmt.Printf("[PREPROCESSOR] Managing imports")
-	handleCmdOutput(exec.Command("goimports", "-w", "./cmd/server").CombinedOutput())
-	println("")
 
 	fmt.Printf("[GO COMPILER] Compiling Server Binary")
 
@@ -117,25 +118,17 @@ func compileMigrator() {
 
 // set debug constant inside the "config" package
 func generateDebugConfig() {
-	fmt.Printf("[CODE GENERATION] Generating DEBUG Config")
+	fmt.Printf("[CODE GENERATION] Generating DEBUG/RELEASE config")
 
-	code := METAGEN_AUTO_COMMENT + `
-package config
-
-const (
-`
+	code := METAGEN_AUTO_COMMENT + "\npackage config\n\nconst (\n"
 
 	if DEBUG {
-		code += `	DEBUG = true
-`
+		code += "	DEBUG = true"
 	} else {
-		code += `	DEBUG = false
-`
+		code += "	DEBUG = false"
 	}
 
-	code += `
-)
-`
+	code += "\n)\n"
 
 	// open file and write code to it
 	in := []byte(code)
@@ -153,9 +146,11 @@ func generateHTTPRoutes() {
 	type RouteInfo struct {
 		URL        string
 		Controller string
+		Package    string
+		Import     string
 		Identity   bool `note`
 		Protected  bool `note`
-		Session    bool `note`
+		CookieSession    bool `note`
 	}
 
 	const root = "pages" // Use the /pages directory for autogenerating routes
@@ -164,10 +159,9 @@ func generateHTTPRoutes() {
 	parts := strings.Split(bi.Path, "/")
 	module_name := parts[0]
 
-	fmt.Printf("[CODE GENERATION] Generating HTTP Routes")
+	fmt.Printf("[CODE GENERATION] Generating HTTP routes")
 
 	var routeList []RouteInfo
-	var importList []string
 
 	// Walk the filesystem recursively
 	err := filepath.Walk(root, func(pathStr string, info os.FileInfo, err error) error {
@@ -220,7 +214,8 @@ func generateHTTPRoutes() {
 					// Combine last directory and function name
 					// Also replace underscore characters "_" with hyphen characters "-"
 					ri.URL = strings.ReplaceAll(relativePath, "_", "-")
-					ri.Controller = fmt.Sprintf("%s.%s", lastDir, funcDecl.Name.Name)
+					ri.Package = lastDir
+					ri.Controller = funcDecl.Name.Name
 
 					// strip names from route and use the base package name if file is index
 					if strings.HasSuffix(pathStr, "/index_controller.go") {
@@ -232,13 +227,9 @@ func generateHTTPRoutes() {
 						ri.Controller = strings.ReplaceAll(ri.Controller, "/", "pages")
 					}
 
-					import_name := module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
+					ri.Import = module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
 
 					routeList = append(routeList, ri)
-
-					if len(importList) == 0 || !Contains[string](importList, import_name) {
-						importList = append(importList, import_name)
-					}
 				}
 			}
 
@@ -253,50 +244,83 @@ func generateHTTPRoutes() {
 	handleErr(err)
 
 	// generate code
-	code := METAGEN_AUTO_COMMENT + `
-package main
-`
+	code := METAGEN_AUTO_COMMENT + "\npackage main\n"
 
-	code += `
-import (
-	"net/http"
-`
+	code += "\nimport (\n\t\"net/http\"\n"
 
-	insertMiddlewareImport := false
 	for _, v := range routeList {
-		if v.Identity || v.Session {
-			insertMiddlewareImport = true
+		if v.Identity || v.CookieSession {
+			code += "	\"previous/middleware\"\n"
+			break
 		}
 	}
 
-	if insertMiddlewareImport {
-		code += "	\"saral/middleware\"\n"
+	// the go import system is horrible, so the following is a package auto-importer/ de-duplicator for code generation.
+	// search through all routes, figure out their package based on the import, and possibly rename it if there already exists an import in
+	// the same namespace.
+
+	packageMap := make(map[string][]RouteInfo)
+	seenImport := make(map[string]bool)
+
+	// group by package
+	for _, route := range routeList {
+		// entry de-duplication
+		if !seenImport[route.Import] {
+			packageMap[route.Package] = append(packageMap[route.Package], route)
+		}
+
+		seenImport[route.Import] = true
 	}
 
-	for _, v := range importList {
-		code += fmt.Sprintf("	\"%s\"\n", v)
+	// iterate over each sub-group
+	for _, routes := range packageMap {
+		// don't give the first instance a named import, only subsequent entries
+		if len(routes) > 0 {
+			routes[0].Import = fmt.Sprintf("\"%s\"", routes[0].Import)
+		}
+
+		if len(routes) > 1 {
+			// modify the package name in the routeList to include the index of the sublist
+			// (this is the whole point -- automatically giving duplicate packages named imports)
+			for i := 1; i < len(routes); i += 1 {
+				for j, v := range routeList {
+					if v.Import == routes[i].Import {
+						routeList[j].Package = fmt.Sprintf("%s%d", routes[i].Package, i)
+					}
+				}
+
+				routes[i].Import = fmt.Sprintf("%s%d \"%s\"", routes[i].Package, i, routes[i].Import)
+			}
+		}
 	}
 
-	code += `)
-`
+	var result []RouteInfo
+	for _, routes := range packageMap {
+		result = append(result, routes...)
+	}
 
-	code += `
-func mapAutoRoutes(mux *http.ServeMux) {
-`
+	for i, _ := range result {
+		code += fmt.Sprintf("\t%s\n", result[i].Import)
+	}
+
+	code += ")\n"
+	code += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
+
 	for _, routeInfo := range routeList {
+		printableController := routeInfo.Package + "." + routeInfo.Controller
 
-		if routeInfo.Session {
-			routeInfo.Controller = fmt.Sprintf("middleware.LoadSessionFromCookie(%s)", routeInfo.Controller)
+		if routeInfo.CookieSession {
+			printableController = fmt.Sprintf("middleware.LoadSessionFromCookie(%s)", printableController)
 		}
 
 		if routeInfo.Identity {
-			routeInfo.Controller = fmt.Sprintf("middleware.LoadIdentity(%s, %t)", routeInfo.Controller, routeInfo.Protected)
+			printableController = fmt.Sprintf("middleware.LoadIdentity(%s, %t)", printableController, routeInfo.Protected)
 		}
 
-		code += fmt.Sprintf("	mux.HandleFunc(\"%s\", %s)\n", routeInfo.URL, routeInfo.Controller)
+		code += fmt.Sprintf("	mux.HandleFunc(\"%s\", %s)\n", routeInfo.URL, printableController)
 	}
 
-	code += `}`
+	code += "}"
 
 	in := []byte(code)
 
@@ -305,4 +329,239 @@ func mapAutoRoutes(mux *http.ServeMux) {
 
 	printStatus(true)
 	println("")
+}
+
+//#Deprecated
+func checkProjectForDeprecatedFuncs() error {
+	deprecatedFuncs := make(map[string]bool)
+
+	const rootDir = "./"
+	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
+			if err := collectDeprecatedFuncs(path, deprecatedFuncs); err != nil {
+				fmt.Errorf("Error scanning file %s: %v\n", path, err)
+			}
+		}
+		return nil
+	})
+
+	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
+			if err := checkDeprecatedFuncs(path, deprecatedFuncs); err != nil {
+				fmt.Errorf("Error scanning file %s: %v\n", path, err)
+			}
+		}
+		return nil
+	})
+
+	return err
+}
+
+// given an ast.Decl, and destination struct, look at the struct for any
+// boolean fields with the struct tag `Note`. If valid notes are found in the given Decl doc string
+// set the tagged booleans to true on the input struct.
+func parseNotesFromDocComment(decl ast.Decl, file *os.File, dest any) error {
+	re := regexp.MustCompile(`@(\w+)`)
+
+	var identifier string
+	var docstring string
+
+	var docNotes []string
+	var validNotes []string
+
+	// check if decl is a function
+	if funcDecl, ok := decl.(*ast.FuncDecl); ok {
+		identifier = funcDecl.Name.Name
+		docstring = funcDecl.Doc.Text()
+	}
+
+	matches := re.FindAllStringSubmatch(docstring, -1)
+
+	for _, match := range matches {
+		// match[1] contains the first capture group (the word after '@')
+		docNotes = append(docNotes, match[1])
+	}
+
+	v := reflect.ValueOf(dest).Elem()
+	t := v.Type()
+
+	if v.Kind() != reflect.Struct {
+		return fmt.Errorf("\ndestination struct must be a pointer to a struct")
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := t.Field(i)
+
+		// Look for the `Note` tag in the struct field
+		if field.Tag == "note" {
+			if Contains[string](docNotes, field.Name) {
+				v.Field(i).SetBool(true)
+			}
+
+			validNotes = append(validNotes, field.Name)
+		}
+	}
+
+	for _, v := range docNotes {
+		if !Contains[string](validNotes, v) {
+			return fmt.Errorf("\n`%s`: Unknown note `@%s`, Identifier: `%s`\n\tValid values are: %v", file.Name(), v, identifier, validNotes)
+		}
+	}
+
+	return nil
+}
+
+func collectDeprecatedFuncs(filePath string, deprecatedFuncs map[string]bool) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("could not open file %s: %v", filePath, err)
+	}
+	defer file.Close()
+
+	fs := token.NewFileSet()
+
+	node, err := parser.ParseFile(fs, filePath, file, parser.ParseComments)
+	if err != nil {
+		return fmt.Errorf("could not parse file %s: %v", filePath, err)
+	}
+
+	// Walk through the AST to find function declarations
+	ast.Inspect(node, func(n ast.Node) bool {
+		switch fn := n.(type) {
+		case *ast.FuncDecl:
+			// Check the doc comments for '#Deprecated'
+			if fn.Doc != nil {
+				for _, comment := range fn.Doc.List {
+					if strings.Contains(comment.Text, "#Deprecated") {
+						deprecatedFuncs[fn.Name.Name] = true
+					}
+				}
+			}
+		}
+		return true
+	})
+
+	return nil
+}
+
+func checkDeprecatedFuncs(filePath string, deprecatedFuncs map[string]bool) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("could not open file %s: %v", filePath, err)
+	}
+	defer file.Close()
+
+	fs := token.NewFileSet()
+
+	node, err := parser.ParseFile(fs, filePath, file, parser.ParseComments)
+	if err != nil {
+		return fmt.Errorf("could not parse file %s: %v", filePath, err)
+	}
+
+	// Walk through the AST to find function  calls
+	ast.Inspect(node, func(n ast.Node) bool {
+		switch fn := n.(type) {
+		case *ast.CallExpr:
+			if funIdent, ok := fn.Fun.(*ast.Ident); ok {
+				if deprecatedFuncs[funIdent.Name] {
+					fmt.Printf(yellow + "WARNING" + reset + ": Deprecated function '%s' is called at %s:%d\n", funIdent.Name, filePath, fs.Position(fn.Pos()).Line)
+				}
+			}
+            // Check if any argument passed to the function is a deprecated function
+            for _, arg := range fn.Args {
+                if argFunc, ok := arg.(*ast.FuncLit); ok {
+                    if body, ok := argFunc.Body.List[0].(*ast.ExprStmt); ok {
+                        if call, ok := body.X.(*ast.CallExpr); ok {
+                            if funIdent, ok := call.Fun.(*ast.Ident); ok {
+                                if deprecatedFuncs[funIdent.Name] {
+                                    fmt.Printf(yellow+"WARNING"+reset+": Deprecated function '%s' is passed as an argument at %s:%d\n",
+                                        funIdent.Name, filePath, fs.Position(argFunc.Pos()).Line)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        case *ast.FuncLit: // Check for deprecated functions passed as arguments directly to anonymous functions
+            for _, stmt := range fn.Body.List {
+                if expr, ok := stmt.(*ast.ExprStmt); ok {
+                    if call, ok := expr.X.(*ast.CallExpr); ok {
+                        if funIdent, ok := call.Fun.(*ast.Ident); ok {
+                            if deprecatedFuncs[funIdent.Name] {
+                                fmt.Printf(yellow+"WARNING"+reset+": Deprecated function '%s' is used within an anonymous function at %s:%d\n",
+                                    funIdent.Name, filePath, fs.Position(fn.Pos()).Line)
+                            }
+                        }
+                    }
+                }
+            }
+		}
+
+		return true
+	})
+
+	return nil
+}
+
+// helpers
+
+//given /foo/bar/baz -> baz
+func removeLastPart(s string) string {
+	lastSlashIndex := strings.LastIndex(s, "/")
+
+	if lastSlashIndex == -1 {
+		return s
+	}
+
+	return s[:lastSlashIndex]
+}
+
+var reset = "\033[0m"
+var red = "\033[31m"
+var green = "\033[32m"
+var yellow = "\033[33m"
+var blue = "\033[34m"
+var magenta = "\033[35m"
+var cyan = "\033[36m"
+var gray = "\033[37m"
+var white = "\033[97m"
+
+func printStatus(b bool) {
+	var status string
+
+	if b {
+		status = green + "SUCCESS" + reset
+	} else {
+		status = red + "FAILED" + reset
+	}
+
+	fmt.Printf("... %s", status)
+}
+
+func handleCmdOutput(out []byte, err error) {
+	if err != nil {
+		printStatus(false)
+		println("")
+		fmt.Printf("%s", out)
+		os.Exit(1)
+	} else {
+		printStatus(true)
+	}
+}
+
+func handleErr(err error) {
+	if err != nil {
+		printStatus(false)
+		println(err.Error())
+		os.Exit(1)
+	}
 }

@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	SESSION_COOKIE_NAME            = "_saral_session"
+	SESSION_COOKIE_NAME            = "_previous_session"
 	SESSION_COOKIE_EXPIRY_DAYS int = 100
 	SESSION_COOKIE_ENTROPY     int = 33
 
-	IDENTITY_COOKIE_NAME        string = "_saral_identity"
+	IDENTITY_COOKIE_NAME        string = "_previous_identity"
 	IDENTITY_COOKIE_EXPIRY_DAYS int    = 30
 	IDENTITY_TOKEN_EXPIRY_DAYS  int    = 30
 	IDENTITY_COOKIE_ENTROPY     int    = 33

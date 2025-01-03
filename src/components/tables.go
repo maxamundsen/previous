@@ -11,7 +11,7 @@ func TableTW(c ...Node) Node {
 		Div(Class("-m-1.5 overflow-x-auto"),
 			Div(Class("p-1.5 min-w-full inline-block align-middle"),
 				Div(Class("overflow-hidden"),
-					Table(Class("min-w-full divide-y divide-gray-200 table-fixed"),
+					Table(Class("min-w-full divide-y divide-neutral-200 table-fixed"),
 						Group(c),
 					),
 				),
@@ -21,7 +21,7 @@ func TableTW(c ...Node) Node {
 }
 
 func TBodyTW(children ...Node) Node {
-	return TBody(Class("divide-y divide-gray-200"), Group(children))
+	return TBody(Class("divide-y divide-neutral-200"), Group(children))
 }
 
 func ThTW(children ...Node) Node {

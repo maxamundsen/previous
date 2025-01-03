@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-	"saral/config"
+	"previous/config"
 )
 
 type sessionKey struct{}

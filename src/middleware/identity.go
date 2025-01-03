@@ -7,9 +7,9 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"saral/config"
-	"saral/database"
-	"saral/models"
+	"previous/config"
+	"previous/database"
+	"previous/models"
 )
 
 type identityKey struct{}

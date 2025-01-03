@@ -13,7 +13,7 @@ import (
 	"net/smtp"
 	"strings"
 	"time"
-	"saral/config"
+	"previous/config"
 )
 
 const (

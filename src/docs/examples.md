@@ -1,3 +1,3 @@
 # Examples
 
-[Click here for an interactive demonstration of Saral](/auth/login)
+[Click here for an interactive demonstration of Previous](/auth/login)

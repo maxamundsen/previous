@@ -1,17 +1,15 @@
-# Saral: A simple web codebase.
+# Previous: A simple web codebase.
 
-## What is Saral?
-Saral is a reference codebase that provides simple, and powerful facilities for building websites and web applications.
-Saral is _not_ a framework, or library.
+## What is Previous?
+Previous is a reference codebase that provides simple, and powerful facilities for building websites and web applications.
+Previous is _not_ a framework, or library.
 This project is a showcase of what a web application can look like with simple procedural code, while avoiding needlessly overcomplicated abstractions.
 
 At the end of the day, the job of a "web developer" is to dynamically generate HTML, and serve it back to a requester.
-Saral was built to remove the friction that is common with popular, overengineered solutions, so you can focus on getting the job done.
-
-The name "Saral" translates to "simple" in Hindi.
+Previous was built to remove the friction that is common with popular, overengineered solutions, so you can focus on getting the job done.
 
 ## Programming Environment
-The codebase is implemented in the [Go](https://go.dev/) programming language, as it is easy to use, procedural, compiles to a static executable, and provides a featureful standard library.
+This project is implemented in the [Go](https://go.dev/) programming language, as it is easy to use, procedural, compiles to a static executable, and provides a featureful standard library.
 
 ### Pre-requisites
 
@@ -19,9 +17,9 @@ The codebase is implemented in the [Go](https://go.dev/) programming language, a
 - Bash shell for running included build scripts. This is typically included in Linux distributions, and MacOS, but needs t
 
 ## Getting Started / Installation
-Clone the Saral repository to your local machine with the following command:
+Clone the Previous repository to your local machine with the following command:
 ```sh
-git clone https://github.com/maxamundsen/Saral.git
+git clone https://github.com/maxamundsen/Previous.git
 ```
 
 Set your working directory to the `/src` directory, and run the following command:
@@ -44,7 +42,7 @@ Many of these frameworks update frequently, deprecate features, change APIs regu
 
 The code that drives your website / application should be specialized to fit the problems you are trying to solve.
 By subscribing to a framework, you lock yourself into a set of rules that may not align with those problems.
-A reference codebase such as Saral provides all the tools you need to get up and running quickly, while proving the flexibily to change things on your own accord.
+A reference codebase such as Previous provides all the tools you need to get up and running quickly, while proving the flexibily to change things on your own accord.
 
 ### Primary Benefits
 

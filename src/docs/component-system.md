@@ -1,5 +1,5 @@
 # Views: Component System
-In Saral, HTML is dynamically generated within the web server process upon an HTTP request.
+In Previous, HTML is dynamically generated within the web server process upon an HTTP request.
 Rendering HTML on the server results in simpler code, and a smaller codebase.
 Despite what some may claim, server-generated HTML does _not_ compromise on interactivity, or coherant interface design.
 
@@ -11,7 +11,7 @@ Advantages to server-rendered HTML over client-rendered:
 
 ## Components
 
-To avoid repeating template logic and view content, Saral utilizes a component system to construct HTML.
+To avoid repeating template logic and view content, Previous utilizes a component system to construct HTML.
 There is no "template language/syntax" like _Mustache_, or _Razor_ to write HTML.
 In fact, by recognizing that HTML is a tree data structure, you don't even need to write HTML markup at all!
 
@@ -21,7 +21,7 @@ This means you can include any valid Go code inside a component.
 This _also_ means that components are debuggable!
 When a component is rendered, all subsequent components down the tree are called, and written to the `writer`.
 
-Saral uses [Gomponents](https://www.gomponents.com/) for component building.
+Previous uses [Gomponents](https://www.gomponents.com/) for component building.
 Please refer to their documentation for detailed documentation.
 
 ## Component Construction
@@ -90,7 +90,7 @@ func BasicPageView(children ...Node) Node {
 			Head(
 				Meta(Charset("utf-8")),
 				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
-				Meta(Name("description"), Content("Saral")),
+				Meta(Name("description"), Content("Previous")),
 			),
 			Body(
 				H1(Text("Hello, World!")),

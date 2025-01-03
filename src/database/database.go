@@ -2,9 +2,9 @@ package database
 
 import (
 	"time"
-	"saral/config"
-	"saral/crypt"
-	"saral/models"
+	"previous/config"
+	"previous/crypt"
+	"previous/models"
 )
 
 var users []models.User

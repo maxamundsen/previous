@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 	"unicode"
-	"saral/config"
-	"saral/crypt"
-	"saral/database"
-	"saral/models"
+	"previous/config"
+	"previous/crypt"
+	"previous/database"
+	"previous/models"
 )
 
 const (

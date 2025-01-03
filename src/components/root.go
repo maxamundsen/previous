@@ -3,7 +3,7 @@ package components
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	"saral/crypt"
+	"previous/crypt"
 )
 
 func RootLayout(title string, children ...Node) Node {
@@ -26,7 +26,7 @@ func RootLayout(title string, children ...Node) Node {
 				Meta(Charset("utf-8")),
 				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
 				TitleEl(Text(title)),
-				Meta(Name("description"), Content("Saral")),
+				Meta(Name("description"), Content("Previous")),
 
 				Link(Rel("apple-touch-icon"), Attr("sizes", "180x180"), Href("/apple-touch-icon.png")),
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "32x32"), Href("/favicon-32x32.png")),
@@ -55,7 +55,7 @@ func EmailRoot(children ...Node) Node {
 			Head(
 				Meta(Charset("utf-8")),
 				Meta(Name("viewport"), Content("width=device-width, initial-scale=1")),
-				Meta(Name("description"), Content("Saral")),
+				Meta(Name("description"), Content("Previous")),
 			),
 			Body(
 				Group(children),

@@ -1,6 +1,6 @@
 # Controllers
 
-In Saral, a "controller" is simply a function that handles an HTTP request.
+In Previous, a "controller" is simply a function that handles an HTTP request.
 The controller is responsible for parsing form submissions, URL query parameters, and calling out to the appropriate functions to generate a response.
 This response is typically in HTML (page) or JSON (API) form.
 
@@ -48,7 +48,7 @@ func ExampleController(w http.ResponseWriter, r *http.Request) {
 
 An API controller is identical to a page controller, except outputs a JSON response.
 
-There are a two builtin functions in Saral that assist with generating JSON from structs:
+There are a two builtin functions in Previous that assist with generating JSON from structs:
 
 ```go
 ApiWriteJSON(w http.ResponseWriter, data interface{})

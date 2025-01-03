@@ -2,17 +2,17 @@ package examples
 
 import (
 	"net/http"
-	"saral/models"
-	"saral/middleware"
+	"previous/models"
+	"previous/middleware"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/components"
+	. "previous/components"
 )
 
 // @Identity
 // @Protected
-// @Session
+// @CookieSession
 func IndexController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	IndexView(*identity).Render(w)

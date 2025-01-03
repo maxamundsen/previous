@@ -11,7 +11,7 @@ You can add your own options, or remove ones you don't need.
 
 ## Runtime Configuration
 
-Runtime configuration options are designed to be set by the system administrator deploying the Saral server executable.
+Runtime configuration options are designed to be set by the system administrator deploying the Previous server executable.
 Setting these options does _not_ require rebuilding the application, or access to the source code, as they are set at runtime.
 
 Example: You want to set different database credentials on your local machine, than on the production server.
@@ -62,7 +62,7 @@ They are intentially located in the `config` package (and not elsewhere) to keep
 
 ```go
 const (
-	SESSION_COOKIE_NAME            = "_saral_session"
+	SESSION_COOKIE_NAME            = "_previous_session"
 	SESSION_COOKIE_EXPIRY_DAYS int = 100
 	SESSION_COOKIE_ENTROPY     int = 33
 
@@ -72,12 +72,12 @@ const (
 
 
 ## Example usage
-To use the config, import `saral/config` from any package to get your config options.
+To use the config, import `previous/config` from any package to get your config options.
 
 ```go
 package yourpackage
 
-import "saral/config"
+import "previous/config"
 
 func connectToDatabase() {
 	// runtime config

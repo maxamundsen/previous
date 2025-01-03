@@ -3,11 +3,11 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/components"
+	. "previous/components"
 
-	"saral/middleware"
-	"saral/models"
-	"saral/snailmail"
+	"previous/middleware"
+	"previous/models"
+	"previous/snailmail"
 
 	"bytes"
 	"net/http"
@@ -16,7 +16,7 @@ import (
 
 // @Identity
 // @Protected
-// @Session
+// @CookieSession
 func SmtpController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

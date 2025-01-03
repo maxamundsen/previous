@@ -2,17 +2,17 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "saral/components"
+	. "previous/components"
 
-	"saral/middleware"
-	"saral/models"
+	"previous/middleware"
+	"previous/models"
 
 	"net/http"
 )
 
 // @Identity
 // @Protected
-// @Session
+// @CookieSession
 func AlpineController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	AlpineView(*identity).Render(w)
@@ -24,7 +24,7 @@ func AlpineView(identity models.Identity) Node {
 			P(Class("mb-5"),
 				Text("Click the button to increase the counter. This interaction relies on client-side scripting."),
 				Text(" Alpine.js allows for simple DOM manipulation using HTML attributes."),
-				Text(" Although Saral isn't built using JavaScript, it is still sometimes necessary for features such as clickable dropdown menues, or modal dialogs."),
+				Text(" Although Previous isn't built using JavaScript, it is still sometimes necessary for features such as clickable dropdown menues, or modal dialogs."),
 			),
 			ButtonGray(Attr("x-text", `"Counter: " + count`), Attr("x-on:click", "count+=1")),
 			P(Class("mt-5"),

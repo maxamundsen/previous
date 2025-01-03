@@ -9,7 +9,7 @@ A basic `routes.go` file looks something like this:
 package main
 
 import (
-    "saral/pages/public"
+    "previous/pages/public"
 )
 
 func mapPageRoutes(mux *http.ServeMux) {

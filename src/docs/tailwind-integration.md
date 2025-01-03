@@ -1,7 +1,7 @@
 # Views: Tailwind Integration
 
 ## Usage & Compiling
-The Saral codebase includes a copy of the Tailwind compiler alongside the build script, where it is called.
+The Previous codebase includes a copy of the Tailwind compiler alongside the build script, where it is called.
 
 ```sh
 sh build_server.sh

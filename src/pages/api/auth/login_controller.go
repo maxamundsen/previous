@@ -1,9 +1,10 @@
-package api
+package auth
 
 import (
 	"net/http"
-	"saral/auth"
-	"saral/middleware"
+	"previous/auth"
+	"previous/middleware"
+	"previous/pages/api"
 
 	"log"
 )
@@ -17,7 +18,7 @@ type LoginInfo struct {
 func LoginController(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 
-	err := ApiReadJSON(w, r, &loginInfo)
+	err := api.ApiReadJSON(w, r, &loginInfo)
 	if err != nil {
 		println(err)
 	}
@@ -37,5 +38,5 @@ func LoginController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ApiWritePlaintext(w, encrypted)
+	api.ApiWritePlaintext(w, encrypted)
 }

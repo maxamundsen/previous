@@ -1,8 +1,8 @@
 package components
 
 import (
-	. "saral/basic"
-	"saral/finance"
+	. "previous/basic"
+	"previous/finance"
 
 	. "maragu.dev/gomponents"
 

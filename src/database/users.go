@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"saral/models"
+	"previous/models"
 )
 
 func FetchUserById(userid int) (models.User, error) {

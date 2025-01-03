@@ -1,13 +1,13 @@
 package main
 
 import (
-	// "saral/middleware"
+	// "previous/middleware"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
-	"saral/components"
-	"saral/docs"
+	"previous/components"
+	"previous/docs"
 )
 
 // manually mapped routes->controllers go here.
@@ -32,6 +32,7 @@ func mapDocumentationRoutes(mux *http.ServeMux) {
 }
 
 // index controller is handled specially
+// #Deprecated
 func mapIndexRoute(mux *http.ServeMux) {
 	fs := http.FileServer(http.Dir("wwwroot"))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
