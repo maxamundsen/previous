@@ -1,0 +1,26 @@
+package pages
+
+import (
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
+	. "previous/components"
+
+	"previous/middleware"
+	"previous/models"
+
+	"net/http"
+)
+
+// @Identity
+// @Protected
+// @CookieSession
+func ExampleController(w http.ResponseWriter, r *http.Request) {
+	identity := middleware.GetIdentity(r)
+	ExampleView(*identity).Render(w)
+}
+
+func ExampleView(identity models.Identity) Node {
+	return AppLayout("Example", identity,
+		// hello
+	)
+}

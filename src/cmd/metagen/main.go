@@ -61,9 +61,6 @@ func main() {
 	compileTailwindCSS()
 	compileServer()
 	compileMigrator()
-
-	// warnings
-	checkProjectForDeprecatedFuncs()
 }
 
 func compileTailwindCSS() {
@@ -148,9 +145,17 @@ func generateHTTPRoutes() {
 		Controller string
 		Package    string
 		Import     string
+
 		Identity   bool `note`
 		Protected  bool `note`
 		CookieSession    bool `note`
+
+		// http verbs
+		HttpPost bool `note`
+		HttpGet bool `note`
+		HttpPut bool `note`
+		HttpPatch bool `note`
+		HttpDelete bool `note`
 	}
 
 	const root = "pages" // Use the /pages directory for autogenerating routes
@@ -317,7 +322,20 @@ func generateHTTPRoutes() {
 			printableController = fmt.Sprintf("middleware.LoadIdentity(%s, %t)", printableController, routeInfo.Protected)
 		}
 
-		code += fmt.Sprintf("	mux.HandleFunc(\"%s\", %s)\n", routeInfo.URL, printableController)
+		httpVerb := ""
+		if routeInfo.HttpGet {
+			httpVerb = "GET "
+		} else if routeInfo.HttpPost {
+			httpVerb = "POST "
+		} else if routeInfo.HttpPut {
+			httpVerb = "PUT "
+		} else if routeInfo.HttpPatch {
+			httpVerb = "PATCH "
+		} else if routeInfo.HttpDelete {
+			httpVerb = "DELETE "
+		}
+
+		code += fmt.Sprintf("\tmux.HandleFunc(\"%s%s\", %s)\n", httpVerb, routeInfo.URL, printableController)
 	}
 
 	code += "}"
@@ -329,40 +347,6 @@ func generateHTTPRoutes() {
 
 	printStatus(true)
 	println("")
-}
-
-//#Deprecated
-func checkProjectForDeprecatedFuncs() error {
-	deprecatedFuncs := make(map[string]bool)
-
-	const rootDir = "./"
-	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
-			if err := collectDeprecatedFuncs(path, deprecatedFuncs); err != nil {
-				fmt.Errorf("Error scanning file %s: %v\n", path, err)
-			}
-		}
-		return nil
-	})
-
-	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
-			if err := checkDeprecatedFuncs(path, deprecatedFuncs); err != nil {
-				fmt.Errorf("Error scanning file %s: %v\n", path, err)
-			}
-		}
-		return nil
-	})
-
-	return err
 }
 
 // given an ast.Decl, and destination struct, look at the struct for any
@@ -415,99 +399,6 @@ func parseNotesFromDocComment(decl ast.Decl, file *os.File, dest any) error {
 			return fmt.Errorf("\n`%s`: Unknown note `@%s`, Identifier: `%s`\n\tValid values are: %v", file.Name(), v, identifier, validNotes)
 		}
 	}
-
-	return nil
-}
-
-func collectDeprecatedFuncs(filePath string, deprecatedFuncs map[string]bool) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return fmt.Errorf("could not open file %s: %v", filePath, err)
-	}
-	defer file.Close()
-
-	fs := token.NewFileSet()
-
-	node, err := parser.ParseFile(fs, filePath, file, parser.ParseComments)
-	if err != nil {
-		return fmt.Errorf("could not parse file %s: %v", filePath, err)
-	}
-
-	// Walk through the AST to find function declarations
-	ast.Inspect(node, func(n ast.Node) bool {
-		switch fn := n.(type) {
-		case *ast.FuncDecl:
-			// Check the doc comments for '#Deprecated'
-			if fn.Doc != nil {
-				for _, comment := range fn.Doc.List {
-					if strings.Contains(comment.Text, "#Deprecated") {
-						deprecatedFuncs[fn.Name.Name] = true
-					}
-				}
-			}
-		}
-		return true
-	})
-
-	return nil
-}
-
-func checkDeprecatedFuncs(filePath string, deprecatedFuncs map[string]bool) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return fmt.Errorf("could not open file %s: %v", filePath, err)
-	}
-	defer file.Close()
-
-	fs := token.NewFileSet()
-
-	node, err := parser.ParseFile(fs, filePath, file, parser.ParseComments)
-	if err != nil {
-		return fmt.Errorf("could not parse file %s: %v", filePath, err)
-	}
-
-	// Walk through the AST to find function  calls
-	ast.Inspect(node, func(n ast.Node) bool {
-		switch fn := n.(type) {
-		case *ast.CallExpr:
-			if funIdent, ok := fn.Fun.(*ast.Ident); ok {
-				if deprecatedFuncs[funIdent.Name] {
-					fmt.Printf(yellow + "WARNING" + reset + ": Deprecated function '%s' is called at %s:%d\n", funIdent.Name, filePath, fs.Position(fn.Pos()).Line)
-				}
-			}
-            // Check if any argument passed to the function is a deprecated function
-            for _, arg := range fn.Args {
-                if argFunc, ok := arg.(*ast.FuncLit); ok {
-                    if body, ok := argFunc.Body.List[0].(*ast.ExprStmt); ok {
-                        if call, ok := body.X.(*ast.CallExpr); ok {
-                            if funIdent, ok := call.Fun.(*ast.Ident); ok {
-                                if deprecatedFuncs[funIdent.Name] {
-                                    fmt.Printf(yellow+"WARNING"+reset+": Deprecated function '%s' is passed as an argument at %s:%d\n",
-                                        funIdent.Name, filePath, fs.Position(argFunc.Pos()).Line)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        case *ast.FuncLit: // Check for deprecated functions passed as arguments directly to anonymous functions
-            for _, stmt := range fn.Body.List {
-                if expr, ok := stmt.(*ast.ExprStmt); ok {
-                    if call, ok := expr.X.(*ast.CallExpr); ok {
-                        if funIdent, ok := call.Fun.(*ast.Ident); ok {
-                            if deprecatedFuncs[funIdent.Name] {
-                                fmt.Printf(yellow+"WARNING"+reset+": Deprecated function '%s' is used within an anonymous function at %s:%d\n",
-                                    funIdent.Name, filePath, fs.Position(fn.Pos()).Line)
-                            }
-                        }
-                    }
-                }
-            }
-		}
-
-		return true
-	})
 
 	return nil
 }

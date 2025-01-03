@@ -16,6 +16,7 @@ import (
 )
 
 // @Identity
+// @Protected
 // @CookieSession
 func LoginController(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
