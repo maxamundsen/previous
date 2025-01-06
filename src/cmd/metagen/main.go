@@ -255,7 +255,7 @@ func generateHTTPRoutes() {
 
 	for _, v := range routeList {
 		if v.Identity || v.CookieSession {
-			code += "	\"previous/middleware\"\n"
+			code += "	. \"previous/middleware\"\n"
 			break
 		}
 	}
@@ -315,11 +315,11 @@ func generateHTTPRoutes() {
 		printableController := routeInfo.Package + "." + routeInfo.Controller
 
 		if routeInfo.CookieSession {
-			printableController = fmt.Sprintf("middleware.LoadSessionFromCookie(%s)", printableController)
+			printableController = fmt.Sprintf("LoadSessionFromCookie(%s)", printableController)
 		}
 
 		if routeInfo.Identity {
-			printableController = fmt.Sprintf("middleware.LoadIdentity(%s, %t)", printableController, routeInfo.Protected)
+			printableController = fmt.Sprintf("LoadIdentity(%s, %t)", printableController, routeInfo.Protected)
 		}
 
 		httpVerb := ""
