@@ -76,6 +76,8 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 			}
 		}
 
+		// fetch the current user according to the database, and validate that the security stamp hasn't changed.
+		// if it has, invalidate the login session.
 		latestUser, _ := database.FetchUserById(identity.User.Id)
 
 		securityCheckFailed := latestUser.SecurityStamp != identity.User.SecurityStamp

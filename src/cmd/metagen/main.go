@@ -108,7 +108,7 @@ func compileServer() {
 func compileMigrator() {
 	fmt.Printf("[GO COMPILER] Compiling SQL Migrator")
 
-	out, err := exec.Command("go", "build", "./cmd/server").CombinedOutput()
+	out, err := exec.Command("go", "build", "./cmd/migrator").CombinedOutput()
 	handleCmdOutput(out, err)
 	println("")
 }
@@ -174,18 +174,15 @@ func generateHTTPRoutes() {
 
 		// Only process .go files
 		if strings.HasSuffix(info.Name(), "_controller.go") {
-			// Open the file
 			file, err := os.Open(pathStr)
 			handleErr(err)
 
 			defer file.Close()
 
-			// Parse the file using the go/parser package
 			fs := token.NewFileSet()
 			node, err := parser.ParseFile(fs, pathStr, file, parser.ParseComments)
 			handleErr(err)
 
-			// Traverse the file and find the first function that ends in "Controller"
 			found := false
 
 			for _, decl := range node.Decls {
@@ -212,7 +209,6 @@ func generateHTTPRoutes() {
 					relativePath := strings.TrimPrefix(pathStr, root)
 					relativePath = strings.TrimSuffix(relativePath, "_controller.go")
 
-					// Extract the last directory name
 					dirPath := filepath.Dir(relativePath)
 					lastDir := filepath.Base(dirPath)
 
@@ -228,12 +224,14 @@ func generateHTTPRoutes() {
 					}
 
 					// if the route is in the "root" folder, make sure it imports the correct package.
-					if strings.HasPrefix(ri.Controller, "/.") {
+					if ri.Package == "/" {
+						ri.Package = "pages"
+						ri.Import = module_name + "/" + ri.Package
 						ri.Controller = strings.ReplaceAll(ri.Controller, "/", "pages")
+					} else {
+						ri.Import = module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
 					}
-
-					ri.Import = module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
-
+					
 					routeList = append(routeList, ri)
 				}
 			}
