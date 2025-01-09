@@ -4,9 +4,10 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
+	. "previous/pages/app"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"encoding/json"
 	"io"
@@ -74,7 +75,7 @@ func ApiFetchController(w http.ResponseWriter, r *http.Request) {
 	ApiFetchView(errorMsg, *identity, jsonOutput).Render(w)
 }
 
-func ApiFetchView(errorMsg string, identity models.Identity, model astroModel) Node {
+func ApiFetchView(errorMsg string, identity auth.Identity, model astroModel) Node {
 	return AppLayout("API Fetch Example", identity,
 		PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
 		P(Class("my-5"), Text("Message:")),

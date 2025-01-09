@@ -1,43 +1,33 @@
 package database
 
 import (
-	"time"
+	"log"
 	"previous/config"
-	"previous/crypt"
-	"previous/models"
+
+	"github.com/jmoiron/sqlx"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
-var users []models.User
+// The database package provides an interface between go code and a relational database.
+
+var db *sqlx.DB
 
 func Init() {
-	adminPass, _ := crypt.HashPassword("admin")
-	pass, _ := crypt.HashPassword(config.GetConfig().IdentityDefaultPassword)
+	var err error
 
-	// default users, no database so hardcode this into the database "init"
-	users = []models.User{
-		{
-			Id:              1,
-			Username:        "admin",
-			Email:           "user@example.com",
-			Firstname:       "John",
-			Lastname:        "Doe",
-			Password:        adminPass,
-			FailedAttempts:  0,
-			SecurityStamp:   "",
-			LastLogin:       time.Now(),
-			PermissionAdmin: true,
-		},
-		{
-			Id:              2,
-			Username:        "example",
-			Email:           "example@example.com",
-			Firstname:       "Sally",
-			Lastname:        "Smith",
-			Password:        pass,
-			FailedAttempts:  0,
-			SecurityStamp:   "",
-			LastLogin:       time.Now(),
-			PermissionAdmin: false,
-		},
+	db, err = sqlx.Connect("sqlite3", config.GetConfig().DbConnectionString)
+
+	// allow sqlx scan without all columns present
+	db = db.Unsafe()
+
+	if err != nil {
+		panic(err.Error())
 	}
+
+	// db.SetMaxOpenConns(0)
+	// db.SetMaxIdleConns(200)
+	// db.SetConnMaxLifetime(5 * time.Minute)
+
+	log.Println("Initialized sqlite3 application database connection")
 }

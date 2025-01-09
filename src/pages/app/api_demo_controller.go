@@ -6,7 +6,7 @@ import (
 	. "previous/components"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"net/http"
 )
@@ -20,7 +20,7 @@ func ApiDemoController(w http.ResponseWriter, r *http.Request) {
 	ApiDemoView(*identity).Render(w)
 }
 
-func ApiDemoView(identity models.Identity) Node {
+func ApiDemoView(identity auth.Identity) Node {
 	return AppLayout("API Demo", identity,
 		Div(
 			Attr("x-data", `

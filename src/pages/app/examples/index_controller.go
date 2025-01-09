@@ -2,12 +2,11 @@ package examples
 
 import (
 	"net/http"
-	"previous/models"
+	"previous/auth"
 	"previous/middleware"
-
+	. "previous/pages/app"
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/components"
 )
 
 // @Identity
@@ -18,7 +17,7 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 	IndexView(*identity).Render(w)
 }
 
-func IndexView(identity models.Identity) Node {
+func IndexView(identity auth.Identity) Node {
 	return AppLayout("Example Index Page", identity,
 		P(Text("This is an index page! Notice how the route is /app/examples without anything following?")),
 	)

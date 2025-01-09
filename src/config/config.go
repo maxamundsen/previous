@@ -49,13 +49,15 @@ type configuration struct {
 	SmtpRequireAuth         bool   `json:"SmtpRequireAuth"`
 }
 
+//mysql:    "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/example?parseTime=true",
+
 const DEFAULT_CONFIG = `{
     "Host": "localhost",
     "Port": "9090",
     "SessionPrivateKey": "key",
     "IdentityPrivateKey": "key",
     "IdentityDefaultPassword": "password",
-    "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/example?parseTime=true",
+    "DbConnectionString": "file:example.db?parseTime=true",
     "SmtpServer": "server",
     "SmtpPort": "587",
     "SmtpUsername": "username",

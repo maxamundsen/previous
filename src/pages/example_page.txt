@@ -6,7 +6,7 @@ import (
 	. "previous/components"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"net/http"
 )
@@ -19,7 +19,7 @@ func ExampleController(w http.ResponseWriter, r *http.Request) {
 	ExampleView(*identity).Render(w)
 }
 
-func ExampleView(identity models.Identity) Node {
+func ExampleView(identity auth.Identity) Node {
 	return AppLayout("Example", identity,
 		// hello
 	)

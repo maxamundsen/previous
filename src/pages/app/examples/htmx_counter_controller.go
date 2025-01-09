@@ -3,7 +3,6 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "previous/components"
-
 	. "previous/basic"
 	
 	"net/http"

@@ -9,7 +9,7 @@ import (
 	"time"
 	"previous/config"
 	"previous/database"
-	"previous/models"
+	"previous/auth"
 )
 
 type identityKey struct{}
@@ -21,7 +21,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 	redirect := config.IDENTITY_AUTH_REDIRECT
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var identity *models.Identity
+		var identity *auth.Identity
 
 		token := r.Header.Get("Authorization")
 
@@ -38,7 +38,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 			}
 
 			if identity == nil {
-				blankIdentity := &models.Identity{Authenticated: false}
+				blankIdentity := &auth.Identity{Authenticated: false}
 
 				if requireAuth {
 					http.Error(w, "Error: Unauthorized", http.StatusUnauthorized)
@@ -56,7 +56,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 			}
 
 			if identity == nil {
-				blankIdentity := &models.Identity{Authenticated: false}
+				blankIdentity := &auth.Identity{Authenticated: false}
 
 				if requireAuth {
 					if redirect && loginPath != r.URL.Path && logoutPath != r.URL.Path {
@@ -78,7 +78,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 		// fetch the current user according to the database, and validate that the security stamp hasn't changed.
 		// if it has, invalidate the login session.
-		latestUser, _ := database.FetchUserById(identity.User.Id)
+		latestUser, _ := database.FetchUserById(identity.User.ID)
 
 		securityCheckFailed := latestUser.SecurityStamp != identity.User.SecurityStamp
 		notAuthenticated := requireAuth && !identity.Authenticated
@@ -105,12 +105,12 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 	})
 }
 
-func GetIdentity(r *http.Request) *models.Identity {
-	identity := r.Context().Value(identityKey{}).(*models.Identity)
+func GetIdentity(r *http.Request) *auth.Identity {
+	identity := r.Context().Value(identityKey{}).(*auth.Identity)
 	return identity
 }
 
-func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *models.Identity) {
+func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *auth.Identity) {
 	cookies := r.Cookies()
 
 	// calculate total bytes used by other cookies

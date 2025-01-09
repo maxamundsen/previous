@@ -4,9 +4,10 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
+	. "previous/pages/app"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 	"previous/snailmail"
 
 	"bytes"
@@ -47,7 +48,7 @@ func SmtpController(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SmtpView(errorMsg string, successMsg string, identity models.Identity) Node {
+func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
 	return AppLayout("SMTP Client Example", identity,
 		If(errorMsg != "", P(Class("text-red-600"), Text(errorMsg))),
 		If(successMsg != "", P(Class("text-red-600"), Text(successMsg))),

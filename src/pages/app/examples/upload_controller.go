@@ -3,7 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/components"
+	. "previous/pages/app"
 
 	"fmt"
 	"io"
@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"time"
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 )
 
 // @Identity
@@ -61,7 +61,7 @@ func UploadController(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UploadView(errorMsg string, successMsg string, identity models.Identity) Node {
+func UploadView(errorMsg string, successMsg string, identity auth.Identity) Node {
 	return AppLayout("Upload Example", identity,
 		If(errorMsg != "", Div(Class("alert alert-danger"), Text(errorMsg))),
 		If(successMsg != "", Div(Class("alert alert-success"), Text(successMsg))),

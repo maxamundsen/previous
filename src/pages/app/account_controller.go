@@ -2,7 +2,7 @@ package app
 
 import (
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -20,7 +20,7 @@ func AccountController(w http.ResponseWriter, r *http.Request) {
 	AccountView(*identity).Render(w)
 }
 
-func AccountView(identity models.Identity) Node {
+func AccountView(identity auth.Identity) Node {
 	return AppLayout("Account", identity,
 		Div(Class("table-responsive"),
 			H4(Class("mb-3 text-lg font-bold"), Text("General Account Information")),
@@ -30,7 +30,7 @@ func AccountView(identity models.Identity) Node {
 				TBody(
 					Tr(
 						ThTW(Text("UserID")),
-						TdTW(ToText(identity.User.Id)),
+						TdTW(ToText(identity.User.ID)),
 					),
 					Tr(
 						ThTW(Text("Username")),
@@ -46,7 +46,7 @@ func AccountView(identity models.Identity) Node {
 					),
 					Tr(
 						ThTW(Text("Last Login")),
-						TdTW(FormatDateTime(identity.User.LastLogin)),
+						TdTW(Text(identity.User.LastLogin)),
 					),
 				),
 			),
@@ -63,7 +63,7 @@ func AccountView(identity models.Identity) Node {
 				TBodyTW(
 					Tr(
 						TdTW(Text("Admin")),
-						TdTW(Input(Type("checkbox"), If(identity.User.PermissionAdmin, Checked()), Disabled())),
+						TdTW(Input(Type("checkbox"), If(identity.User.PermissionAdmin != 0, Checked()), Disabled())),
 					),
 				),
 			),

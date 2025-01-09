@@ -6,7 +6,7 @@ import (
 	. "previous/components"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"net/http"
 )
@@ -19,7 +19,7 @@ func DashboardController(w http.ResponseWriter, r *http.Request) {
 	DashboardView(*identity).Render(w)
 }
 
-func DashboardView(identity models.Identity) Node {
+func DashboardView(identity auth.Identity) Node {
 	return AppLayout("Dashboard", identity,
 		H5(Class("font-bold"), Text("Welcome back, "), Text(identity.User.Firstname+" "+identity.User.Lastname), Text(".")),
 		P(
@@ -35,10 +35,10 @@ func DashboardView(identity models.Identity) Node {
 			Icon("htmx", 24),
 			Icon("github", 24),
 		),
-		If(identity.User.PermissionAdmin,
+		If(identity.User.PermissionAdmin != 0,
 			Div(
 				Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),
-					P(Class("font-bold text-neutral-600"), Text("Admin only")),
+					P(Class("font-bold text-red-600"), Text("Admin only")),
 					P(Text("You can only see this if you have the admin permission")),
 				),
 			),

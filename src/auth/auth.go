@@ -3,7 +3,6 @@ package auth
 import (
 	"crypto/rand"
 	"errors"
-	"log"
 	"math/big"
 	"strconv"
 	"strings"
@@ -12,14 +11,21 @@ import (
 	"previous/config"
 	"previous/crypt"
 	"previous/database"
-	"previous/models"
+	"previous/.jet/model"
 )
 
 const (
 	UNAUTHORIZED_MESSAGE string = "Unauthorized access"
 )
 
-func NewIdentity(userid int, rememberMe bool) *models.Identity {
+type Identity struct {
+	User          model.User
+	Authenticated bool
+	RememberMe    bool
+	Expiration    time.Time
+}
+
+func NewIdentity(userid int32, rememberMe bool) *Identity {
 	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
 	expiration := time.Now().Add(expirationDuration)
 
@@ -28,7 +34,7 @@ func NewIdentity(userid int, rememberMe bool) *models.Identity {
 		return nil
 	}
 
-	return &models.Identity{
+	return &Identity{
 		User:          user,
 		Authenticated: true,
 		RememberMe:    rememberMe,
@@ -36,7 +42,7 @@ func NewIdentity(userid int, rememberMe bool) *models.Identity {
 	}
 }
 
-func Authenticate(username string, password string) (int, bool) {
+func Authenticate(username string, password string) (int32, bool) {
 	// time attack partial mitigation
 	// adds up to 0.5 seconds to the response time
 
@@ -56,7 +62,7 @@ func Authenticate(username string, password string) (int, bool) {
 
 	user, userErr := database.FetchUserByUsername(username)
 
-	if userErr != nil || user.FailedAttempts > config.MAX_LOGIN_ATTEMPTS {
+	if userErr != nil || user.FailedAttempts > int32(config.MAX_LOGIN_ATTEMPTS) {
 		// set user password to dummy password to keep timing consistent when validating password
 		user.Password = "$2a$14$KW5OO1wZqGGq3SrpBFj0Oema5DG8Ph7lZJvq0ECkkYBpNFom6b9vO"
 		crypt.ComparePasswords(password, user.Password)
@@ -73,7 +79,7 @@ func Authenticate(username string, password string) (int, bool) {
 		database.UpdateUser(user)
 	}
 
-	return user.Id, result
+	return user.ID, result
 }
 
 func CheckPasswordCriteria(password string) error {
@@ -127,65 +133,65 @@ func CheckPasswordCriteria(password string) error {
 	return nil
 }
 
-func ChangePassword(user models.User, oldPassword string, newPassword string, passwordConfirm string, noCheck bool) (models.User, error) {
-	// noCheck skips criteria validation, and confirmation validation
-	if noCheck {
-		if newPassword != passwordConfirm {
-			log.Println("Passwords do not match")
-			return user, errors.New("passwords do not match")
-		}
+// func ChangePassword(user models.User, oldPassword string, newPassword string, passwordConfirm string, noCheck bool) (models.User, error) {
+// 	// noCheck skips criteria validation, and confirmation validation
+// 	if noCheck {
+// 		if newPassword != passwordConfirm {
+// 			log.Println("Passwords do not match")
+// 			return user, errors.New("passwords do not match")
+// 		}
 
-		critErr := CheckPasswordCriteria(newPassword)
+// 		critErr := CheckPasswordCriteria(newPassword)
 
-		if critErr != nil {
-			return user, critErr
-		}
+// 		if critErr != nil {
+// 			return user, critErr
+// 		}
 
-		if !crypt.ComparePasswords(oldPassword, user.Password) {
-			return user, errors.New("old password incorrect")
-		}
-	}
+// 		if !crypt.ComparePasswords(oldPassword, user.Password) {
+// 			return user, errors.New("old password incorrect")
+// 		}
+// 	}
 
-	newHash, hashErr := crypt.HashPassword(newPassword)
-	if hashErr != nil {
-		return user, errors.New("could not hash password")
-	}
+// 	newHash, hashErr := crypt.HashPassword(newPassword)
+// 	if hashErr != nil {
+// 		return user, errors.New("could not hash password")
+// 	}
 
-	user.Password = newHash
+// 	user.Password = newHash
 
-	updateErr := database.UpdateUser(user)
+// 	updateErr := database.UpdateUser(user)
 
-	if updateErr != nil {
-		return user, errors.New("could not update user")
-	}
+// 	if updateErr != nil {
+// 		return user, errors.New("could not update user")
+// 	}
 
-	return user, nil
-}
+// 	return user, nil
+// }
 
-// wrapper with less args for skipping validation, confirmation
-func ChangePasswordNoCheck(user models.User, newPassword string) (models.User, error) {
-	return ChangePassword(user, "", newPassword, "", true)
-}
+// // wrapper with less args for skipping validation, confirmation
+// func ChangePasswordNoCheck(user models.User, newPassword string) (models.User, error) {
+// 	return ChangePassword(user, "", newPassword, "", true)
+// }
 
-// hard reset user password without confirmation or record.
-// should only be used for developer purposes
-func ResetPasswordNoConfirm(userid int) (models.User, error) {
-	user, err := database.FetchUserById(userid)
-	if err != nil {
-		return user, err
-	}
+// // hard reset user password without confirmation or record.
+// // should only be used for developer purposes
+// func ResetPasswordNoConfirm(userid int) (models.User, error) {
+// 	user, err := database.FetchUserById(userid)
+// 	if err != nil {
+// 		return user, err
+// 	}
 
-	hash, hashErr := crypt.HashPassword(config.GetConfig().IdentityDefaultPassword)
-	if hashErr != nil {
-		return user, hashErr
-	}
+// 	hash, hashErr := crypt.HashPassword(config.GetConfig().IdentityDefaultPassword)
+// 	if hashErr != nil {
+// 		return user, hashErr
+// 	}
 
-	user.Password = hash
+// 	user.Password = hash
 
-	updateErr := database.UpdateUser(user)
-	if updateErr != nil {
-		return user, updateErr
-	}
+// 	updateErr := database.UpdateUser(user)
+// 	if updateErr != nil {
+// 		return user, updateErr
+// 	}
 
-	return user, nil
-}
+// 	return user, nil
+// }

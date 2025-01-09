@@ -243,9 +243,6 @@ This codebase includes a few builtin components that make things a little easier
 Here are a few examples from `/src/pages/components.go` and `/src/pages/helpers.go`:
 
 ```go
-// turn an array of nodes into a node group
-func MakeGroup(children ...Node) Node
-
 // conditionally render a component with else
 func IfElse(condition bool, t Node, f Node) Node
 

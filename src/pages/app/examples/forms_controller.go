@@ -4,8 +4,9 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
+	. "previous/pages/app"
 
-	"previous/models"
+	"previous/auth"
 	"previous/middleware"
 
 	"net/http"
@@ -36,17 +37,17 @@ func FormController(w http.ResponseWriter, r *http.Request) {
 	FormView(&viewModel, *identity).Render(w)
 }
 
-func FormView(viewModel *FormViewModel, identity models.Identity) Node {
+func FormView(viewModel *FormViewModel, identity auth.Identity) Node {
 	return AppLayout("Form Submit Example", identity,
 		If(viewModel.display,
-			MakeGroup(
+			Group{
 				P(Text("You input:")),
 				Ul(
 					Li(Class("text-red-400"), Text(viewModel.field1)),
 					Li(Class("text-red-400"), Text(viewModel.field2)),
 				),
 				Br(),
-			),
+			},
 		),
 		Form(Method("post"), AutoComplete("off"),
 			FormLabel(Text("Field 1")),

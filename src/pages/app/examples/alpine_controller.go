@@ -3,9 +3,10 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
+	. "previous/pages/app"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"net/http"
 )
@@ -18,7 +19,7 @@ func AlpineController(w http.ResponseWriter, r *http.Request) {
 	AlpineView(*identity).Render(w)
 }
 
-func AlpineView(identity models.Identity) Node {
+func AlpineView(identity auth.Identity) Node {
 	return AppLayout("Alpine Example", identity,
 		Div(Attr("x-data", "{ count: 0 }"),
 			P(Class("mb-5"),

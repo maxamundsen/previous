@@ -4,9 +4,10 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
+	. "previous/pages/app"
 
 	"previous/middleware"
-	"previous/models"
+	"previous/auth"
 
 	"net/http"
 )
@@ -19,7 +20,7 @@ func HtmxController(w http.ResponseWriter, r *http.Request) {
 	HtmxView(*identity).Render(w)
 }
 
-func HtmxView(identity models.Identity) Node {
+func HtmxView(identity auth.Identity) Node {
 	return AppLayout("HTMX Example", identity,
 		P(Class("mb-5"), Text("Click the button to increase the counter. Open up the network tab in the browser developer tools to see how this works under the hood.")),
 		CounterButton(0),

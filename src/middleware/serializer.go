@@ -5,7 +5,7 @@ import (
 	"encoding/gob"
 	"previous/config"
 	"previous/crypt"
-	"previous/models"
+	"previous/auth"
 )
 
 // A cookie serializer is a better way to handle session data. they are still
@@ -62,7 +62,7 @@ func DecryptSession(sessionString string) (map[string]interface{}, error) {
 	return session, nil
 }
 
-func EncryptIdentity(data *models.Identity) (string, error) {
+func EncryptIdentity(data *auth.Identity) (string, error) {
 	// serialize
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
@@ -80,8 +80,8 @@ func EncryptIdentity(data *models.Identity) (string, error) {
 	return auth, nil
 }
 
-func DecryptIdentity(authString string) (*models.Identity, error) {
-	cookie := models.Identity{}
+func DecryptIdentity(authString string) (*auth.Identity, error) {
+	cookie := auth.Identity{}
 
 	// decrypt
 	secret, err := crypt.DecryptSecret(authString, config.GetConfig().IdentityPrivateKey)

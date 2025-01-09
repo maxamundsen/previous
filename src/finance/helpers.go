@@ -7,6 +7,15 @@ import (
 	"strings"
 )
 
+// takes a number such as 123456, and outputs (1234, 56) as strings
+func SplitInt64(n int64) (string, string) {
+	// Calculate the first part as string
+	firstPart := fmt.Sprintf("%d", n/100)
+	// Calculate the second part as string with leading zero if necessary
+	secondPart := fmt.Sprintf("%02d", n%100)
+	return firstPart, secondPart
+}
+
 func Int64ToMoney(value int64) string {
 	decimalValue := float64(value) / 100.0
 	moneyString := fmt.Sprintf("%.2f", decimalValue)
