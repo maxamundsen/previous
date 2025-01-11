@@ -1,12 +1,13 @@
 package app
 
 import (
-	"previous/middleware"
 	"previous/auth"
+	"previous/middleware"
+
+	. "previous/components"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/components"
 
 	"net/http"
 )

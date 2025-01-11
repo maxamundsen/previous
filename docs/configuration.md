@@ -11,7 +11,7 @@ You can add your own options, or remove ones you don't need.
 
 ## Runtime Configuration
 
-Runtime configuration options are designed to be set by the system administrator deploying the Previous server executable.
+Runtime configuration options are designed to be set by the system administrator / provisioning tools when deploying the Previous server executable.
 Setting these options does _not_ require rebuilding the application, or access to the source code, as they are set at runtime.
 
 Example: You want to set different database credentials on your local machine, than on the production server.
@@ -55,7 +55,7 @@ _Note: `config.json` is deliberately added to `.gitignore` to avoid leaking secr
 
 ## Compile-time Configuration
 
-Unlike the runtime options, compile-time options are specifically intended to be set by the _developer_ (that's you!).
+Unlike the runtime options, compile-time options are specifically intended to be set by the _developer_.
 
 These are just plain global constants.
 They are intentially located in the `config` package (and not elsewhere) to keep all configuration related constants in one place.
@@ -69,7 +69,6 @@ const (
 	...
 )
 ```
-
 
 ## Example usage
 To use the config, import `previous/config` from any package to get your config options.

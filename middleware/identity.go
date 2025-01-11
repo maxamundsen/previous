@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
-	"time"
+	"previous/auth"
 	"previous/config"
 	"previous/database"
-	"previous/auth"
+	"strings"
+	"time"
 )
 
 type identityKey struct{}

@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-
 func IndexController(w http.ResponseWriter, r *http.Request) {
 	// serve home page if route is literally '/'
 	if r.URL.Path == "/" {

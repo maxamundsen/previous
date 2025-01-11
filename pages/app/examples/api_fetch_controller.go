@@ -1,13 +1,14 @@
 package examples
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	. "previous/components"
 	. "previous/pages/app"
 
-	"previous/middleware"
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
+
 	"previous/auth"
+	"previous/middleware"
 
 	"encoding/json"
 	"io"
@@ -77,6 +78,10 @@ func ApiFetchController(w http.ResponseWriter, r *http.Request) {
 
 func ApiFetchView(errorMsg string, identity auth.Identity, model astroModel) Node {
 	return AppLayout("API Fetch Example", identity,
+		Div(Class("mb-5 p-10 bg-white border border-neutral-200 shadow"),
+			P(Class("font-bold text-neutral-800"), Text("Note:")),
+			P(Text("This page controller makes the API request directly, blocking rendering. If you want to load a skeleton page, then the content, please use HTMX.")),
+		),
 		PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
 		P(Class("my-5"), Text("Message:")),
 		Code(Class("text-pink-600"), ToText(model.Message)),

@@ -9,9 +9,9 @@
 *.dylib
 __debug*
 *.pdb
-src/server
-src/metagen
-src/migrator
+./server
+./metagen
+./migrator
 
 # editor stuff
 *.sublime-workspace

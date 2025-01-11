@@ -45,7 +45,6 @@ func ToText(i interface{}) Node {
 	return Text(ToString(i))
 }
 
-
 // FORMS
 func FormInput(children ...Node) Node {
 	return Input(Class("p-1 block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6"),
@@ -119,5 +118,3 @@ func ThTW(children ...Node) Node {
 func TdTW(children ...Node) Node {
 	return Td(Class("px-6 py-4 whitespace-nowrap text-sm font-medium text-muted-foreground"), Group(children))
 }
-
-

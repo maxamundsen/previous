@@ -1,12 +1,13 @@
 package app
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	. "previous/components"
 
-	"previous/middleware"
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
+
 	"previous/auth"
+	"previous/middleware"
 
 	"net/http"
 )
@@ -36,11 +37,9 @@ func DashboardView(identity auth.Identity) Node {
 			Icon("github", 24),
 		),
 		If(identity.User.PermissionAdmin != 0,
-			Div(
-				Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),
-					P(Class("font-bold text-red-600"), Text("Admin only")),
-					P(Text("You can only see this if you have the admin permission")),
-				),
+			Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),
+				P(Class("font-bold text-red-600"), Text("Admin only")),
+				P(Text("You can only see this if you have the admin permission")),
 			),
 		),
 	)

@@ -1,12 +1,13 @@
 package examples
+
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
 	. "previous/pages/app"
 
-	"previous/middleware"
 	"previous/auth"
+	"previous/middleware"
 
 	"net/http"
 )

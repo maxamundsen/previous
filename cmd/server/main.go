@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"previous/config"
 	"previous/database"
-	"previous/pages"
 	"previous/docs"
+	"previous/pages"
 )
 
 // Entry point for the application, initializes package globals

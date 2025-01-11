@@ -1,23 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
-	"flag"
 	"path"
 	"path/filepath"
+	. "previous/basic"
+	"reflect"
+	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
-	"net/url"
-	"regexp"
-	"reflect"
-	. "previous/basic"
 )
 
 var OS string
@@ -25,8 +25,8 @@ var OS string
 var envtype int
 
 const (
-	ENVIRONMENT_DEV = iota
-	ENVIRONMENT_STAGING = iota
+	ENVIRONMENT_DEV        = iota
+	ENVIRONMENT_STAGING    = iota
 	ENVIRONMENT_PRODUCTION = iota
 )
 
@@ -43,21 +43,21 @@ func main() {
 
 	env := flag.String("env", "dev", "The environment to run in: dev, staging, or production")
 
-    // Parse command-line flags
-    flag.Parse()
+	// Parse command-line flags
+	flag.Parse()
 
 	switch *env {
-    case "dev":
-    	envtype = ENVIRONMENT_DEV
-    case "staging":
-    	envtype = ENVIRONMENT_STAGING
-    case "production":
-    	envtype = ENVIRONMENT_PRODUCTION
-    default:
-        fmt.Printf("Invalid environment specified: %s\n", *env)
-        fmt.Println("Allowed values are: dev, staging, or production")
-        os.Exit(1)
-    }
+	case "dev":
+		envtype = ENVIRONMENT_DEV
+	case "staging":
+		envtype = ENVIRONMENT_STAGING
+	case "production":
+		envtype = ENVIRONMENT_PRODUCTION
+	default:
+		fmt.Printf("Invalid environment specified: %s\n", *env)
+		fmt.Println("Allowed values are: dev, staging, or production")
+		os.Exit(1)
+	}
 
 	args := flag.Args()
 
@@ -91,7 +91,6 @@ func main() {
 		}
 	}
 
-
 End:
 
 	if len(args) == 0 {
@@ -105,7 +104,7 @@ func helpmsg() {
 	println("Usage: metagen [options...]")
 	println("build                          Build dependencies, generate code, then build final executables.")
 	println("migrate [up, down, create]     Deploy and create SQL migrations.")
-    os.Exit(1)
+	os.Exit(1)
 }
 
 func build() {
@@ -118,20 +117,13 @@ func build() {
 	// codegen
 	generateDebugConfig()
 	generateHTTPRoutes()
-
 	generateJetModels()
+	generateTailwindCSS()
 
-	// compilation
-	compileTailwindCSS()
-	compileServer()
+	// compileServer()
 }
 
-func buildTools() {
-	compileJet()
-	compileMigrator()
-}
-
-func compileTailwindCSS() {
+func generateTailwindCSS() {
 	tailwindcmd := ""
 
 	fmt.Printf("Generating TailwindCSS stylesheet(s)")
@@ -154,25 +146,23 @@ func compileTailwindCSS() {
 	println("")
 }
 
-func compileServer() {
-	var out []byte
-	var err error
+// func compileServer() {
+// 	var out []byte
+// 	var err error
 
-	fmt.Printf("Compiling Server Binary")
+// 	fmt.Printf("Compiling Server Binary")
 
-	if envtype == ENVIRONMENT_DEV {
-		// include extra flags for the GC
-		// out, err = exec.Command("go", "build", "-gcflags=all=\"-N -l\"", "./cmd/server").CombinedOutput()
-		out, err = exec.Command("go", "build", "./cmd/server").CombinedOutput()
-	} else {
-		out, err = exec.Command("go", "build", "./cmd/server").CombinedOutput()
-	}
+// 	if envtype == ENVIRONMENT_DEV {
+// 		// include extra flags for the GC
+// 		out, err = exec.Command("go", "build", "-gcflags=all=-N -l", "./cmd/server").CombinedOutput()
+// 	} else {
+// 		out, err = exec.Command("go", "build", "./cmd/server").CombinedOutput()
+// 	}
 
-	handleCmdOutput(out, err)
+// 	handleCmdOutput(out, err)
 
-	println("")
-}
-
+// 	println("")
+// }
 
 // set debug constant inside the "config" package
 func generateDebugConfig() {
@@ -207,15 +197,15 @@ func generateHTTPRoutes() {
 		Package    string
 		Import     string
 
-		Identity   bool `note`
-		Protected  bool `note`
-		CookieSession    bool `note`
+		Identity      bool `note`
+		Protected     bool `note`
+		CookieSession bool `note`
 
 		// http verbs
-		HttpPost bool `note`
-		HttpGet bool `note`
-		HttpPut bool `note`
-		HttpPatch bool `note`
+		HttpPost   bool `note`
+		HttpGet    bool `note`
+		HttpPut    bool `note`
+		HttpPatch  bool `note`
 		HttpDelete bool `note`
 	}
 
@@ -292,7 +282,7 @@ func generateHTTPRoutes() {
 					} else {
 						ri.Import = module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
 					}
-					
+
 					routeList = append(routeList, ri)
 				}
 			}
@@ -423,7 +413,7 @@ func generateJetModels() {
 	jetdir := ".jet"
 
 	os.RemoveAll(jetdir)
-	
+
 	// compile bin if not exists
 	if _, err := os.Stat(bin); err != nil {
 		compileJet()
@@ -459,7 +449,7 @@ func generateJetModels() {
 			os.Exit(1)
 		}
 	}
-	cmd := exec.Command(bin, "-source=" + databaseType, "-dsn=" + connectionString, "-schema=" + databaseSchema, "-path=" + jetdir)
+	cmd := exec.Command(bin, "-source="+databaseType, "-dsn="+connectionString, "-schema="+databaseSchema, "-path="+jetdir)
 
 	handleCmdOutput(cmd.CombinedOutput())
 
@@ -484,7 +474,6 @@ func parseSQLiteFilename(dsn string) (string, error) {
 
 	return "", fmt.Errorf("invalid DSN format: %s", dsn)
 }
-
 
 func compileMigrator() {
 	fmt.Printf("Compiling Migration Tool")
@@ -550,7 +539,7 @@ func parseNotesFromDocComment(decl ast.Decl, file *os.File, dest any) error {
 
 // helpers
 
-//given /foo/bar/baz -> baz
+// given /foo/bar/baz -> baz
 func removeLastPart(s string) string {
 	lastSlashIndex := strings.LastIndex(s, "/")
 

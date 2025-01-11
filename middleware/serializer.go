@@ -3,9 +3,9 @@ package middleware
 import (
 	"bytes"
 	"encoding/gob"
+	"previous/auth"
 	"previous/config"
 	"previous/crypt"
-	"previous/auth"
 )
 
 // A cookie serializer is a better way to handle session data. they are still

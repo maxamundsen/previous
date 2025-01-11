@@ -14,8 +14,8 @@ import (
 
 type FormViewModel struct {
 	display bool
-	field1 string
-	field2 string
+	field1  string
+	field2  string
 }
 
 // @Identity

@@ -1,0 +1,34 @@
+{
+	"page_controller": {
+	"prefix": "page_controller",
+	"body": [
+		"package ${1:Package Name}",
+		"",
+		"import (",
+		"\t. \"maragu.dev/gomponents\"",
+		"\t. \"maragu.dev/gomponents/html\"",
+		"\t. \"previous/components\"",
+		"",
+		"\t\"previous/middleware\"",
+		"\t\"previous/auth\"",
+		"",
+		"\t\"net/http\"",
+		")",
+		"",
+		"// @Identity",
+		"// @Protected",
+		"// @CookieSession",
+		"func ${2:Pagename}Controller(w http.ResponseWriter, r *http.Request) {",
+		"\tidentity := middleware.GetIdentity(r)",
+		"\t${2:Pagename}View(*identity).Render(w)",
+		"}",
+		"",
+		"func ${2:Pagename}View(identity auth.Identity) Node {",
+		"\treturn AppLayout(\"${2:Pagename}\", identity,",
+		"\t\tP(Text(\"Hello, World!\")),",
+		"\t)",
+		"}"
+	],
+	"description": "Page with middleware and a basic view."
+	}
+}

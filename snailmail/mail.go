@@ -11,9 +11,9 @@ import (
 	"mime"
 	"net/mail"
 	"net/smtp"
+	"previous/config"
 	"strings"
 	"time"
-	"previous/config"
 )
 
 const (

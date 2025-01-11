@@ -6,8 +6,8 @@ import (
 	. "previous/components"
 	. "previous/pages/app"
 
-	"previous/middleware"
 	"previous/auth"
+	"previous/middleware"
 
 	"net/http"
 )

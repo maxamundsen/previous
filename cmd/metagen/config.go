@@ -9,17 +9,17 @@ import (
 )
 
 type metagenConfiguration struct {
-	DevDbType string `json:"DevDbType"`
+	DevDbType             string `json:"DevDbType"`
 	DevDbConnectionString string `json:"DevDbConnectionString"`
-	DevDbSchema string `json:"DevDbSchema"`
+	DevDbSchema           string `json:"DevDbSchema"`
 
-	ProdDbType string `json:"ProdDbType"`
+	ProdDbType             string `json:"ProdDbType"`
 	ProdDbConnectionString string `json:"ProdDbConnectionString"`
-	ProdDbSchema string `json:"ProdDbSchema"`
+	ProdDbSchema           string `json:"ProdDbSchema"`
 
-	StagingDbType string `json:"StagingDbType"`
+	StagingDbType             string `json:"StagingDbType"`
 	StagingDbConnectionString string `json:"StagingDbConnectionString"`
-	StagingDbSchema string `json:"StagingDbSchema"`
+	StagingDbSchema           string `json:"StagingDbSchema"`
 }
 
 var config metagenConfiguration

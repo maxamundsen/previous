@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
-	"previous/middleware"
 	"previous/auth"
+	"previous/middleware"
+	"time"
 )
 
 // @Identity

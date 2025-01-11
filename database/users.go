@@ -4,6 +4,7 @@ import (
 	"previous/.jet/model"
 
 	. "previous/.jet/table"
+
 	. "github.com/go-jet/jet/v2/sqlite"
 )
 
@@ -51,8 +52,8 @@ func FetchUserSecurityStamp(userid int) (string, error) {
 
 func UpdateUser(user model.User) error {
 	stmt := User.UPDATE(User.MutableColumns).
-	MODEL(user).
-	WHERE(User.ID.EQ(Int32(user.ID)))
+		MODEL(user).
+		WHERE(User.ID.EQ(Int32(user.ID)))
 
 	_, err := stmt.Exec(db)
 	return err

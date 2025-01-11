@@ -13,23 +13,27 @@ This project is implemented in the [Go](https://go.dev/) programming language, a
 
 ### Pre-requisites
 
-- A copy of the [Go compiler](https://go.dev/).
-- Bash shell for running included build scripts. This is typically included in Linux distributions, and MacOS, but needs t
+- The [Go compiler](https://go.dev/).
 
 ## Getting Started / Installation
-Clone the Previous repository to your local machine with the following command:
+Clone the Previous repository:
 ```sh
 git clone https://github.com/maxamundsen/Previous.git
 ```
 
-Set your working directory to the `/src` directory, and run the following command:
+Run the metaprogram:
 ```sh
-sh build_server.sh
+go run ./cmd/metagen --env=dev build
 ```
 
-This outputs a `server` or `server.exe` file inside the `/src` directory.
+Compile and run the server application:
+```sh
+go build ./cmd/server && ./server
+```
+
 When executed, the web server will listen on TCP port `:9090`.
-Navigate to the `/docs` page to read the full codebase documentation.
+This can be changed in the [config](/docs/configuration).
+
 
 Any third party dependencies are included in the project.
 This includes fonts, icons, Go libraries, and JS libraries.
