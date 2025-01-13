@@ -1,4 +1,4 @@
-package database
+package repository
 
 type Pagination struct {
 	CurrentPage  int

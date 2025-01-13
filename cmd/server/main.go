@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"previous/config"
-	"previous/database"
+	"previous/repository"
 	"previous/docs"
 	"previous/pages"
 )
@@ -24,7 +24,7 @@ func main() {
 	config.LoadConfig()
 
 	docs.RegisterDocumentation()
-	database.Init()
+	repository.Init()
 
 	// create http multiplexer, map routes
 	mux := http.NewServeMux()

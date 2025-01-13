@@ -7,7 +7,7 @@ import (
 	"previous/.jet/model"
 	"previous/config"
 	"previous/crypt"
-	"previous/database"
+	"previous/repository"
 	"strconv"
 	"strings"
 	"time"
@@ -29,7 +29,7 @@ func NewIdentity(userid int32, rememberMe bool) *Identity {
 	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
 	expiration := time.Now().Add(expirationDuration)
 
-	user, fetchErr := database.FetchUserById(userid)
+	user, fetchErr := repository.FetchUserById(userid)
 	if fetchErr != nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	time.Sleep(randomDuration)
 
-	user, userErr := database.FetchUserByUsername(username)
+	user, userErr := repository.FetchUserByUsername(username)
 
 	if userErr != nil || user.FailedAttempts > int32(config.MAX_LOGIN_ATTEMPTS) {
 		// set user password to dummy password to keep timing consistent when validating password
@@ -73,10 +73,10 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	if !result {
 		user.FailedAttempts += 1
-		database.UpdateUser(user)
+		repository.UpdateUser(user)
 	} else {
 		user.FailedAttempts = 0
-		database.UpdateUser(user)
+		repository.UpdateUser(user)
 	}
 
 	return user.ID, result
