@@ -29,7 +29,7 @@ func NewIdentity(userid int32, rememberMe bool) *Identity {
 	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
 	expiration := time.Now().Add(expirationDuration)
 
-	user, fetchErr := repository.FetchUserById(userid)
+	user, fetchErr := repository.UserRepository{}.FetchById(userid)
 	if fetchErr != nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	time.Sleep(randomDuration)
 
-	user, userErr := repository.FetchUserByUsername(username)
+	user, userErr := repository.UserRepository{}.FetchByUsername(username)
 
 	if userErr != nil || user.FailedAttempts > int32(config.MAX_LOGIN_ATTEMPTS) {
 		// set user password to dummy password to keep timing consistent when validating password
@@ -73,10 +73,10 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	if !result {
 		user.FailedAttempts += 1
-		repository.UpdateUser(user)
+		repository.UserRepository{}.Update(user)
 	} else {
 		user.FailedAttempts = 0
-		repository.UpdateUser(user)
+		repository.UserRepository{}.Update(user)
 	}
 
 	return user.ID, result

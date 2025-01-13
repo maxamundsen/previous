@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"previous/.jet/model"
 
 	. "previous/.jet/table"
@@ -8,21 +9,23 @@ import (
 	. "github.com/go-jet/jet/v2/sqlite"
 )
 
-func FetchUserById(userid int32) (model.User, error) {
-	dest := model.User{}
+type UserRepository struct{}
+
+func (u UserRepository) FetchById(id int32) (model.User, error) {
+	user := model.User{}
 
 	stmt := SELECT(
 		User.AllColumns,
 	).FROM(User).WHERE(
-		User.ID.EQ(Int32(int32(userid))),
+		User.ID.EQ(Int32(int32(id))),
 	)
 
-	err := stmt.Query(db, &dest)
+	err := stmt.Query(db, &user)
 
-	return dest, err
+	return user, err
 }
 
-func FetchUserByUsername(username string) (model.User, error) {
+func (u UserRepository) FetchByUsername(username string) (model.User, error) {
 	dest := model.User{}
 
 	stmt := SELECT(
@@ -37,7 +40,7 @@ func FetchUserByUsername(username string) (model.User, error) {
 	return dest, err
 }
 
-func FetchUserSecurityStamp(userid int) (string, error) {
+func (u UserRepository) FetchSecurityStamp(userid int) (string, error) {
 	stamp := ""
 
 	stmt := SELECT(
@@ -50,11 +53,10 @@ func FetchUserSecurityStamp(userid int) (string, error) {
 	return stamp, err
 }
 
-func UpdateUser(user model.User) error {
+func (u UserRepository) Update(user model.User) (sql.Result, error) {
 	stmt := User.UPDATE(User.MutableColumns).
 		MODEL(user).
 		WHERE(User.ID.EQ(Int32(user.ID)))
 
-	_, err := stmt.Exec(db)
-	return err
+	return stmt.Exec(db)
 }
