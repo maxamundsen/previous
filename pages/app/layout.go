@@ -27,6 +27,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
 												A(Href("/app/examples"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
+												A(Href("/app/examples/pagination"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-Side Data Grid")),
 												A(Href("/app/examples/forms"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Form Submission")),
 												A(Href("/app/examples/htmx"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTMX")),
 												A(Href("/app/examples/alpine"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Alpine.js")),
