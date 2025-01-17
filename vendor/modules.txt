@@ -1,3 +1,6 @@
+# github.com/btcsuite/btcutil v1.0.2
+## explicit; go 1.13
+github.com/btcsuite/btcutil/base58
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew

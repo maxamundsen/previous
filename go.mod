@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-jet/jet v2.3.0+incompatible // indirect
 	github.com/go-jet/jet/v2 v2.12.0 // indirect

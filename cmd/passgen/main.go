@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hotlap/crypt"
+	"previous/crypt"
 	"os"
 )
 

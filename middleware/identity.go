@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"previous/auth"
 	"previous/config"
+	"previous/crypt"
 	"previous/repository"
 	"strings"
 	"time"
@@ -34,7 +35,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 			if len(splitToken) >= 2 {
 				token = splitToken[1]
-				identity, _ = DecryptIdentity(token)
+				identity, _ = crypt.DecryptData[auth.Identity](token)
 			}
 
 			if identity == nil {
@@ -52,7 +53,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 		} else {
 			identityCookie, err := r.Cookie(config.IDENTITY_COOKIE_NAME)
 			if err == nil {
-				identity, _ = DecryptIdentity(identityCookie.Value)
+				identity, _ = crypt.DecryptData[auth.Identity](identityCookie.Value)
 			}
 
 			if identity == nil {
@@ -123,7 +124,22 @@ func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *auth.Id
 		}
 	}
 
-	cookieString, err := EncryptIdentity(identity)
+	// A cookie serializer is a better way to handle session data. they are still
+	// generated, validated, and read only by the server, but they are stored on the
+	// client in a cookie.
+
+	// For example, when a user logs into a web service, all of their auth data is
+	// packed into a serialized encrypted string, which is sent via a cookie. this
+	// cookie can be sent back to the page, decrypted, and de-serialized to retrieve
+	// auth information in code. this is extremely fast and cheap, since you do not
+	// need to store this data in a database, or even in memory.
+
+	// Of course with this approach you must be careful not to leak the encryption
+	// key, since it can be used to decrypt legitimate keys, and sign faulty ones.
+	// The key should not be checked into VCS, and be regenerated if theft is
+	// suspected. Resetting the key will log *everyone* out, since no sessions
+	// or identities will validate.
+	cookieString, err := crypt.EncryptData(identity)
 	if err != nil {
 		return
 	}

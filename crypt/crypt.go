@@ -4,15 +4,59 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"encoding/base64"
+	"github.com/btcsuite/btcutil/base58"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"previous/config"
+	"encoding/gob"
+	"encoding/base64"
+	"bytes"
+
 
 	"github.com/minio/highwayhash"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func EncryptData[T any](data *T) (string, error) {
+	// serialize
+	b := bytes.Buffer{}
+	e := gob.NewEncoder(&b)
+	err := e.Encode(data)
+	if err != nil {
+		return "", err
+	}
+
+	// encrypt
+	outString, err := EncryptSecret(b.Bytes(), config.GetConfig().IdentityPrivateKey)
+	if err != nil {
+		return "", err
+	}
+
+	return outString, nil
+}
+
+func DecryptData[T any](dataString string) (*T, error) {
+	dest := new(T)
+
+	secret, err := DecryptSecret(dataString, config.GetConfig().IdentityPrivateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// de-serialized
+	b := bytes.Buffer{}
+	b.Write(secret)
+
+	d := gob.NewDecoder(&b)
+	gobErr := d.Decode(dest)
+	if gobErr != nil {
+		return nil, gobErr
+	}
+
+	return dest, nil
+}
 
 func HighwayHash(in string) (string, error) {
 	key := []byte("01234567890123456789012345678901")
@@ -65,10 +109,10 @@ func ComparePasswords(password string, hash string) bool {
 	return err == nil
 }
 
-func RandBase64String(entropyBytes int) string {
+func RandBase58String(entropyBytes int) string {
 	b := make([]byte, entropyBytes)
 	rand.Read(b)
-	return base64.StdEncoding.EncodeToString(b)
+	return base58.Encode(b)
 }
 
 func EncryptSecret(data []byte, passKey string) (string, error) {
@@ -91,16 +135,13 @@ func EncryptSecret(data []byte, passKey string) (string, error) {
 	}
 
 	encryptedData := gcm.Seal(nonce, nonce, data, nil)
-	encodedData := base64.StdEncoding.EncodeToString(encryptedData)
+	encodedData := base58.Encode(encryptedData)
 
 	return encodedData, nil
 }
 
 func DecryptSecret(encryptedData string, passKey string) ([]byte, error) {
-	encryptedBytes, err := base64.StdEncoding.DecodeString(encryptedData)
-	if err != nil {
-		return nil, err
-	}
+	encryptedBytes := base58.Decode(encryptedData)
 
 	key := make([]byte, 32)
 	copy(key, passKey)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"previous/config"
 	"time"
+	"previous/crypt"
 )
 
 type sessionKey struct{}
@@ -16,7 +17,8 @@ func LoadSessionFromCookie(h http.HandlerFunc) http.HandlerFunc {
 
 		sessionCookie, err := r.Cookie(config.SESSION_COOKIE_NAME)
 		if err == nil {
-			sessionMap, _ = DecryptSession(sessionCookie.Value)
+			decryptMap, _ := crypt.DecryptData[map[string]interface{}](sessionCookie.Value)
+			sessionMap = *decryptMap
 		}
 
 		if sessionMap == nil {
@@ -46,7 +48,7 @@ func PutSessionCookie(w http.ResponseWriter, r *http.Request, session map[string
 		}
 	}
 
-	sessionString, err := EncryptSession(session)
+	sessionString, err := crypt.EncryptData(&session)
 	if err != nil {
 		return
 	}
