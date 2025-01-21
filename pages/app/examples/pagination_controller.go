@@ -2,10 +2,10 @@ package examples
 
 import (
 	. "maragu.dev/gomponents"
-	// . "maragu.dev/gomponents/html"
 
 	. "previous/components"
 	. "previous/pages/app"
+
 	// "previous/repository"
 
 	"previous/auth"
@@ -28,10 +28,3 @@ func PaginationView(identity auth.Identity) Node {
 		HxLoad("/app/examples/orders-hx"),
 	)
 }
-
-// func SearchablePaginatedComponent(hxURL string, p repository.Pagination, children ...Node) Node {
-
-// 	return Div(Attr("hx-get", hxURL
-
-// 	)
-// }

@@ -5,15 +5,11 @@ import (
 	. "previous/pages/app"
 
 	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 
 	"previous/auth"
 	"previous/middleware"
 
-	"encoding/json"
-	"io"
 	"net/http"
-	"time"
 )
 
 // Struct for deserializing json from 3rd party API
@@ -34,74 +30,12 @@ type person struct {
 // @CookieSession
 func ApiFetchController(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
-
-	errorMsg := ""
-
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-
-	req, reqErr := http.NewRequest(http.MethodGet, "http://api.open-notify.org/astros.json", nil)
-
-	if reqErr != nil {
-		errorMsg = reqErr.Error()
-	}
-
-	req.Header.Set("User-Agent", "Example-Api")
-
-	res, resErr := client.Do(req)
-
-	if resErr != nil {
-		errorMsg = resErr.Error()
-	}
-
-	if res.Body != nil {
-		defer res.Body.Close()
-	}
-
-	body, readErr := io.ReadAll(res.Body)
-
-	if readErr != nil {
-		errorMsg = readErr.Error()
-	}
-
-	jsonOutput := astroModel{}
-
-	jsonErr := json.Unmarshal(body, &jsonOutput)
-
-	if jsonErr != nil {
-		errorMsg = jsonErr.Error()
-	}
-
-	ApiFetchView(errorMsg, *identity, jsonOutput).Render(w)
+	ApiFetchView(identity).Render(w)
 }
 
-func ApiFetchView(errorMsg string, identity auth.Identity, model astroModel) Node {
-	return AppLayout("API Fetch Example", identity,
-		Div(Class("mb-5 p-10 bg-white border border-neutral-200 shadow"),
-			P(Class("font-bold text-neutral-800"), Text("Note:")),
-			P(Text("This page controller makes the API request directly, blocking rendering. If you want to load a skeleton page, then the content, please use HTMX.")),
-		),
+func ApiFetchView(identity *auth.Identity) Node {
+	return AppLayout("API Fetch Example", *identity,
 		PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
-		P(Class("my-5"), Text("Message:")),
-		Code(Class("text-pink-600"), ToText(model.Message)),
-		Br(),
-		Br(),
-		TableTW(
-			THead(
-				Tr(
-					ThTW(Text("Person")),
-					ThTW(Text("Spacecraft")),
-				),
-			),
-			TBodyTW(
-				Map(model.People, func(p person) Node {
-					return Tr(
-						TdTW(Text(p.Name)),
-						TdTW(Text(p.Craft)),
-					)
-				}),
-			),
-		),
+		HxLoad("/app/examples/api-fetch-hx"),
 	)
 }

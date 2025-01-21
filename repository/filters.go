@@ -1,6 +1,19 @@
 package repository
 
-import . "github.com/go-jet/jet/v2/sqlite"
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+
+	. "github.com/go-jet/jet/v2/sqlite"
+
+	. "previous/basic"
+)
+
+type ColFilter struct {
+	DisplayName string
+	ColumnName  string
+}
 
 type Filter struct {
 	Search string
@@ -16,6 +29,42 @@ type Pagination struct {
 	TotalPages   int
 	TotalItems   int
 	ItemsPerPage int
+}
+
+func ParseFilterFromRequest(r *http.Request) Filter {
+	filter := Filter{}
+
+	filter.Search = r.URL.Query().Get("search")
+	filter.OrderBy = r.URL.Query().Get("orderBy")
+	filter.OrderDescending, _ = strconv.ParseBool(r.URL.Query().Get("desc"))
+	filter.Pagination.CurrentPage, _ = strconv.Atoi(r.URL.Query().Get("pageNum"))
+	filter.Pagination.ItemsPerPage, _ = strconv.Atoi(r.URL.Query().Get("itemsPerPage"))
+
+	return filter
+}
+
+func QueryParamsFromPagenum(pageNum int, f Filter) string {
+	f.Pagination.CurrentPage = pageNum
+
+	return QueryParamsFromFilter(f)
+}
+
+func QueryParamsFromOrderBy(orderBy string, direction bool, f Filter) string {
+	f.OrderBy = orderBy
+	f.OrderDescending = direction
+
+	return QueryParamsFromFilter(f)
+}
+
+func QueryParamsFromFilter(f Filter) string {
+	return fmt.Sprintf(
+		"?search=%s&orderBy=%s&desc=%t&pageNum=%d&itemsPerPage=%d",
+		f.Search,
+		f.OrderBy,
+		f.OrderDescending,
+		f.Pagination.CurrentPage,
+		f.Pagination.ItemsPerPage,
+	)
 }
 
 func GetColumnFromStringName(column string, cl ColumnList) (Column, bool) {
@@ -38,6 +87,15 @@ func GetStringNamesFromColumns(cl ColumnList) []string {
 	return list
 }
 
+func GetFriendlyNamesFromColumns(cl ColumnList) []string {
+	list := []string{}
+
+	for _, col := range cl {
+		list = append(list, SnakeCaseToTitleCase(col.Name()))
+	}
+
+	return list
+}
 
 func (p *Pagination) ProcessPageNum() {
 	if p.ItemsPerPage == 0 {

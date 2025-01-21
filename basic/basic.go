@@ -5,7 +5,18 @@ import (
 	"fmt"
 	"reflect"
 	"time"
+	"strings"
 )
+
+func SnakeCaseToTitleCase(s string) string {
+    parts := strings.Split(s, "_")
+
+    for i, part := range parts {
+        parts[i] = strings.Title(part)
+    }
+
+    return strings.Join(parts, " ")
+}
 
 func ToString(i interface{}) string {
 	v := reflect.ValueOf(i)

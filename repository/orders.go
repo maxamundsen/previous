@@ -10,6 +10,12 @@ import (
 
 type OrderRepository struct{}
 
+func (o OrderRepository) Count() int {
+	orders, _ := o.Fetch()
+
+	return len(orders)
+}
+
 func (o OrderRepository) Fetch() ([]model.Order, error) {
 	orders := []model.Order{}
 
