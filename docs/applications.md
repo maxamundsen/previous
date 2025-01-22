@@ -13,3 +13,6 @@ This application is responsible for handling HTTP requests, and generating HTML,
 
 ## SQL Migrator
 The migration utility allows sql scripts to be pushed to a remote server, while tracking version information.
+
+## Password Generator
+Simple utility that generates passwords.

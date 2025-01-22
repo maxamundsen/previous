@@ -15,7 +15,7 @@ Using icons:
 ```go
 func MyComponent() Node {
 	return Div(
-		Icon("menu", 24),
+		Icon(ICON_MENU, 24),
 	)
 }
 ```
@@ -31,7 +31,7 @@ Icons can be colored if `fill="currentColor"`, or `stroke="currentColor"` is set
 ```go
 func MyComponent() Node {
 	return Div(Class("text-red-500"),
-		Icon("users", 24), // this icon will draw in red
+		Icon(ICON_MENU, 24), // this icon will draw in red
 	)
 }
 ```

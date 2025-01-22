@@ -23,7 +23,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 										A(Href("/app/dashboard"), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Dashboard")),
 										Div(Class("relative ml-3"),
 											Div(
-												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Attr("x-on:click.outside", "examplesDropdownOpen = false"), Class("relative flex px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon("chevron-down", 16))),
+												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Attr("x-on:click.outside", "examplesDropdownOpen = false"), Class("relative flex px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon(ICON_CHEVRON_DOWN, 16))),
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
 												A(Href("/app/examples"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
@@ -62,7 +62,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 								Button(Attr("x-on:click", "mobileMenuOpen = !mobileMenuOpen"), Type("button"), Class("relative inline-flex items-center justify-center p-2 text-neutral-400 hover:bg-neutral-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-800"),
 									Span(Class("absolute -inset-0.5")),
 									Span(Class("sr-only"), Text("Open main menu")),
-									Icon("menu", 24),
+									Icon(ICON_MENU, 24),
 								),
 							),
 						),

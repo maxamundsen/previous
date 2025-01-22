@@ -41,17 +41,17 @@ Go libraries are vendored, and their source code is compiled alongside user-leve
 JavaScript dependencies are bundled and minified.
 
 ## Why not another solution?
-Other tools and frameworks sell the promise of a "good developer experience" without any efforts towards robustness, longevity, or "real" simplicity.
-Many of these frameworks update frequently, deprecate features, change APIs regularly, and have _many_ dependencies, forcing you to do _lots_ of housekeeping to keep your website running.
+Other tools and frameworks sell the promise of a "good developer experience" without any efforts towards robustness, longevity, or "true" simplicity.
+Many of these frameworks deprecate features, change APIs regularly, and have _many_ dependencies, forcing you to do _lots_ of housekeeping to keep your website running.
 
 The code that drives your website / application should be specialized to fit the problems you are trying to solve.
 By subscribing to a framework, you lock yourself into a set of rules that may not align with those problems.
-A reference codebase such as Previous provides all the tools you need to get up and running quickly, while proving the flexibily to change things on your own accord.
+In contrast to a framework, a reference codebase provides all the tools you need to get up and running quickly, while proving the means to extend the code to fit your project.
 
 ### Primary Benefits
 
 - Compile to a statically-linked executable - Extremely easy to deploy to your platform of choice; docker not required.
-- Statically type-checked by the compiler - No need for half-baked pseudo-type-checking systems.
+- Everything is statically type-checked by the compiler - This includes HTML components, and database queries.
 - Procedural code - No esoteric template / configuration syntax required. Pages are written using pure, procedural Go functions.
 - Vendored dependencies - By vendoring third party code as source, you can feel confident that you application will be long lasting, and robust.
 - Simple and extendable - This project serves as a reference for your individual needs. You are expected to extend or reduce this codebase as needed. For example, if you are building a simple personal site, you may not need a database, or authentication system! Just delete those parts!

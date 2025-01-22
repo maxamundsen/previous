@@ -31,7 +31,7 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
 							Input(Type("hidden"), Name("itemsPerPage"), Value(ToString(f.Pagination.ItemsPerPage))),
 							Button(Class("absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "), Type("button"),
-								Icon("search", 24),
+								Icon(ICON_SEARCH, 24),
 							),
 						),
 					),
@@ -46,7 +46,12 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 							Map(cols, func(col repository.ColInfo) Node {
 								return Th(AutoTableClickHandler(url + repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending, f), tableId), Class("p-4 border-b border-slate-200 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100"),
 									P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-slate-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
-										Icon("sort-arrows", 16),
+										If(f.OrderBy == col.DbName,
+											IfElse(f.OrderDescending,
+												Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
+												Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+											),
+										),
 									),
 								)
 							}),

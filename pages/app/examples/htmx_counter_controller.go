@@ -18,7 +18,7 @@ func HtmxCounterController(w http.ResponseWriter, r *http.Request) {
 
 func CounterButton(count int) Node {
 	if count == 10 {
-		return ButtonBlue(Text("Counter reached 10"))
+		return ButtonBlue(Icon(ICON_HTMX, 24), Text("Counter reached 10"))
 	} else {
 		return ButtonGray(
 			Attr("hx-get", "/app/examples/htmx-counter?count="+ToString(count)),
