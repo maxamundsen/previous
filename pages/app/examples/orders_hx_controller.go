@@ -4,9 +4,9 @@ import (
 	"previous/.jet/model"
 	"previous/.jet/table"
 
-	// "github.com/go-jet/jet/v2/sqlite"
-
 	. "previous/components"
+
+	"github.com/go-jet/jet/v2/sqlite"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -27,15 +27,34 @@ func OrdersHxController(w http.ResponseWriter, r *http.Request) {
 
 func OrdersHxView(url string, filter repository.Filter) Node {
 	filter.Pagination.ItemsPerPage = 5
-	filter.OrderBy = "id"
-	filter.OrderDescending = true
 
+	// fetch entities from filter function
 	orders, _ := repository.OrderRepository{}.Filter(filter)
-	filter.Pagination.TotalItems = repository.OrderRepository{}.Count()
+	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search})
+	filter.Pagination.TotalItems = len(searchItems)
 
-	filter.Pagination.ProcessPageNum()
+	// generate page numbers according to total length of data
+	filter.Pagination.GeneratePageNumbers()
 
-	cols := repository.GetFriendlyNamesFromColumns(table.Order.AllColumns)
+	// You can automatically generate friendly names from the SQL columns:
+	cols := repository.GetColInfoFromJet(
+		sqlite.ColumnList{
+			table.Order.ID,
+			table.Order.ProductID,
+			table.Order.PurchaserName,
+			table.Order.PurchaserEmail,
+			table.Order.Price,
+		},
+	)
+
+	// Or you can map them manually:
+	cols = []repository.ColInfo{
+		{DbName: table.Order.ID.Name(), DisplayName: "ID"},
+		{DbName: table.Order.ProductID.Name(), DisplayName: "Product ID"},
+		{DbName: table.Order.PurchaserName.Name(), DisplayName: "Customer"},
+		{DbName: table.Order.PurchaserEmail.Name(), DisplayName: "Customer Email"},
+		{DbName: table.Order.Price.Name(), DisplayName: "Price (USD)"},
+	}
 
 	return AutoTable(
 		"order_table",

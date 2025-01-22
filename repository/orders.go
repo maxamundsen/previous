@@ -10,12 +10,6 @@ import (
 
 type OrderRepository struct{}
 
-func (o OrderRepository) Count() int {
-	orders, _ := o.Fetch()
-
-	return len(orders)
-}
-
 func (o OrderRepository) Fetch() ([]model.Order, error) {
 	orders := []model.Order{}
 
@@ -47,8 +41,10 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	}
 
 	// pagination
-	stmt.LIMIT(int64(f.Pagination.ItemsPerPage))
-	stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.ItemsPerPage))
+	if f.Pagination.ItemsPerPage > 0 {
+		stmt.LIMIT(int64(f.Pagination.ItemsPerPage))
+		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.ItemsPerPage))
+	}
 
 	output := stmt.DebugSql()
 	println(output)

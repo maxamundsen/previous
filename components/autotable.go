@@ -1,9 +1,12 @@
 package components
 
 import (
+	. "previous/basic"
+
 	"previous/repository"
 
 	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
 
 )
@@ -12,7 +15,7 @@ func AutoTableClickHandler(url string, tableId string) Node {
 	return HxOnClick(url, "outerHTML", "#" + tableId, "#" + tableId)
 }
 
-func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, nf func(E) Node, cols []string) Node {
+func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, nf func(E) Node, cols []repository.ColInfo) Node {
 	return Group{
 		Form(AutoComplete("off"), Attr("hx-get", url), Attr("hx-trigger", "keyup delay:100ms from:input, click from:select"), Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId), Attr("hx-select", "#"+tableId),
 			Div(Class("w-full flex justify-between items-center mb-3 mt-1 pl-3"),
@@ -24,6 +27,9 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 					Div(Class("w-full max-w-sm min-w-[200px] relative"),
 						Div(Class("relative"),
 							Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"), Placeholder("Search for customer..."), Name("search"), AutoFocus()),
+							Input(Type("hidden"), Name("orderBy"), Value(f.OrderBy)),
+							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
+							Input(Type("hidden"), Name("itemsPerPage"), Value(ToString(f.Pagination.ItemsPerPage))),
 							Button(Class("absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "), Type("button"),
 								Icon("search", 24),
 							),
@@ -37,9 +43,9 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 				Table(Class("table-fixed min-w-max"),
 					THead(
 						Tr(
-							Map(cols, func(s string) Node {
-								return Th(AutoTableClickHandler(url + repository.QueryParamsFromOrderBy(s, !f.OrderDescending, f), tableId), Class("p-4 border-b border-slate-200 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100"),
-									P(Class("flex items-center justify-between gap-2 font-sans text-sm font-normal leading-none text-slate-500"), Text(s),
+							Map(cols, func(col repository.ColInfo) Node {
+								return Th(AutoTableClickHandler(url + repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending, f), tableId), Class("p-4 border-b border-slate-200 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100"),
+									P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-slate-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
 										Icon("sort-arrows", 16),
 									),
 								)

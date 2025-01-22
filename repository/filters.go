@@ -10,9 +10,9 @@ import (
 	. "previous/basic"
 )
 
-type ColFilter struct {
+type ColInfo struct {
 	DisplayName string
-	ColumnName  string
+	DbName  string
 }
 
 type Filter struct {
@@ -52,6 +52,7 @@ func QueryParamsFromPagenum(pageNum int, f Filter) string {
 func QueryParamsFromOrderBy(orderBy string, direction bool, f Filter) string {
 	f.OrderBy = orderBy
 	f.OrderDescending = direction
+	f.Pagination.CurrentPage = 1
 
 	return QueryParamsFromFilter(f)
 }
@@ -77,27 +78,22 @@ func GetColumnFromStringName(column string, cl ColumnList) (Column, bool) {
 	return nil, false
 }
 
-func GetStringNamesFromColumns(cl ColumnList) []string {
-	list := []string{}
+func GetColInfoFromJet(cl ColumnList) []ColInfo {
+	list := []ColInfo{}
 
 	for _, col := range cl {
-		list = append(list, col.Name())
+		newCol := ColInfo{
+			DisplayName: SnakeCaseToTitleCase(col.Name()),
+			DbName: col.Name(),
+		}
+
+		list = append(list, newCol)
 	}
 
 	return list
 }
 
-func GetFriendlyNamesFromColumns(cl ColumnList) []string {
-	list := []string{}
-
-	for _, col := range cl {
-		list = append(list, SnakeCaseToTitleCase(col.Name()))
-	}
-
-	return list
-}
-
-func (p *Pagination) ProcessPageNum() {
+func (p *Pagination) GeneratePageNumbers() {
 	if p.ItemsPerPage == 0 {
 		p.TotalPages = 1
 	} else {
