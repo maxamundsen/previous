@@ -14,6 +14,8 @@ import (
 // @Identity
 // @Protected
 func ApiFetchHxController(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
 	errorMsg := ""
 
 	client := http.Client{
@@ -52,11 +54,15 @@ func ApiFetchHxController(w http.ResponseWriter, r *http.Request) {
 		errorMsg = jsonErr.Error()
 	}
 
-	ApiFetchHxView(errorMsg, jsonOutput).Render(w)
+	end := time.Now()
+	elapsed := end.Sub(start)
+
+	ApiFetchHxView(errorMsg, jsonOutput, elapsed).Render(w)
 }
 
-func ApiFetchHxView(errorMsg string, model astroModel) Node {
+func ApiFetchHxView(errorMsg string, model astroModel, duration time.Duration) Node {
 	return Group{
+		P(Class("text-sm text-blue-500"), Text("Fetch took: "), ToText(duration)),
 		P(Class("my-5"), Text("Message:")),
 		Code(Class("text-pink-600"), ToText(model.Message)),
 		Br(),
