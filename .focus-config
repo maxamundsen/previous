@@ -1,0 +1,36 @@
+[13]  # Version number. Do not delete.
+
+[[workspace]]
+# These directories and files will be scanned when a workspace is opened so that search etc. works.
+./
+
+[ignore]
+.git
+./vendor/**
+./tools/**
+.build
+.vscode
+*.bak
+*.min.js
+*.min.css
+*.min.js.map
+*.min.css.map
+lib**
+fonts**
+*.sqlite
+__debug*
+
+[[ settings ]]
+tab_size: 4
+indent_using:                                       spaces
+
+[[ build commands ]]
+build_working_dir: ./
+run_working_dir: ./
+error_regex:                            ^(?P<file>.*):(?P<line>\d+):(?P<col>\d+): (?P<msg>.*)$
+clear_build_output_before_running:      true
+open_panel_on_build:                    true
+
+[Build Debug Macos]
+build_command: go run ./cmd/metagen --env=dev build
+key_binding:   Cmd-Shift-B

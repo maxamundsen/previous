@@ -12,23 +12,26 @@ import (
 
 type ColInfo struct {
 	DisplayName string
-	DbName  string
+	DbName      string
 }
 
 type Filter struct {
-	Search string
-	Pagination Pagination
-	OrderBy string
+	Search          string
+	Pagination      Pagination
+	OrderBy         string
 	OrderDescending bool
 }
 
 type Pagination struct {
-	CurrentPage  int
-	NextPage     int
-	PreviousPage int
-	TotalPages   int
-	TotalItems   int
-	ItemsPerPage int
+	CurrentPage           int
+	NextPage              int
+	PreviousPage          int
+	TotalPages            int
+	TotalItems            int
+	MaxItemsPerPage          int
+	ItemsThisPage int
+	ViewRangeLower        int
+	ViewRangeUpper        int
 }
 
 func ParseFilterFromRequest(r *http.Request) Filter {
@@ -38,7 +41,7 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 	filter.OrderBy = r.URL.Query().Get("orderBy")
 	filter.OrderDescending, _ = strconv.ParseBool(r.URL.Query().Get("desc"))
 	filter.Pagination.CurrentPage, _ = strconv.Atoi(r.URL.Query().Get("pageNum"))
-	filter.Pagination.ItemsPerPage, _ = strconv.Atoi(r.URL.Query().Get("itemsPerPage"))
+	filter.Pagination.MaxItemsPerPage, _ = strconv.Atoi(r.URL.Query().Get("itemsPerPage"))
 
 	return filter
 }
@@ -64,7 +67,7 @@ func QueryParamsFromFilter(f Filter) string {
 		f.OrderBy,
 		f.OrderDescending,
 		f.Pagination.CurrentPage,
-		f.Pagination.ItemsPerPage,
+		f.Pagination.MaxItemsPerPage,
 	)
 }
 
@@ -84,7 +87,7 @@ func GetColInfoFromJet(cl ColumnList) []ColInfo {
 	for _, col := range cl {
 		newCol := ColInfo{
 			DisplayName: SnakeCaseToTitleCase(col.Name()),
-			DbName: col.Name(),
+			DbName:      col.Name(),
 		}
 
 		list = append(list, newCol)
@@ -93,15 +96,15 @@ func GetColInfoFromJet(cl ColumnList) []ColInfo {
 	return list
 }
 
-func (p *Pagination) GeneratePageNumbers() {
-	if p.ItemsPerPage == 0 {
+func (p *Pagination) GeneratePagination() {
+	if p.MaxItemsPerPage == 0 {
 		p.TotalPages = 1
 	} else {
-		p.TotalPages = p.TotalItems / p.ItemsPerPage
+		p.TotalPages = p.TotalItems / p.MaxItemsPerPage
 
 		// Gofmt sucks ass wtf is this ???
 		// It won't let me put a space between the modulo sign
-		if p.TotalItems%p.ItemsPerPage != 0 {
+		if p.TotalItems%p.MaxItemsPerPage != 0 {
 			p.TotalPages++
 		}
 	}
@@ -116,6 +119,13 @@ func (p *Pagination) GeneratePageNumbers() {
 	} else {
 		p.PreviousPage = p.CurrentPage - 1
 	}
+
+	if p.TotalItems != 0 {
+		p.ViewRangeLower = p.MaxItemsPerPage * p.CurrentPage - p.MaxItemsPerPage + 1
+	} else {
+		p.ViewRangeLower = 0
+	}
+	p.ViewRangeUpper = p.MaxItemsPerPage * p.CurrentPage - p.MaxItemsPerPage + p.ItemsThisPage
 
 	if p.CurrentPage >= p.TotalPages {
 		p.CurrentPage = p.TotalPages

@@ -126,16 +126,6 @@ func HxLoad(url string) Node {
 	)
 }
 
-func HxOnClick(url string, swap string, target string, selection string) Node {
-	return Group{
-		Attr("hx-get", url),
-		Attr("hx-swap", swap),
-		Attr("hx-target", target),
-		Attr("hx-select", selection),
-		Attr("hx-trigger", "click"),
-	}
-}
-
 func Spinner() Node {
 	// we could make this an "icon" but ... why?
 	// also just return regular HTML because why not

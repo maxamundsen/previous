@@ -1,7 +1,7 @@
 # Views: Component System
 In Previous, HTML is dynamically generated within the web server process upon an HTTP request.
 Rendering HTML on the server results in simpler code, and a smaller codebase.
-Despite what some may claim, server-generated HTML does _not_ compromise on interactivity, or coherant interface design.
+Despite what some may claim, server-generated HTML does _not_ compromise on interactivity, or "user experience".
 
 Advantages to server-rendered HTML over client-rendered:
 

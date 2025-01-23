@@ -41,9 +41,9 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	}
 
 	// pagination
-	if f.Pagination.ItemsPerPage > 0 {
-		stmt.LIMIT(int64(f.Pagination.ItemsPerPage))
-		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.ItemsPerPage))
+	if f.Pagination.MaxItemsPerPage > 0 {
+		stmt.LIMIT(int64(f.Pagination.MaxItemsPerPage))
+		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
 	}
 
 	output := stmt.DebugSql()

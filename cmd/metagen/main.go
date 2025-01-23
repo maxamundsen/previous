@@ -69,20 +69,20 @@ func main() {
 		case "migrate":
 			if len(args) >= 2 {
 				if args[1] == "up" {
-					println("migrating up")
+					fmt.Println("migrating up")
 				} else if args[1] == "down" {
-					println("migrating down")
+					fmt.Println("migrating down")
 				} else if args[1] == "create" {
-					println("creating migration")
+					fmt.Println("creating migration")
 				} else if args[1] == "version" {
 					if len(args) >= 3 {
-						println("Migrating to version " + args[2])
+						fmt.Println("Migrating to version " + args[2])
 					} else {
-						println("Please enter version to migrate to.")
+						fmt.Println("Please enter version to migrate to.")
 					}
 				}
 			} else {
-				println("Usage: metagen migrate [up, down, create]")
+				fmt.Println("Usage: metagen migrate [up, down, create]")
 			}
 			goto End
 		default:
@@ -97,21 +97,21 @@ End:
 		helpmsg()
 	}
 
-	println("")
+	fmt.Printf("\n")
 }
 
 func helpmsg() {
-	println("Usage: metagen [options...]")
-	println("build                          Build dependencies, generate code, then build final executables.")
-	println("migrate [up, down, create]     Deploy and create SQL migrations.")
+	fmt.Println("Usage: metagen [options...]")
+	fmt.Println("build                          Build dependencies, generate code, then build final executables.")
+	fmt.Println("migrate [up, down, create]     Deploy and create SQL migrations.")
 	os.Exit(1)
 }
 
 func build() {
 	if envtype == ENVIRONMENT_DEV {
-		println("[COMPILING IN DEBUG MODE]")
+		fmt.Println("[DEBUG ENVIRONMENT]")
 	} else if envtype == ENVIRONMENT_STAGING || envtype == ENVIRONMENT_PRODUCTION {
-		println("[COMPILING IN RELEASE MODE]")
+		fmt.Println("[RELEASE ENVIRONMENT]")
 	}
 
 	// codegen
@@ -143,7 +143,7 @@ func generateTailwindCSS() {
 		printStatus(true)
 	}
 
-	println("")
+	fmt.Printf("\n")
 }
 
 // func compileServer() {
@@ -161,7 +161,7 @@ func generateTailwindCSS() {
 
 // 	handleCmdOutput(out, err)
 
-// 	println("")
+// 	fmt.Printf("\n")
 // }
 
 // set debug constant inside the "config" package
@@ -185,7 +185,7 @@ func generateDebugConfig() {
 	handleErr(err)
 
 	printStatus(true)
-	println("")
+	fmt.Printf("\n")
 }
 
 // Generates routes from files named `*_controller.go` found recursively inside the `/src/pages` directory.
@@ -395,7 +395,7 @@ func generateHTTPRoutes() {
 	handleErr(fileErr)
 
 	printStatus(true)
-	println("")
+	fmt.Printf("\n")
 }
 
 func compileJet() {
@@ -405,7 +405,7 @@ func compileJet() {
 	cmd.Dir = "./tools/jet-2.12.0"
 	handleCmdOutput(cmd.CombinedOutput())
 
-	println("")
+	fmt.Printf("\n")
 }
 
 func generateJetModels() {
@@ -445,7 +445,7 @@ func generateJetModels() {
 
 		if _, err := os.Stat(filename); err != nil {
 			printStatus(false)
-			println("\n" + err.Error())
+			fmt.Println("\n" + err.Error())
 			os.Exit(1)
 		}
 	}
@@ -453,7 +453,7 @@ func generateJetModels() {
 
 	handleCmdOutput(cmd.CombinedOutput())
 
-	println("")
+	fmt.Printf("\n")
 }
 
 func parseSQLiteFilename(dsn string) (string, error) {
@@ -480,7 +480,7 @@ func compileMigrator() {
 
 	handleCmdOutput(exec.Command("cd", "./tools/migrate-4.18.1", "&&", "go", "build", "./cmd/migrate").CombinedOutput())
 
-	println("")
+	fmt.Printf("\n")
 }
 
 // given an ast.Decl, and destination struct, look at the struct for any
@@ -550,23 +550,13 @@ func removeLastPart(s string) string {
 	return s[:lastSlashIndex]
 }
 
-var reset = "\033[0m"
-var red = "\033[31m"
-var green = "\033[32m"
-var yellow = "\033[33m"
-var blue = "\033[34m"
-var magenta = "\033[35m"
-var cyan = "\033[36m"
-var gray = "\033[37m"
-var white = "\033[97m"
-
 func printStatus(b bool) {
 	var status string
 
 	if b {
-		status = green + "SUCCESS" + reset
+		status = "SUCCESS"
 	} else {
-		status = red + "FAILED" + reset
+		status = "FAILED"
 	}
 
 	fmt.Printf("... %s", status)
@@ -575,7 +565,7 @@ func printStatus(b bool) {
 func handleCmdOutput(out []byte, err error) {
 	if err != nil {
 		printStatus(false)
-		println("")
+		fmt.Printf("\n")
 		fmt.Printf("%s", out)
 		os.Exit(1)
 	} else {
@@ -586,7 +576,7 @@ func handleCmdOutput(out []byte, err error) {
 func handleErr(err error) {
 	if err != nil {
 		printStatus(false)
-		println(err.Error())
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 }

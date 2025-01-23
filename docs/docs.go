@@ -150,23 +150,23 @@ func DocView(title string, displayId int, html string) Node {
 
 func DocLayout(title string, displayId int, children ...Node) Node {
 	return RootLayout(title+" | Previous Documentation",
-		Body(Attr("x-data", "{ mobileMenu: false }"), Attr("hx-swap", "innerHTML show:unset"),
-			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-neutral-800 sm:hidden hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-200"),
+		Body(Class("bg-white"), Attr("x-data", "{ mobileMenu: false }"), Attr("hx-swap", "innerHTML show:unset"),
+			Button(Attr("x-on:click", "mobileMenu = !mobileMenu"), Type("button"), Class("inline-flex items-center p-2 mt-2 ms-3 text-sm text-neutral-700 sm:hidden hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-200"),
 				Span(Class("sr-only"), Text("Open sidebar")),
 				Icon(ICON_MENU, 24),
 			),
-			Aside(Class("border-1 shadow-sm bg-zinc-100 fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
+			Aside(Class("border-r-1 shadow-sm bg-white fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
 				Div(Class("px-4 overflow-y-auto py-6"),
 					A(Href("/"), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
-					H5(Class("mt-3 mb-5 text-center text-neutral-800 "), Text("Previous: Codebase Documentation")),
+					H5(Class("mt-3 mb-5 text-center text-neutral-700 "), Text("Previous: Codebase Documentation")),
 					Ul(Class("mt-6 space-y-1"),
-						A(Href("/docs"), Classes{"block px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200": true, "bg-neutral-200": displayId == 0}, Text("Overview")),
+						A(Href("/docs"), Classes{"block px-4 py-2 text-sm text-neutral-700 hover:text-neutral-950 hover:underline": true, "text-neutral-950 font-medium": displayId == 0}, Text("Overview")),
 						Map(DocList, func(doc Document) Node {
 							if len(doc.SubList) > 0 {
 								return Li(
 									Details(Class("group [&_summary::-webkit-details-marker]:hidden"), If(doc.DisplayId == displayId, Attr("open")),
-										Summary(Class("flex cursor-pointer items-center justify-between px-4 py-2 text-neutral-800 hover:bg-neutral-200"),
-											Span(Class("text-sm font-medium"), Text(doc.Title)),
+										Summary(Class("flex cursor-pointer items-center justify-between px-4 py-2 text-neutral-700 hover:text-neutral-950 hover:underline"),
+											Span(Class("text-sm" ), Text(doc.Title)),
 											Span(Class("shrink-0 transition duration-300 group-open:-rotate-180"),
 												Icon(ICON_CHEVRON_UP, 16),
 											),
@@ -174,7 +174,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 										Ul(Class("mt-2 space-y-1 px-4"),
 											Map(doc.SubList, func(subdoc Document) Node {
 												return Li(
-													A(Href("/docs/"+subdoc.Slug), Classes{"block px-4 py-2 text-sm font-medium text-neutral-800": true, "hover:bg-neutral-200": title != subdoc.Title, "bg-neutral-200": title == subdoc.Title}, Text(subdoc.Title)),
+													A(Href("/docs/"+subdoc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700": true, "hover:text-neutral-950 hover:underline": title != subdoc.Title, "text-neutral-950 font-medium": title == subdoc.Title}, Text(subdoc.Title)),
 												)
 											}),
 										),
@@ -182,14 +182,14 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 								)
 							} else {
 								return Li(
-									A(Href("/docs/"+doc.Slug), Classes{"block px-4 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-200": true, "bg-neutral-200": displayId == doc.DisplayId}, Text(doc.Title)),
+									A(Href("/docs/"+doc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700 hover:text-neutral-950 hover:underline": true, "text-neutral-950 font-medium": displayId == doc.DisplayId}, Text(doc.Title)),
 								)
 							}
 						}),
 					),
 				),
 			),
-			Div(Class("m-5 p-10 sm:ml-72 prose prose-pre:rounded-none prose-pre:text-neutral-700 prose-pre:bg-neutral-100 max-w-none bg-white rose-a:text-neutral-800  prose-headings:text-neutral-950"),
+			Div(Class("m-5 p-10 sm:ml-72 prose prose-pre:rounded-none prose-pre:text-neutral-700 prose-pre:bg-neutral-50 prose-pre:border-1 prose-pre:shadow max-w-none rose-a:text-neutral-700 prose-headings:text-neutral-950"),
 				Group(children),
 			),
 		),
