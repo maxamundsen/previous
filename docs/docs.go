@@ -52,13 +52,13 @@ func RegisterDocumentation() {
 	})
 
 	RegisterDocPage(Document{
-		Title: "Routing",
+		Title: "Manual Routing",
 		Slug:  "routing",
 	})
 
 	RegisterDocPage(Document{
-		Title: "Controllers",
-		Slug:  "controllers",
+		Title: "Pages",
+		Slug:  "pages",
 	})
 
 	RegisterDocPage(Document{

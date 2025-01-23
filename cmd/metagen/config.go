@@ -9,15 +9,12 @@ import (
 )
 
 type metagenConfiguration struct {
-	DevDbType             string `json:"DevDbType"`
 	DevDbConnectionString string `json:"DevDbConnectionString"`
 	DevDbSchema           string `json:"DevDbSchema"`
 
-	ProdDbType             string `json:"ProdDbType"`
 	ProdDbConnectionString string `json:"ProdDbConnectionString"`
 	ProdDbSchema           string `json:"ProdDbSchema"`
 
-	StagingDbType             string `json:"StagingDbType"`
 	StagingDbConnectionString string `json:"StagingDbConnectionString"`
 	StagingDbSchema           string `json:"StagingDbSchema"`
 }
@@ -64,15 +61,12 @@ func loadMetaConfig() {
 }
 
 const DEFAULT_METAGEN_CONFIG = `{
-	"DevDbType": "sqlite",
 	"DevDbConnectionString": "file:example.db",
 	"DevDbSchema": "example",
 
-	"ProdDbType": "sqlite",
 	"ProdDbConnectionString": "file:example.db",
 	"ProdDbSchema": "example",
 
-	"StagingDbType": "sqlite",
 	"StagingDbConnectionString": "file:example.db",
 	"StagingDbSchema": "example",
 }`

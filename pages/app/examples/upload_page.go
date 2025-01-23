@@ -18,7 +18,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func UploadController(w http.ResponseWriter, r *http.Request) {
+func UploadPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	if r.Method == http.MethodPost {

@@ -11,6 +11,16 @@ import (
 )
 
 func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, nf func(E) Node, cols []repository.ColInfo) Node {
+	paginationButton := func(icon string, page int) Node {
+		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(icon, 16),
+			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
+			Attr("hx-swap", "#"+tableId),
+			Attr("hx-target", "#"+tableId),
+			Attr("hx-select", "#"+tableId),
+			Attr("hx-trigger", "click"),
+		)
+	}
+
 	return Group{
 		Form(AutoComplete("off"), Attr("hx-get", url), Attr("hx-trigger", "keyup delay:100ms from:input, click from:select"), Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId), Attr("hx-select", "#"+tableId),
 			Div(Class("w-full flex justify-between items-center mb-3 mt-1 pl-3"),
@@ -92,37 +102,19 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 								Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100")),
 							),
 						),
-						Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(ICON_CHEVRON_FIRST, 16),
-							Attr("hx-get", url+repository.QueryParamsFromPagenum(1, f)),
-							Attr("hx-swap", "#"+tableId),
-							Attr("hx-target", "#"+tableId),
-							Attr("hx-select", "#"+tableId),
-							Attr("hx-trigger", "click"),
-						),
-						Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(ICON_CHEVRON_LEFT, 16),
-							Attr("hx-get", url+repository.QueryParamsFromPagenum(f.Pagination.PreviousPage, f)),
-							Attr("hx-swap", "#"+tableId),
-							Attr("hx-target", "#"+tableId),
-							Attr("hx-select", "#"+tableId),
-							Attr("hx-trigger", "click"),
+
+						paginationButton(ICON_CHEVRON_FIRST, 1),
+						paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
+
+						Div(Class("text-sm content-center text-neutral-500 py-3 px-3 min-h-9"),
+							Text("Page "),
+							ToText(f.Pagination.CurrentPage),
+							Text(" of "),
+							ToText(f.Pagination.TotalPages),
 						),
 
-						Div(Class("text-sm content-center text-neutral-500 py-3 px-3 min-h-9"), Text("Page "), ToText(f.Pagination.CurrentPage), Text(" of "), ToText(f.Pagination.TotalPages)),
-
-						Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(ICON_CHEVRON_RIGHT, 16),
-							Attr("hx-get", url+repository.QueryParamsFromPagenum(f.Pagination.NextPage, f)),
-							Attr("hx-swap", "#"+tableId),
-							Attr("hx-target", "#"+tableId),
-							Attr("hx-select", "#"+tableId),
-							Attr("hx-trigger", "click"),
-						),
-						Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(ICON_CHEVRON_LAST, 16),
-							Attr("hx-get", url+repository.QueryParamsFromPagenum(f.Pagination.TotalPages, f)),
-							Attr("hx-swap", "#"+tableId),
-							Attr("hx-target", "#"+tableId),
-							Attr("hx-select", "#"+tableId),
-							Attr("hx-trigger", "click"),
-						),
+						paginationButton(ICON_CHEVRON_RIGHT, f.Pagination.NextPage),
+						paginationButton(ICON_CHEVRON_LAST, f.Pagination.TotalPages),
 					),
 				),
 			),

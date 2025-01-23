@@ -12,7 +12,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func IndexController(w http.ResponseWriter, r *http.Request) {
+func IndexPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	IndexView(*identity).Render(w)
 }

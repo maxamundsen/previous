@@ -17,7 +17,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func PaginationController(w http.ResponseWriter, r *http.Request) {
+func PaginationPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	PaginationView(*identity).Render(w)

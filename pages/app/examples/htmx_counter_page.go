@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func HtmxCounterController(w http.ResponseWriter, r *http.Request) {
+func HtmxCounterPage(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.URL.Query().Get("count"))
 	count += 1
 

@@ -18,7 +18,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func LoginController(w http.ResponseWriter, r *http.Request) {
+func LoginPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		LoginView("").Render(w)
 	} else if r.Method == http.MethodPost {

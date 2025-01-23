@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func IndexController(w http.ResponseWriter, r *http.Request) {
+func IndexPage(w http.ResponseWriter, r *http.Request) {
 	// serve home page if route is literally '/'
 	if r.URL.Path == "/" {
 		http.Redirect(w, r, "/docs", http.StatusFound)

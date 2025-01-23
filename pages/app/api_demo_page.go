@@ -6,7 +6,6 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 
-	"previous/auth"
 	"previous/middleware"
 
 	"net/http"
@@ -15,16 +14,13 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func ApiDemoController(w http.ResponseWriter, r *http.Request) {
+func ApiDemoPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
-	ApiDemoView(*identity).Render(w)
-}
-
-func ApiDemoView(identity auth.Identity) Node {
-	return AppLayout("API Demo", identity,
-		Div(
-			Attr("x-data", `
+	func() Node {
+		return AppLayout("API Demo", *identity,
+			Div(
+				Attr("x-data", `
 				{
 					username: "",
 					password: "",
@@ -69,31 +65,32 @@ func ApiDemoView(identity auth.Identity) Node {
 					},
 				}
 			`),
-			Form(Attr("x-on:submit.prevent", "getToken()"), AutoComplete("off"),
-				FormLabel(Text("Username:")),
-				FormInput(Type("text"), Attr("x-model", "username")),
-				FormLabel(Text("Password:")),
-				FormInput(Type("password"), Attr("x-model", "password")),
-				Br(),
-				ButtonGray(Type("submit"), Text("Generate Token")),
-				Div(Class("mt-7 text-red-500"), Attr("x-text", "error")),
-			),
-			Hr(),
-			Form(Attr("x-on:submit.prevent", "sendRequest()"), AutoComplete("off"),
-				FormLabel(Text("Local route:")),
-				FormSelect(Attr("x-model", "route"),
-					Option(Value("/api/test"), Text("/api/test"), Selected()),
-					Option(Value("/api/account"), Text("/api/account - Authorized")),
+				Form(Attr("x-on:submit.prevent", "getToken()"), AutoComplete("off"),
+					FormLabel(Text("Username:")),
+					FormInput(Type("text"), Attr("x-model", "username")),
+					FormLabel(Text("Password:")),
+					FormInput(Type("password"), Attr("x-model", "password")),
+					Br(),
+					ButtonGray(Type("submit"), Text("Generate Token")),
+					Div(Class("mt-7 text-red-500"), Attr("x-text", "error")),
+				),
+				Hr(),
+				Form(Attr("x-on:submit.prevent", "sendRequest()"), AutoComplete("off"),
+					FormLabel(Text("Local route:")),
+					FormSelect(Attr("x-model", "route"),
+						Option(Value("/api/test"), Text("/api/test"), Selected()),
+						Option(Value("/api/account"), Text("/api/account - Authorized")),
+					),
+					Br(),
+					FormLabel(Text("Bearer token:")),
+					FormInput(Attr("x-model", "token")),
+					Br(),
+					ButtonGray(Type("submit"), Text("Submit Request")),
 				),
 				Br(),
-				FormLabel(Text("Bearer token:")),
-				FormInput(Attr("x-model", "token")),
-				Br(),
-				ButtonGray(Type("submit"), Text("Submit Request")),
+				FormLabel(Text("Result:")),
+				FormTextarea(Attr("x-text", "response")),
 			),
-			Br(),
-			FormLabel(Text("Result:")),
-			FormTextarea(Attr("x-text", "response")),
-		),
-	)
+		)
+	}().Render(w)
 }

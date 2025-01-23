@@ -107,10 +107,16 @@ Text is inserted into a component by using the `Text` component.
 It takes a string as an argument.
 During the rendering process, it will place the input text string inside HTML tags.
 
+You can also use the `ToText` component to render non-string arguments as HTML text.
+Under the hood, this is a wrapper around `printf`.
+
 ```go
-func ParagraphComponent(input string) Node {
-	return P(Text(input))
+func ParagraphComponent(input string, numberInput int) Node {
+	return P(Text(input), ToText(numberInput))
 }
+
+// ParagraphComponent("hello", 5)
+// => <p>hello5</p>
 ```
 Note that the `Text` component will _automatically escape HTML_!
 This component is safe to use for user generated content without worrying about XSS!
@@ -121,24 +127,30 @@ This is done using the `Attr` component:
 
 ```go
 func AttributeExampleComponent() Node {
-	return Div(Attr("some-data", "some-value")) // renders to <div some-data="some-value"></div>
+	return Div(Attr("some-data", "some-value"))
 }
+
+// => <div some-data="some-value"></div>
 ```
 
 By passing one argument to `Attr` instead of two, it will render to HTML without a value attached.
 
 ```go
 func SingleAttributeExampleComponent() Node {
-	return Div(Attr("single-attribute")) // renders to <div single-attribute></div>
+	return Div(Attr("single-attribute"))
 }
+
+// => <div single-attribute></div>
 ```
 ### Class / Classes Component
 Classes can be added to components by calling the `Class` component with a string containing the list of CSS classes.
 
 ```go
 func HeadingComponent() Node {
-	return H1(Class("text-center text-primary"), Text("Hello, World!")) // renders to <h1 class="text-center text-primary">Hello, World!</h1>
+	return H1(Class("text-center text-primary"), Text("Hello, World!"))
 }
+
+// => <h1 class="text-center text-primary">Hello, World!</h1>
 ```
 
 You can alternatively use the `Classes` struct to conditionally include CSS classes onto a component:
@@ -147,6 +159,12 @@ You can alternatively use the `Classes` struct to conditionally include CSS clas
 func HeadingComponent(cond bool) Node {
 	return H1(Classes{"text-center fw-bold": true, "text-success": cond}, Text("Hello, World!"))
 }
+
+// HeadingComponent(false)
+// => <h1 class="text-center fw-bold">Hello, World!</h1>
+//
+// HeadingComponent(true)
+// => <h1 class="text-center fw-bold text-success">Hello, World!</h1>
 ```
 
 ### Map Component (looping)
@@ -167,10 +185,17 @@ func MapListComponent(people []string) Node {
 ```
 
 ### Conditional Components
-There is a builtin component to handle conditional logic.
+There are builtin components to handle conditional logic: `If`, `IfElse`, `Iff`, and `IffElse`.
 Just like the `Map` component, it is purely to improve the ergonomics of the component system.
 
 ```go
+// Signatures:
+func If(condition bool, t Node) Node
+func IfElse(condition bool, t Node, f Node) Node
+func Iff(condition bool, t func() Node) Node
+func IffElse(condition bool, t func() Node, f func() Node) Node
+
+// Usage:
 func MyComponent(cond bool) Node {
 	return P(
 		Text("This text will always print. "),
@@ -237,18 +262,3 @@ Instead, you should pass the result from a database call _to_ a component.
 
 With large `Node` trees containing many subcomponents, potentially spanning across different files and packages, it can become difficult to keep track of who is calling what.
 To help keep things organized, put HTTP logic inside the `Controller`, "business logic" inside a delegated package (Ex: database related stuff), and only leave "display logic" up to the component.
-
-## Helper Components
-This codebase includes a few builtin components that make things a little easier.
-Here are a few examples from `/src/pages/components.go` and `/src/pages/helpers.go`:
-
-```go
-// conditionally render a component with else
-func IfElse(condition bool, t Node, f Node) Node
-
-// conditionally render a component with function callback
-func IffElse(condition bool, t func() Node, f func() Node) Node
-
-// automatically convert input type to string, then output a Text component
-func ToText(i interface{}) Node
-```

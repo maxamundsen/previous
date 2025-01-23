@@ -15,7 +15,7 @@ type LoginInfo struct {
 }
 
 // @Identity
-func LoginController(w http.ResponseWriter, r *http.Request) {
+func LoginPage(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 
 	err := api.ApiReadJSON(w, r, &loginInfo)

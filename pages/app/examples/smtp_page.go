@@ -18,7 +18,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func SmtpController(w http.ResponseWriter, r *http.Request) {
+func SmtpPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	if r.Method == http.MethodPost {

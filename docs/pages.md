@@ -1,8 +1,7 @@
-# Controllers
+# Pages
 
-In Previous, a "controller" is simply a function that handles an HTTP request.
-The controller is responsible for parsing form submissions, URL query parameters, and calling out to the appropriate functions to generate a response.
-This response is typically in HTML (page) or JSON (API) form.
+In Previous, a "page" is a specially generated HTTP handler.
+A page is responsible for parsing form submissions, URL query parameters, and calling out to the appropriate functions to generate a response.
 
 In Go, an HTTP handler is defined as a function that takes two arguments: a response writer, and a request pointer:
 
