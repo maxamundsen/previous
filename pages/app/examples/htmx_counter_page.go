@@ -1,9 +1,11 @@
 package examples
 
 import (
-	. "maragu.dev/gomponents"
+	"previous/.metagen/pageinfo"
 	. "previous/basic"
 	. "previous/components"
+
+	. "maragu.dev/gomponents"
 
 	"net/http"
 	"strconv"
@@ -21,7 +23,7 @@ func CounterButton(count int) Node {
 		return ButtonBlue(Icon(ICON_HTMX, 24), Text("Counter reached 10"))
 	} else {
 		return ButtonGray(
-			Attr("hx-get", "/app/examples/htmx-counter?count="+ToString(count)),
+			Attr("hx-get", pageinfo.APP_EXAMPLES_HTMXCOUNTER_URL + "?count="+ToString(count)),
 			Attr("hx-swap", "outerHTML"),
 			Text("Counter: "), ToText(count),
 		)

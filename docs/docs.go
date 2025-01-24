@@ -7,6 +7,7 @@ import (
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
 
+	"previous/.metagen/pageinfo"
 	. "previous/components"
 
 	"github.com/gomarkdown/markdown"
@@ -157,7 +158,7 @@ func DocLayout(title string, displayId int, children ...Node) Node {
 			),
 			Aside(Class("border-r-1 shadow-sm bg-white fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"),
 				Div(Class("px-4 overflow-y-auto py-6"),
-					A(Href("/"), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
+					A(Href(pageinfo.INDEX_URL), Img(Class("mx-auto h-16 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
 					H5(Class("mt-3 mb-5 text-center text-neutral-700 "), Text("Previous: Codebase Documentation")),
 					Ul(Class("mt-6 space-y-1"),
 						A(Href("/docs"), Classes{"block px-4 py-2 text-sm text-neutral-700 hover:text-neutral-950 hover:underline": true, "text-neutral-950 font-medium": displayId == 0}, Text("Overview")),

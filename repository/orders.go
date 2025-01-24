@@ -46,9 +46,6 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
 	}
 
-	output := stmt.DebugSql()
-	println(output)
-
 	err := stmt.Query(db, &orders)
 	return orders, err
 }

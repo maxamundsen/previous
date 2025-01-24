@@ -55,6 +55,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	newpath := filepath.Join(".", ".metagen")
+	err := os.MkdirAll(newpath, os.ModePerm)
+
+	if err != nil {
+		fmt.Println("Cannot create metagen output dir. Exiting.")
+		os.Exit(1)
+	}
+
 	args := flag.Args()
 
 	for _, arg := range args {
@@ -112,7 +120,7 @@ func build() {
 
 	// codegen
 	generateDebugConfig()
-	generateHTTPRoutes()
+	generatePageData()
 	generateJetModels()
 	generateTailwindCSS()
 
@@ -186,12 +194,13 @@ func generateDebugConfig() {
 
 // Generates routes from files named `*_page.go` found recursively inside the `/src/pages` directory.
 // When parsing files, we search for the first function suffixed with `Page`, if one is not found, return an error and fail compilation.
-func generateHTTPRoutes() {
+func generatePageData() {
 	type RouteInfo struct {
-		URL        string
-		PageName string
-		Package    string
-		Import     string
+		FileDef string
+		URL         string
+		PageName    string
+		Package     string
+		Import      string
 
 		Identity      bool `note`
 		Protected     bool `note`
@@ -265,6 +274,8 @@ func generateHTTPRoutes() {
 					ri.Package = lastDir
 					ri.PageName = funcDecl.Name.Name
 
+					ri.FileDef = file.Name()
+
 					// strip names from route and use the base package name if file is index
 					if strings.HasSuffix(pathStr, "/index_page.go") {
 						ri.URL = path.Dir(ri.URL)
@@ -294,13 +305,13 @@ func generateHTTPRoutes() {
 	handleErr(err)
 
 	// generate code
-	code := METAGEN_AUTO_COMMENT + "\npackage main\n"
+	routeCode := METAGEN_AUTO_COMMENT + "\npackage main\n"
 
-	code += "\nimport (\n\t\"net/http\"\n"
+	routeCode += "\nimport (\n\t\"net/http\"\n"
 
 	for _, v := range routeList {
 		if v.Identity || v.CookieSession {
-			code += "	. \"previous/middleware\"\n"
+			routeCode += "	. \"previous/middleware\"\n"
 			break
 		}
 	}
@@ -350,11 +361,11 @@ func generateHTTPRoutes() {
 	}
 
 	for i, _ := range result {
-		code += fmt.Sprintf("\t%s\n", result[i].Import)
+		routeCode += fmt.Sprintf("\t%s\n", result[i].Import)
 	}
 
-	code += ")\n"
-	code += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
+	routeCode += ")\n"
+	routeCode += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
 
 	for _, routeInfo := range routeList {
 		printablePage := routeInfo.Package + "." + routeInfo.PageName
@@ -380,15 +391,69 @@ func generateHTTPRoutes() {
 			httpVerb = "DELETE "
 		}
 
-		code += fmt.Sprintf("\tmux.HandleFunc(\"%s%s\", %s)\n", httpVerb, routeInfo.URL, printablePage)
+		routeCode += fmt.Sprintf("\tmux.HandleFunc(\"%s%s\", %s)\n", httpVerb, routeInfo.URL, printablePage)
 	}
 
-	code += "}"
+	routeCode += "}"
 
-	in := []byte(code)
+	in := []byte(routeCode)
 
 	fileErr := os.WriteFile("./cmd/server/generated_routes.metagen.go", in, 0644)
 	handleErr(fileErr)
+
+	// generate recursive structs representing pages
+	// this is used in order to reference a page without needing to actually write out the link as a string literal
+	// it also lets you jump to page code whenever that page is referenced in view links or something like that.
+	// essentially making dead page links a compile time error if you use this structure.
+
+	newpath := filepath.Join(".", ".metagen/pageinfo")
+	dirErr := os.MkdirAll(newpath, os.ModePerm)
+	handleErr(dirErr)
+
+	structCode := METAGEN_AUTO_COMMENT
+	structCode += "\npackage pageinfo\n\n"
+	// structCode += "import (\n"
+	// structCode += "\t \"net/http\"\n"
+
+	// for i, _ := range result {
+	// 	structCode += fmt.Sprintf("\t%s\n", result[i].Import)
+	// }
+
+	// structCode += ")\n\n"
+
+	structCode += "type AvailableMiddleware struct {\n"
+	structCode += "\tIdentity      bool\n"
+	structCode += "\tProtected     bool\n"
+	structCode += "\tCookieSession bool\n"
+	structCode += "}\n\n"
+
+	structCode += "var (\n"
+	for _, route := range routeList {
+		upperPath := strings.ToUpper(route.URL)
+		identName := strings.ReplaceAll(upperPath, "/", "_")
+		identName = strings.ReplaceAll(identName, "-", "")
+
+		if identName == "_" {
+			identName = "_INDEX"
+		}
+
+		identName = strings.TrimPrefix(identName, "_")
+
+		structCode += fmt.Sprintf("\t%s_URL string = \"%s\"\n", identName, route.URL)
+		structCode += fmt.Sprintf("\t%s_FILEDEF string = \"/%s\"\n", identName, route.FileDef)
+		structCode += fmt.Sprintf("\t%s_MIDDLEWARE AvailableMiddleware = AvailableMiddleware{Identity: %t, Protected: %t, CookieSession: %t}\n", identName, route.Identity, route.Protected, route.CookieSession)
+
+		// structCode += fmt.Sprintf("\t%s_HANDLER func(http.ResponseWriter, *http.Request) = %s.%s\n", identName, route.Package, route.PageName)
+
+		structCode += "\n"
+	}
+
+	structCode += ")\n"
+
+	structCode_b := []byte(structCode)
+
+	structFileErr := os.WriteFile("./.metagen/pageinfo/pageinfo.metagen.go", structCode_b, 0644)
+	handleErr(structFileErr)
 
 	printStatus(true)
 	fmt.Printf("\n")

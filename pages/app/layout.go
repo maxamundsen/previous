@@ -1,10 +1,12 @@
 package app
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
+	"previous/.metagen/pageinfo"
 	"previous/auth"
 	. "previous/components"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
@@ -16,7 +18,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 						Div(Class("flex h-16 items-center justify-between"),
 							Div(Class("flex items-center"),
 								Div(Class("flex-shrink-0"),
-									A(Href("/"), Img(Class("h-12 w-12"), Src("/images/logo.svg"), Alt("Previous"))),
+									A(Href(pageinfo.INDEX_URL), Img(Class("h-12 w-12"), Src("/images/logo.svg"), Alt("Previous"))),
 								),
 								Div(Attr("x-data", "{ examplesDropdownOpen: false }"), Class("hidden md:block"),
 									Div(Class("ml-10 flex items-baseline space-x-4"),
@@ -26,17 +28,17 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Attr("x-on:click.outside", "examplesDropdownOpen = false"), Class("relative flex px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon(ICON_CHEVRON_DOWN, 16))),
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
-												A(Href("/app/examples"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
-												A(Href("/app/examples/pagination"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-Side Data Grid")),
-												A(Href("/app/examples/forms"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Form Submission")),
-												A(Href("/app/examples/htmx"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTMX")),
-												A(Href("/app/examples/alpine"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Alpine.js")),
-												A(Href("/app/examples/upload"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("File Uploading")),
-												A(Href("/app/examples/smtp"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("SMTP Client")),
-												A(Href("/app/examples/api-fetch"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-side API Fetch")),
+												A(Href(pageinfo.APP_EXAMPLES_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
+												A(Href(pageinfo.APP_EXAMPLES_PAGINATION_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-Side Data Grid")),
+												A(Href(pageinfo.APP_EXAMPLES_FORMS_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Form Submission")),
+												A(Href(pageinfo.APP_EXAMPLES_HTMX_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTMX")),
+												A(Href(pageinfo.APP_EXAMPLES_ALPINE_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Alpine.js")),
+												A(Href(pageinfo.APP_EXAMPLES_UPLOAD_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("File Uploading")),
+												A(Href(pageinfo.APP_EXAMPLES_SMTP_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("SMTP Client")),
+												A(Href(pageinfo.APP_EXAMPLES_APIFETCH_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-side API Fetch")),
 											),
 										),
-										A(Href("/app/api-demo"), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("API Demo")),
+										A(Href(pageinfo.APP_APIDEMO_URL), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("API Demo")),
 										A(Href("/docs"), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Documentation")),
 									),
 								),
@@ -52,8 +54,8 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											),
 										),
 										Div(Attr("x-cloak"), Attr("x-show", "profileDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"), TabIndex("-1"),
-											A(Href("/app/account"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), ID("user-menu-item-0"), Text("Your Profile")),
-											A(Href("/auth/logout"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), ID("user-menu-item-2"), Text("Log out")),
+											A(Href(pageinfo.APP_ACCOUNT_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), ID("user-menu-item-0"), Text("Your Profile")),
+											A(Href(pageinfo.AUTH_LOGOUT_URL), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), ID("user-menu-item-2"), Text("Log out")),
 										),
 									),
 								),

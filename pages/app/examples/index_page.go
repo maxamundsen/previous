@@ -1,12 +1,13 @@
 package examples
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	"net/http"
 	"previous/auth"
 	"previous/middleware"
 	. "previous/pages/app"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 // @Identity

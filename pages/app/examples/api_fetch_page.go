@@ -2,6 +2,7 @@ package examples
 
 import (
 	. "previous/components"
+	"previous/.metagen/pageinfo"
 	. "previous/pages/app"
 
 	. "maragu.dev/gomponents"
@@ -20,7 +21,7 @@ func ApiFetchPage(w http.ResponseWriter, r *http.Request) {
 	func() Node {
 		return AppLayout("API Fetch Example", *identity,
 			PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
-			HxLoad("/app/examples/api-fetch-hx"),
+			HxLoad(pageinfo.APP_EXAMPLES_APIFETCHHX_URL),
 		)
 	}().Render(w)
 }
