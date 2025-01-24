@@ -23,7 +23,7 @@ func CounterButton(count int) Node {
 		return ButtonBlue(Icon(ICON_HTMX, 24), Text("Counter reached 10"))
 	} else {
 		return ButtonGray(
-			Attr("hx-get", pageinfo.APP_EXAMPLES_HTMXCOUNTER.URL + "?count="+ToString(count)),
+			Attr("hx-get", pageinfo.APP_EXAMPLES_HTMXCOUNTER.Url + "?count="+ToString(count)),
 			Attr("hx-swap", "outerHTML"),
 			Text("Counter: "), ToText(count),
 		)

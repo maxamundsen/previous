@@ -428,13 +428,13 @@ func generatePageData() {
 	structCode += "}\n\n"
 
 	structCode += "type PageInfo struct {\n"
-	structCode += "\tURL            string\n"
+	structCode += "\tUrl            string\n"
 	structCode += "\tFileDef        string\n"
 	structCode += "\tMiddleware Middleware\n"
 	structCode += "}\n\n"
 
 	structCode += "var (\n"
-	structCode += fmt.Sprintf("\tPageList [%d]PageInfo\n", len(routeList))
+	structCode += "\tPageInfoList []PageInfo\n"
 	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n\n"
 
 	for i, route := range routeList {
@@ -449,7 +449,7 @@ func generatePageData() {
 		identName = strings.TrimPrefix(identName, "_")
 
 		structCode += fmt.Sprintf(`	%s PageInfo = PageInfo{
-		URL:     "%s",
+		Url:     "%s",
 		FileDef: "/%s",
 		Middleware: Middleware{
 			Identity:      %t,
@@ -476,7 +476,7 @@ func generatePageData() {
 	structCode += "func init() {\n"
 	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
 
-	for i, route := range routeList{
+	for _, route := range routeList{
 		upperPath := strings.ToUpper(route.URL)
 		identName := strings.ReplaceAll(upperPath, "/", "_")
 		identName = strings.ReplaceAll(identName, "-", "")
@@ -488,13 +488,26 @@ func generatePageData() {
 		identName = strings.TrimPrefix(identName, "_")
 
 		structCode += fmt.Sprintf("\tPageInfoMap[\"%s\"] = %s\n", route.URL, identName)
-		structCode += fmt.Sprintf("\tPageList[%d] = %s\n", i, identName)
 
-		if i != len(routeList) - 1 {
-			structCode += "\n"
-		}
 	}
 
+	structCode += "\n\tPageInfoList = []PageInfo{\n"
+
+	for _, route := range routeList{
+		upperPath := strings.ToUpper(route.URL)
+		identName := strings.ReplaceAll(upperPath, "/", "_")
+		identName = strings.ReplaceAll(identName, "-", "")
+
+		if identName == "_" {
+			identName = "_INDEX"
+		}
+
+		identName = strings.TrimPrefix(identName, "_")
+
+		structCode += fmt.Sprintf("\t\t%s,\n", identName)
+	}
+
+	structCode += "\t}\n"
 	structCode += "}\n"
 
 	structCode_b := []byte(structCode)

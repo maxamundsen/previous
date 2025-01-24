@@ -55,7 +55,7 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 				Br(),
 				Text("the URL is:"),
 				Br(),
-				B(Text(thisPageInfo.URL)),
+				B(Text(thisPageInfo.Url)),
 				Br(),
 				Text("and has the following middleware:"),
 				Br(),
