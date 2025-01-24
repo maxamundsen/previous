@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"previous/.metagen/pageinfo"
 	. "previous/components"
 
 	. "maragu.dev/gomponents"
@@ -41,6 +43,21 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 			),
 			Span(Class("ml-3 text-black"),
 				Icon(ICON_X_DOT_COM, 24),
+			),
+			Br(),
+			Br(),
+			P(
+				Text("Page handlers support \"reflection.\" For example, the page you are reading right now is defined in:"),
+				Br(),
+				B(Text(pageinfo.APP_DASHBOARD_FILEDEF)),
+				Br(),
+				Text("the URL is:"),
+				Br(),
+				B(Text(pageinfo.APP_DASHBOARD_URL)),
+				Br(),
+				Text("and has the following middleware:"),
+				Br(),
+				B(Text(fmt.Sprintf("%+v", pageinfo.APP_DASHBOARD_MIDDLEWARE))),
 			),
 			If(identity.User.PermissionAdmin != 0,
 				Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),
