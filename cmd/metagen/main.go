@@ -196,11 +196,11 @@ func generateDebugConfig() {
 // When parsing files, we search for the first function suffixed with `Page`, if one is not found, return an error and fail compilation.
 func generatePageData() {
 	type RouteInfo struct {
-		FileDef string
-		URL         string
-		PageName    string
-		Package     string
-		Import      string
+		FileDef  string
+		URL      string
+		PageName string
+		Package  string
+		Import   string
 
 		Identity      bool `note`
 		Protected     bool `note`
@@ -421,14 +421,23 @@ func generatePageData() {
 
 	// structCode += ")\n\n"
 
-	structCode += "type AvailableMiddleware struct {\n"
+	structCode += "type Middleware struct {\n"
 	structCode += "\tIdentity      bool\n"
 	structCode += "\tProtected     bool\n"
 	structCode += "\tCookieSession bool\n"
 	structCode += "}\n\n"
 
+	structCode += "type PageInfo struct {\n"
+	structCode += "\tURL            string\n"
+	structCode += "\tFileDef        string\n"
+	structCode += "\tMiddleware Middleware\n"
+	structCode += "}\n\n"
+
 	structCode += "var (\n"
-	for _, route := range routeList {
+	structCode += fmt.Sprintf("\tPageList [%d]PageInfo\n", len(routeList))
+	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n\n"
+
+	for i, route := range routeList {
 		upperPath := strings.ToUpper(route.URL)
 		identName := strings.ReplaceAll(upperPath, "/", "_")
 		identName = strings.ReplaceAll(identName, "-", "")
@@ -439,16 +448,54 @@ func generatePageData() {
 
 		identName = strings.TrimPrefix(identName, "_")
 
-		structCode += fmt.Sprintf("\t%s_URL string = \"%s\"\n", identName, route.URL)
-		structCode += fmt.Sprintf("\t%s_FILEDEF string = \"/%s\"\n", identName, route.FileDef)
-		structCode += fmt.Sprintf("\t%s_MIDDLEWARE AvailableMiddleware = AvailableMiddleware{Identity: %t, Protected: %t, CookieSession: %t}\n", identName, route.Identity, route.Protected, route.CookieSession)
+		structCode += fmt.Sprintf(`	%s PageInfo = PageInfo{
+		URL:     "%s",
+		FileDef: "/%s",
+		Middleware: Middleware{
+			Identity:      %t,
+			Protected:     %t,
+			CookieSession: %t,
+		},
+	}
+`,
+			identName,
+			route.URL,
+			route.FileDef,
+			route.Identity,
+			route.Protected,
+			route.CookieSession,
+		)
 
-		// structCode += fmt.Sprintf("\t%s_HANDLER func(http.ResponseWriter, *http.Request) = %s.%s\n", identName, route.Package, route.PageName)
-
-		structCode += "\n"
+		if i != len(routeList) - 1 {
+			structCode += "\n"
+		}
 	}
 
-	structCode += ")\n"
+	structCode += ")\n\n"
+
+	structCode += "func init() {\n"
+	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
+
+	for i, route := range routeList{
+		upperPath := strings.ToUpper(route.URL)
+		identName := strings.ReplaceAll(upperPath, "/", "_")
+		identName = strings.ReplaceAll(identName, "-", "")
+
+		if identName == "_" {
+			identName = "_INDEX"
+		}
+
+		identName = strings.TrimPrefix(identName, "_")
+
+		structCode += fmt.Sprintf("\tPageInfoMap[\"%s\"] = %s\n", route.URL, identName)
+		structCode += fmt.Sprintf("\tPageList[%d] = %s\n", i, identName)
+
+		if i != len(routeList) - 1 {
+			structCode += "\n"
+		}
+	}
+
+	structCode += "}\n"
 
 	structCode_b := []byte(structCode)
 

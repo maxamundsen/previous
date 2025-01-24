@@ -19,6 +19,8 @@ import (
 func DashboardPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
+	thisPageInfo := pageinfo.PageInfoMap[r.URL.Path]
+
 	func() Node {
 		return AppLayout("Dashboard", *identity,
 			H5(Class("font-bold"), Text("Welcome back, "), Text(identity.User.Firstname+" "+identity.User.Lastname), Text(".")),
@@ -49,15 +51,15 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 			P(
 				Text("Page handlers support \"reflection.\" For example, the page you are reading right now is defined in:"),
 				Br(),
-				B(Text(pageinfo.APP_DASHBOARD_FILEDEF)),
+				B(Text(thisPageInfo.FileDef)),
 				Br(),
 				Text("the URL is:"),
 				Br(),
-				B(Text(pageinfo.APP_DASHBOARD_URL)),
+				B(Text(thisPageInfo.URL)),
 				Br(),
 				Text("and has the following middleware:"),
 				Br(),
-				B(Text(fmt.Sprintf("%+v", pageinfo.APP_DASHBOARD_MIDDLEWARE))),
+				B(Text(fmt.Sprintf("%+v", thisPageInfo.Middleware))),
 			),
 			If(identity.User.PermissionAdmin != 0,
 				Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),
