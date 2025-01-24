@@ -19,6 +19,8 @@ import (
 func DashboardPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
+	// You can get page info from the PageInfoMap, a mapping between urls and PageInfo.
+	// Since this handler handles requests to that URL, we can guarentee that the incoming URL matches the correct PageInfo
 	thisPageInfo := pageinfo.PageInfoMap[r.URL.Path]
 
 	func() Node {
