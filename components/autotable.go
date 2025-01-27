@@ -10,7 +10,7 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, nf func(E) Node, cols []repository.ColInfo) Node {
+func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, searchNodes Node, nf func(E) Node, cols []repository.ColInfo) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
@@ -31,7 +31,7 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 				Div(Class("ml-3"),
 					Div(Class("w-full max-w-sm min-w-[200px] relative"),
 						Div(Class("relative"),
-							Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"), Placeholder("Search..."), Name("search"), AutoFocus()),
+							searchNodes,
 							Input(Type("hidden"), Name("orderBy"), Value(f.OrderBy)),
 							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
 							Input(Type("hidden"), Name("itemsPerPage"), Value(ToString(f.Pagination.MaxItemsPerPage))),
@@ -89,7 +89,12 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 							Attr("hx-target", "#"+tableId),
 							Attr("hx-select", "#"+tableId),
 							Attr("hx-swap", "outerHTML"),
-							Input(Type("hidden"), Name("search"), Value(f.Search)),
+
+							Map(f.Search, func(sf repository.SearchFilter) Node {
+								return Input(Type("hidden"), Name("search_" + sf.ColName), Value(sf.Value))
+							}),
+
+
 							Input(Type("hidden"), Name("orderBy"), Value(f.OrderBy)),
 							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
 							Select(

@@ -68,6 +68,11 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 			url,
 			filter,
 			orders,
+			Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
+				Placeholder("Search..."),
+				Name("search_" + table.Order.PurchaserName.Name()),
+				AutoFocus(),
+			),
 			func(order model.Order) Node {
 				return Tr(Class("hover:bg-neutral-50 border-b border-neutral-200"),
 					Td(Class("p-4 py-5"),

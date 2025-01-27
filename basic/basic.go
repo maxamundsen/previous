@@ -57,6 +57,15 @@ func DateToString(utcTime time.Time) string {
 	return estTime.Format("01/02/06")
 }
 
+func ContainsGetIndex[T comparable](s []T, e T) (int, bool) {
+	for i, v := range s {
+		if v == e {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func Contains[T comparable](s []T, e T) bool {
 	for _, v := range s {
 		if v == e {

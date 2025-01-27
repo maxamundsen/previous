@@ -24,19 +24,20 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 
 	stmt := SELECT(Order.AllColumns).FROM(Order)
 
-	column, exists := GetColumnFromStringName(f.OrderBy, Order.AllColumns)
-
 	// where filters
-	if f.Search != "" {
-		stmt.WHERE(Order.PurchaserName.LIKE(String("%" + f.Search + "%")))
+	purchaserSearch := GetSearchFilterValueFromColName(f.Search, Order.PurchaserName.Name())
+	if purchaserSearch != "" {
+		stmt.WHERE(Order.PurchaserName.LIKE(String("%" + purchaserSearch + "%")))
 	}
 
 	// order by
+	obCol, exists := GetColumnFromStringName(f.OrderBy, Order.AllColumns)
+
 	if exists {
 		if f.OrderDescending {
-			stmt.ORDER_BY(column.DESC())
+			stmt.ORDER_BY(obCol.DESC())
 		} else {
-			stmt.ORDER_BY(column.ASC())
+			stmt.ORDER_BY(obCol.ASC())
 		}
 	}
 
