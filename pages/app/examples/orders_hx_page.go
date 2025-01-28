@@ -28,9 +28,11 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// fetch entities from filter function
-	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search})
+	// this first counts the possible items before pagination
+	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search, Between: filter.Between})
 	filter.Pagination.TotalItems = len(searchItems)
 
+	// this query gets the data AFTER pagination
 	orders, _ := repository.OrderRepository{}.Filter(filter)
 	filter.Pagination.ItemsThisPage = len(orders)
 
@@ -63,16 +65,38 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 
 	// Generate HTML
 	func() Node {
+		elId := "order_table"
 		return AutoTable(
-			"order_table",
+			elId,
 			url,
 			filter,
 			orders,
-			Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
-				Placeholder("Search..."),
-				Name("search_" + table.Order.PurchaserName.Name()),
-				AutoFocus(),
-			),
+			Group{
+				Div(Class("w-full flex-[auto_auto_auto] justify-between mb-3 mt-1"),
+					Div(Class("w-full max-w-sm min-w-[200px] relative"),
+						Div(Class("relative"),
+							TableSearch(
+								Placeholder("Search Customer Name..."),
+								BindSearch(elId, table.Order.PurchaserName.Name()),
+								AutoFocus(),
+							),
+							TableSearch(
+								Placeholder("Search Customer Email..."),
+								BindSearch(elId, table.Order.PurchaserEmail.Name()),
+								AutoFocus(),
+							),
+							TableSearch(
+								Placeholder("Price Min"),
+								BindLeftBetween(elId, table.Order.Price.Name()),
+							),
+							TableSearch(
+								Placeholder("Price Max"),
+								BindRightBetween(elId, table.Order.Price.Name()),
+							),
+						),
+					),
+				),
+			},
 			func(order model.Order) Node {
 				return Tr(Class("hover:bg-neutral-50 border-b border-neutral-200"),
 					Td(Class("p-4 py-5"),

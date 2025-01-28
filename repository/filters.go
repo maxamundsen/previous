@@ -12,16 +12,24 @@ import (
 )
 
 const (
-	ORDER_BY_URL_KEY       = "orderBy"
-	ORDER_DESC_URL_KEY     = "desc"
-	PAGE_NUM_URL_KEY       = "pageNum"
-	ITEMS_PER_PAGE_URL_KEY = "itemsPerPage"
-	SEARCH_URL_KEY_PREFIX         = "search_"
+	BETWEEN_LEFT_URL_KEY_PREFIX  = "betweenLeft_"
+	BETWEEN_RIGHT_URL_KEY_PREFIX = "betweenRight_"
+	ORDER_BY_URL_KEY             = "orderBy"
+	ORDER_DESC_URL_KEY           = "desc"
+	PAGE_NUM_URL_KEY             = "pageNum"
+	ITEMS_PER_PAGE_URL_KEY       = "itemsPerPage"
+	SEARCH_URL_KEY_PREFIX        = "search_"
 )
 
 type ColInfo struct {
 	DisplayName string
 	DbName      string
+}
+
+type BetweenFilter struct {
+	ColName   string
+	Value     string
+	Direction bool // left is false, right is true
 }
 
 type SearchFilter struct {
@@ -31,6 +39,7 @@ type SearchFilter struct {
 
 type Filter struct {
 	Search          []SearchFilter
+	Between         []BetweenFilter
 	Pagination      Pagination
 	OrderBy         string
 	OrderDescending bool
@@ -59,6 +68,22 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 				filter.Search = append(filter.Search, SearchFilter{ColName: strings.TrimPrefix(k, SEARCH_URL_KEY_PREFIX), Value: qValue})
 			}
 		}
+
+		if strings.HasPrefix(k, BETWEEN_LEFT_URL_KEY_PREFIX) {
+			qValue := strings.Join(v, "")
+
+			if qValue != "" {
+				filter.Between = append(filter.Between, BetweenFilter{ColName: strings.TrimPrefix(k, BETWEEN_LEFT_URL_KEY_PREFIX), Value: qValue, Direction: false})
+			}
+		}
+
+		if strings.HasPrefix(k, BETWEEN_RIGHT_URL_KEY_PREFIX) {
+			qValue := strings.Join(v, "")
+
+			if qValue != "" {
+				filter.Between = append(filter.Between, BetweenFilter{ColName: strings.TrimPrefix(k, BETWEEN_RIGHT_URL_KEY_PREFIX), Value: qValue, Direction: true})
+			}
+		}
 	}
 
 	filter.OrderBy = r.URL.Query().Get(ORDER_BY_URL_KEY)
@@ -69,6 +94,25 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 	return filter
 }
 
+// "Input" is the target column name, which is usually retrieved from Jet mappings
+func GetBetweenFilterValuesFromColName(b []BetweenFilter, input string) (string, string) {
+	left := ""
+	right := ""
+
+	for _, v := range b {
+		if v.ColName == input && !v.Direction {
+			left = v.Value
+		}
+
+		if v.ColName == input && v.Direction {
+			right = v.Value
+		}
+	}
+
+	return left, right
+}
+
+// "Input" is the target column name, which is usually retrieved from Jet mappings
 func GetSearchFilterValueFromColName(s []SearchFilter, input string) string {
 	for _, v := range s {
 		if v.ColName == input {
@@ -104,6 +148,14 @@ func QueryParamsFromFilter(f Filter) string {
 
 	for _, v := range f.Search {
 		output += "&" + SEARCH_URL_KEY_PREFIX + v.ColName + "=" + v.Value
+	}
+
+	for _, v := range f.Between {
+		if v.Direction {
+			output += "&" + BETWEEN_RIGHT_URL_KEY_PREFIX + v.ColName + "=" + v.Value
+		} else {
+			output += "&" + BETWEEN_LEFT_URL_KEY_PREFIX + v.ColName + "=" + v.Value
+		}
 	}
 
 	return output

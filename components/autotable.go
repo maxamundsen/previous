@@ -10,7 +10,38 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, searchNodes Node, nf func(E) Node, cols []repository.ColInfo) Node {
+const TABLE_ABOVE_PREFIX = "_tableAbove"
+const FORM_BIND_SUFFIX = "_form"
+const FORM_PAGINATION_SUFFIX = "_paginationForm"
+
+// FILTER COMPONENTS
+
+// Autotable bind search to col
+func BindSearch(elId string, col string) Node {
+	return Group{
+		FormAttr(elId + FORM_BIND_SUFFIX),
+		Name(repository.SEARCH_URL_KEY_PREFIX + col),
+	}
+}
+
+// Autotable bind right between value to col
+func BindRightBetween(elId string, col string) Node {
+	return Group{
+		FormAttr(elId + FORM_BIND_SUFFIX),
+		Name(repository.BETWEEN_RIGHT_URL_KEY_PREFIX + col),
+	}
+}
+
+// Autotable bind left between value to col
+func BindLeftBetween(elId string, col string) Node {
+	return Group{
+		FormAttr(elId + FORM_BIND_SUFFIX),
+		Name(repository.BETWEEN_LEFT_URL_KEY_PREFIX + col),
+	}
+}
+
+// THE TABLE
+func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, cols []repository.ColInfo) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
@@ -22,28 +53,20 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 	}
 
 	return Group{
-		Form(AutoComplete("off"), Attr("hx-get", url), Attr("hx-trigger", "keyup delay:100ms from:input, click from:select"), Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId), Attr("hx-select", "#"+tableId),
-			Div(Class("w-full flex justify-between items-center mb-3 mt-1 pl-3"),
-				Div(
-					H3(Class("text-lg font-semibold text-neutral-800"), Text("Example Orders")),
-					P(Class("text-neutral-500"), Text("An example `orders` table with filtering, pagination, and sorting.")),
-				),
-				Div(Class("ml-3"),
-					Div(Class("w-full max-w-sm min-w-[200px] relative"),
-						Div(Class("relative"),
-							searchNodes,
-							Input(Type("hidden"), Name("orderBy"), Value(f.OrderBy)),
-							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
-							Input(Type("hidden"), Name("itemsPerPage"), Value(ToString(f.Pagination.MaxItemsPerPage))),
-							Button(Class("absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white "), Type("button"),
-								Icon(ICON_SEARCH, 24),
-							),
-						),
-					),
-				),
-			),
+		Div(ID(tableId+TABLE_ABOVE_PREFIX),
+			aboveTable,
 		),
 		Div(ID(tableId),
+			Form(ID(tableId+FORM_BIND_SUFFIX),
+				AutoComplete("off"),
+				Attr("hx-get", url),
+				Attr("hx-trigger", "keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
+				Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId),
+				Attr("hx-select", "#"+tableId),
+				Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+				Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
+				Input(Type("hidden"), Name(repository.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
+			),
 			Div(Class("relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md"),
 				Div(Class("overflow-scroll flex flex-col w-full h-full"),
 					Table(Class("table-fixed"),
@@ -83,23 +106,30 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 						Div(Class("content-center text-sm text-neutral-500"),
 							Span(Text("Items per page:")),
 						),
-						Form(Class("py-3 px-3 min-h-9 block"),
+						Form(ID(tableId+FORM_PAGINATION_SUFFIX), Class("py-3 px-3 min-h-9 block"),
 							Attr("hx-get", url),
-							Attr("hx-trigger", "click from:select"),
+							Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
 							Attr("hx-target", "#"+tableId),
 							Attr("hx-select", "#"+tableId),
 							Attr("hx-swap", "outerHTML"),
 
 							Map(f.Search, func(sf repository.SearchFilter) Node {
-								return Input(Type("hidden"), Name("search_" + sf.ColName), Value(sf.Value))
+								return Input(Type("hidden"), Name(repository.SEARCH_URL_KEY_PREFIX+sf.ColName), Value(sf.Value))
 							}),
 
+							Map(f.Between, func(bf repository.BetweenFilter) Node {
+								if bf.Direction {
+									return Input(Type("hidden"), Name(repository.BETWEEN_RIGHT_URL_KEY_PREFIX+bf.ColName), Value(bf.Value))
+								} else {
+									return Input(Type("hidden"), Name(repository.BETWEEN_LEFT_URL_KEY_PREFIX+bf.ColName), Value(bf.Value))
+								}
+							}),
 
-							Input(Type("hidden"), Name("orderBy"), Value(f.OrderBy)),
-							Input(Type("hidden"), Name("orderDescending"), Value(ToString(f.OrderDescending))),
+							Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+							Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 							Select(
 								Class("bg-gray-50 py-3 px-3 min-h-9 border border-gray-300 text-gray-900 text-sm block p-1.5 shadow-sm"),
-								Name("itemsPerPage"),
+								Name(repository.ITEMS_PER_PAGE_URL_KEY),
 								Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5")),
 								Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10")),
 								Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25")),

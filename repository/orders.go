@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"fmt"
 	"previous/.jet/model"
+	"previous/finance"
 
 	. "previous/.jet/table"
 
@@ -24,11 +26,34 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 
 	stmt := SELECT(Order.AllColumns).FROM(Order)
 
-	// where filters
+	condition := Bool(true)
+
+	// search filters
+	emailSearch := GetSearchFilterValueFromColName(f.Search, Order.PurchaserEmail.Name())
+	if emailSearch != "" {
+		condition = condition.AND(Order.PurchaserEmail.LIKE(String("%" + emailSearch + "%")))
+	}
+
 	purchaserSearch := GetSearchFilterValueFromColName(f.Search, Order.PurchaserName.Name())
 	if purchaserSearch != "" {
-		stmt.WHERE(Order.PurchaserName.LIKE(String("%" + purchaserSearch + "%")))
+		condition = condition.AND(Order.PurchaserName.LIKE(String("%" + purchaserSearch + "%")))
 	}
+
+	// between filters
+	priceSearchLeft_string, priceSearchRight_string := GetBetweenFilterValuesFromColName(f.Between, Order.Price.Name())
+
+	priceSearchLeft := Int32(int32(finance.MoneyToInt64(priceSearchLeft_string)))
+	priceSearchRight := Int32(int32(finance.MoneyToInt64(priceSearchRight_string)))
+
+	if priceSearchLeft_string != "" {
+		condition = condition.AND(Order.Price.GT_EQ(priceSearchLeft))
+	}
+
+	if priceSearchRight_string != "" {
+		condition = condition.AND(Order.Price.LT_EQ(priceSearchRight))
+	}
+
+	stmt.WHERE(condition)
 
 	// order by
 	obCol, exists := GetColumnFromStringName(f.OrderBy, Order.AllColumns)
@@ -39,6 +64,8 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 		} else {
 			stmt.ORDER_BY(obCol.ASC())
 		}
+	} else {
+		stmt.ORDER_BY(Order.ID.ASC())
 	}
 
 	// pagination
@@ -46,6 +73,8 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 		stmt.LIMIT(int64(f.Pagination.MaxItemsPerPage))
 		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
 	}
+
+	fmt.Println(stmt.DebugSql())
 
 	err := stmt.Query(db, &orders)
 	return orders, err

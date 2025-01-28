@@ -1,9 +1,11 @@
 package components
 
 import (
+	"previous/config"
+	"previous/crypt"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	"previous/crypt"
 )
 
 func RootLayout(title string, children ...Node) Node {
@@ -38,7 +40,12 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
-				Script(Src("/lib/htmx/htmx.min.js")),
+				// use minified htmx only in prod
+				IfElse(config.DEBUG,
+					Script(Src("/lib/htmx/htmx.js")),
+					Script(Src("/lib/htmx/htmx.min.js")),
+				),
+
 				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
 				Script(Src("/lib/highlight/highlight.min.js")),
 				Script(Src("/js/index.js?v="+js_hash)),

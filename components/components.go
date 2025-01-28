@@ -1,11 +1,12 @@
 package components
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	. "previous/basic"
 	"previous/finance"
 	"time"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 // CONTAINERS
@@ -93,6 +94,12 @@ func ButtonBlue(children ...Node) Node {
 }
 
 // TABLES
+func TableSearch(c ...Node) Node {
+	return Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
+		Group(c),
+	)
+}
+
 func TableTW(c ...Node) Node {
 	return Div(Class("flex flex-col"),
 		Div(Class("-m-1.5 overflow-x-auto"),
