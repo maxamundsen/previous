@@ -58,9 +58,9 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 	cols = []repository.ColInfo{
 		{DbName: table.Order.ID.Name(), DisplayName: "ID"},
 		{DbName: table.Order.ProductID.Name(), DisplayName: "Product ID"},
-		{DbName: table.Order.PurchaserName.Name(), DisplayName: "Customer"},
-		{DbName: table.Order.PurchaserEmail.Name(), DisplayName: "Customer Email"},
-		{DbName: table.Order.Price.Name(), DisplayName: "Price (USD)"},
+		{DbName: table.Order.PurchaserName.Name(), DisplayName: "Customer", Sortable: true},
+		{DbName: table.Order.PurchaserEmail.Name(), DisplayName: "Customer Email", Sortable: true},
+		{DbName: table.Order.Price.Name(), DisplayName: "Price (USD)", Sortable: true},
 	}
 
 	// Generate HTML

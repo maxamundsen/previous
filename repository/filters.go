@@ -24,6 +24,7 @@ const (
 type ColInfo struct {
 	DisplayName string
 	DbName      string
+	Sortable    bool
 }
 
 type BetweenFilter struct {

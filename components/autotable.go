@@ -73,21 +73,29 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 						THead(
 							Tr(
 								Map(cols, func(col repository.ColInfo) Node {
-									return Th(Class("p-4 border-b border-neutral-200 transition-colors cursor-pointer bg-neutral-100 hover:bg-neutral-200"),
-										Attr("hx-get", url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
-										Attr("hx-swap", "#"+tableId),
-										Attr("hx-target", "#"+tableId),
-										Attr("hx-select", "#"+tableId),
-										Attr("hx-trigger", "click"),
-										P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
-											If(f.OrderBy == col.DbName,
-												IfElse(f.OrderDescending,
-													Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
-													Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+									if col.Sortable {
+										return Th(Class("p-4 border-b border-neutral-200 transition-colors cursor-pointer bg-neutral-100 hover:bg-neutral-200"),
+											Attr("hx-get", url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
+											Attr("hx-swap", "#"+tableId),
+											Attr("hx-target", "#"+tableId),
+											Attr("hx-select", "#"+tableId),
+											Attr("hx-trigger", "click"),
+											P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
+												If(f.OrderBy == col.DbName,
+													IfElse(f.OrderDescending,
+														Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
+														Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+													),
 												),
 											),
-										),
-									)
+										)
+									} else {
+										return Th(Class("p-4 border-b border-neutral-200 transition-colors bg-neutral-100"),
+											P(Class("flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500 font-normal"),
+												Text(col.DisplayName),
+											),
+										)
+									}
 								}),
 							),
 						),
