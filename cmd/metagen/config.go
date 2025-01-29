@@ -68,5 +68,5 @@ const DEFAULT_METAGEN_CONFIG = `{
 	"ProdDbSchema": "example",
 
 	"StagingDbConnectionString": "file:example.db",
-	"StagingDbSchema": "example",
+	"StagingDbSchema": "example"
 }`
