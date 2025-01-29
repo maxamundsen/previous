@@ -17,31 +17,16 @@ const FORM_PAGINATION_SUFFIX = "_paginationForm"
 // FILTER COMPONENTS
 
 // Autotable bind search to col
-func BindSearch(elId string, col string) Node {
+func BindSearch(elId string, identifier string) Node {
 	return Group{
 		FormAttr(elId + FORM_BIND_SUFFIX),
-		Name(repository.SEARCH_URL_KEY_PREFIX + col),
-	}
-}
-
-// Autotable bind right between value to col
-func BindRightBetween(elId string, col string) Node {
-	return Group{
-		FormAttr(elId + FORM_BIND_SUFFIX),
-		Name(repository.BETWEEN_RIGHT_URL_KEY_PREFIX + col),
-	}
-}
-
-// Autotable bind left between value to col
-func BindLeftBetween(elId string, col string) Node {
-	return Group{
-		FormAttr(elId + FORM_BIND_SUFFIX),
-		Name(repository.BETWEEN_LEFT_URL_KEY_PREFIX + col),
+		Name(repository.SEARCH_URL_KEY_PREFIX + identifier),
 	}
 }
 
 // THE TABLE
-func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, cols []repository.ColInfo) Node {
+// Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
+func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, cols []repository.ColInfo, belowTable Node) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
@@ -100,67 +85,67 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 							),
 						),
 						TBody(
-							Map(entities, nf),
+							IfElse(len(entities) > 0,
+								Map(entities, nf),
+								Td(Class("p-4 py-5"),
+									P(Class("block text-sm text-neutral-800"), Text("Dataset contains no entries.")),
+								),
+							),
 						),
 					),
 				),
-				Div(Class("flex justify-between items-center px-4 py-3"),
-					Div(Class("text-sm text-neutral-500"),
-						B(Icon(ICON_LIST_ORDERED, 16)),
-						Span(Class("mr-3")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
-					),
-
-					Div(Class("flex"),
-						Div(Class("content-center text-sm text-neutral-500"),
-							Span(Text("Items per page:")),
+				If(f.Pagination.Enabled,
+					Div(Class("flex justify-between items-center px-4 py-3"),
+						Div(Class("text-sm text-neutral-500"),
+							B(Icon(ICON_LIST_ORDERED, 16)),
+							Span(Class("mr-3")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
-						Form(ID(tableId+FORM_PAGINATION_SUFFIX), Class("py-3 px-3 min-h-9 block"),
-							Attr("hx-get", url),
-							Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
-							Attr("hx-target", "#"+tableId),
-							Attr("hx-select", "#"+tableId),
-							Attr("hx-swap", "outerHTML"),
 
-							Map(f.Search, func(sf repository.SearchFilter) Node {
-								return Input(Type("hidden"), Name(repository.SEARCH_URL_KEY_PREFIX+sf.ColName), Value(sf.Value))
-							}),
-
-							Map(f.Between, func(bf repository.BetweenFilter) Node {
-								if bf.Direction {
-									return Input(Type("hidden"), Name(repository.BETWEEN_RIGHT_URL_KEY_PREFIX+bf.ColName), Value(bf.Value))
-								} else {
-									return Input(Type("hidden"), Name(repository.BETWEEN_LEFT_URL_KEY_PREFIX+bf.ColName), Value(bf.Value))
-								}
-							}),
-
-							Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
-							Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
-							Select(
-								Class("bg-gray-50 py-3 px-3 min-h-9 border border-gray-300 text-gray-900 text-sm block p-1.5 shadow-sm"),
-								Name(repository.ITEMS_PER_PAGE_URL_KEY),
-								Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5")),
-								Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10")),
-								Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25")),
-								Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50")),
-								Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100")),
+						Div(Class("flex"),
+							Div(Class("content-center text-sm text-neutral-500"),
+								Span(Text("Items per page:")),
 							),
+							Form(ID(tableId+FORM_PAGINATION_SUFFIX), Class("py-3 px-3 min-h-9 block"),
+								Attr("hx-get", url),
+								Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
+								Attr("hx-target", "#"+tableId),
+								Attr("hx-select", "#"+tableId),
+								Attr("hx-swap", "outerHTML"),
+
+								MapMapWithKey(f.Search, func(s string, v string) Node {
+									return Input(Type("hidden"), Name(repository.SEARCH_URL_KEY_PREFIX+s), Value(v))
+								}),
+
+								Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+								Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
+								Select(
+									Class("bg-gray-50 py-3 px-3 min-h-9 border border-gray-300 text-gray-900 text-sm block p-1.5 shadow-sm"),
+									Name(repository.ITEMS_PER_PAGE_URL_KEY),
+									Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
+									Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
+									Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),
+									Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50"), Value("50")),
+									Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100"), Value("100")),
+								),
+							),
+
+							paginationButton(ICON_CHEVRON_FIRST, 1),
+							paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
+
+							Div(Class("text-sm content-center text-neutral-500 py-3 px-3 min-h-9"),
+								Text("Page "),
+								ToText(f.Pagination.CurrentPage),
+								Text(" of "),
+								ToText(f.Pagination.TotalPages),
+							),
+
+							paginationButton(ICON_CHEVRON_RIGHT, f.Pagination.NextPage),
+							paginationButton(ICON_CHEVRON_LAST, f.Pagination.TotalPages),
 						),
-
-						paginationButton(ICON_CHEVRON_FIRST, 1),
-						paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
-
-						Div(Class("text-sm content-center text-neutral-500 py-3 px-3 min-h-9"),
-							Text("Page "),
-							ToText(f.Pagination.CurrentPage),
-							Text(" of "),
-							ToText(f.Pagination.TotalPages),
-						),
-
-						paginationButton(ICON_CHEVRON_RIGHT, f.Pagination.NextPage),
-						paginationButton(ICON_CHEVRON_LAST, f.Pagination.TotalPages),
 					),
 				),
 			),
+			belowTable,
 		),
 	}
 }

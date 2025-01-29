@@ -21,23 +21,18 @@ import (
 // @CookieSession
 func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 	filter := repository.ParseFilterFromRequest(r)
-	url := r.URL.Path
-
-	if filter.Pagination.MaxItemsPerPage == 0 {
-		filter.Pagination.MaxItemsPerPage = 5
-	}
+	filter.Pagination.Enabled = true
 
 	// fetch entities from filter function
 	// this first counts the possible items before pagination
-	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search, Between: filter.Between})
+	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search})
 	filter.Pagination.TotalItems = len(searchItems)
 
 	// this query gets the data AFTER pagination
 	orders, _ := repository.OrderRepository{}.Filter(filter)
-	filter.Pagination.ItemsThisPage = len(orders)
 
 	// generate page numbers according to total length of data
-	filter.Pagination.GeneratePagination()
+	filter.Pagination.GeneratePagination(len(searchItems), len(orders))
 
 	// You can automatically generate friendly names from the SQL columns:
 	cols := repository.GetColInfoFromJet(
@@ -68,13 +63,13 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 		elId := "order_table"
 		return AutoTable(
 			elId,
-			url,
+			r.URL.Path,
 			filter,
 			orders,
 			Group{
-				Div(Class("w-full flex-[auto_auto_auto] justify-between mb-3 mt-1"),
-					Div(Class("w-full max-w-sm min-w-[200px] relative"),
-						Div(Class("relative"),
+				Div(Class("w-full flex justify-between mb-3 mt-1"),
+					Div(Class("w-full relative"),
+						Div(Class("relative flex flex-row items-center"),
 							TableSearch(
 								Placeholder("Search Customer Name..."),
 								BindSearch(elId, table.Order.PurchaserName.Name()),
@@ -87,11 +82,11 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 							),
 							TableSearch(
 								Placeholder("Price Min"),
-								BindLeftBetween(elId, table.Order.Price.Name()),
+								BindSearch(elId, table.Order.Price.Name() + "_left"),
 							),
 							TableSearch(
 								Placeholder("Price Max"),
-								BindRightBetween(elId, table.Order.Price.Name()),
+								BindSearch(elId, table.Order.Price.Name() + "_right"),
 							),
 						),
 					),
@@ -117,6 +112,7 @@ func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
 				)
 			},
 			cols,
+			nil,
 		)
 	}().Render(w)
 }

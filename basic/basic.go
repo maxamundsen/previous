@@ -4,18 +4,37 @@ package basic
 import (
 	"fmt"
 	"reflect"
-	"time"
 	"strings"
+	"time"
 )
 
+type Pair struct {
+	Key   string
+	Value string
+}
+
+func MakeURLParams(base string, params ...Pair) string {
+	output := base
+
+	for i, v := range params {
+		if i == 0 {
+			output += "?" + v.Key + "=" + v.Value
+		} else {
+			output += "&" + v.Key + "=" + v.Value
+		}
+	}
+
+	return output
+}
+
 func SnakeCaseToTitleCase(s string) string {
-    parts := strings.Split(s, "_")
+	parts := strings.Split(s, "_")
 
-    for i, part := range parts {
-        parts[i] = strings.Title(part)
-    }
+	for i, part := range parts {
+		parts[i] = strings.Title(part)
+	}
 
-    return strings.Join(parts, " ")
+	return strings.Join(parts, " ")
 }
 
 func ToString(i interface{}) string {
@@ -39,31 +58,55 @@ func ToString(i interface{}) string {
 	return output
 }
 
-func TimeToString(utcTime time.Time) string {
-	// Convert to EST (Eastern Standard Time)
-	loc, _ := time.LoadLocation("America/New_York")
-	estTime := utcTime.In(loc)
+func HTMLDateToTime(date string) time.Time {
+	t, _ := time.Parse("2006-01-02", date)
+	return t
+}
 
-	// Format the time as mm/dd/yy hh:mm AM/PM
-	return estTime.Format("01/02/06 03:04 PM")
+func TimeToSqliteString(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
+}
+
+func SqliteStringToTime(dateTimeStr string) time.Time {
+	formats := []string{
+		"2006-01-02 15:04:05.000000000",
+		"2006-01-02 15:04:05",
+	}
+
+	var t time.Time
+	var err error
+
+	for _, format := range formats {
+		t, err = time.Parse(format, dateTimeStr)
+		if err == nil {
+			return t
+		}
+	}
+
+	return t
+}
+
+func TimeToTimeString(utcTime time.Time) string {
+	return utcTime.Format("03:04 PM")
+}
+
+func TimeToString(utcTime time.Time) string {
+	return utcTime.Format("01/02/06 03:04 PM")
 }
 
 func DateToString(utcTime time.Time) string {
-	// Convert to EST (Eastern Standard Time)
-	loc, _ := time.LoadLocation("America/New_York")
-	estTime := utcTime.In(loc)
-
-	// Format the time as mm/dd/yy hh:mm AM/PM
-	return estTime.Format("01/02/06")
+	return utcTime.Format("01/02/06")
 }
 
-func ContainsGetIndex[T comparable](s []T, e T) (int, bool) {
-	for i, v := range s {
-		if v == e {
-			return i, true
-		}
-	}
-	return 0, false
+func StringToDate(ds string) time.Time {
+	nt, _ := time.Parse("01/02/06", ds)
+	return nt
+}
+
+func Reverse[T comparable](s []T) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+        s[i], s[j] = s[j], s[i]
+    }
 }
 
 func Contains[T comparable](s []T, e T) bool {

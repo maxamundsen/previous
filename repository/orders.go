@@ -29,18 +29,19 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	condition := Bool(true)
 
 	// search filters
-	emailSearch := GetSearchFilterValueFromColName(f.Search, Order.PurchaserEmail.Name())
+	emailSearch := f.Search[Order.PurchaserEmail.Name()]
 	if emailSearch != "" {
 		condition = condition.AND(Order.PurchaserEmail.LIKE(String("%" + emailSearch + "%")))
 	}
 
-	purchaserSearch := GetSearchFilterValueFromColName(f.Search, Order.PurchaserName.Name())
+	purchaserSearch := f.Search[Order.PurchaserName.Name()]
 	if purchaserSearch != "" {
 		condition = condition.AND(Order.PurchaserName.LIKE(String("%" + purchaserSearch + "%")))
 	}
 
 	// between filters
-	priceSearchLeft_string, priceSearchRight_string := GetBetweenFilterValuesFromColName(f.Between, Order.Price.Name())
+	priceSearchLeft_string := f.Search[Order.Price.Name() + "_left"]
+	priceSearchRight_string := f.Search[Order.Price.Name() + "_right"]
 
 	priceSearchLeft := Int32(int32(finance.MoneyToInt64(priceSearchLeft_string)))
 	priceSearchRight := Int32(int32(finance.MoneyToInt64(priceSearchRight_string)))
@@ -69,9 +70,11 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	}
 
 	// pagination
-	if f.Pagination.MaxItemsPerPage > 0 {
-		stmt.LIMIT(int64(f.Pagination.MaxItemsPerPage))
-		stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
+	if f.Pagination.Enabled {
+		if f.Pagination.MaxItemsPerPage > 0 {
+			stmt.LIMIT(int64(f.Pagination.MaxItemsPerPage))
+			stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
+		}
 	}
 
 	fmt.Println(stmt.DebugSql())

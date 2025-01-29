@@ -30,6 +30,10 @@ func ExampleEmailComponent(body string) Node {
 }
 
 // FORMATTERS
+func FormatTime(utcTime time.Time) Node {
+	return Text(TimeToTimeString(utcTime))
+}
+
 func FormatDateTime(utcTime time.Time) Node {
 	return Text(TimeToString(utcTime))
 }
@@ -96,6 +100,12 @@ func ButtonBlue(children ...Node) Node {
 // TABLES
 func TableSearch(c ...Node) Node {
 	return Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
+		Group(c),
+	)
+}
+
+func TableSearchDropdown(c ...Node) Node {
+	return Select(Class("bg-white w-full px-3 h-10 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
 		Group(c),
 	)
 }

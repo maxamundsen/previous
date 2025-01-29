@@ -19,6 +19,7 @@ const (
 	PAGE_NUM_URL_KEY             = "pageNum"
 	ITEMS_PER_PAGE_URL_KEY       = "itemsPerPage"
 	SEARCH_URL_KEY_PREFIX        = "search_"
+	FILTER_DEFAULT_MAX_ITEMS     = 10
 )
 
 type ColInfo struct {
@@ -27,26 +28,15 @@ type ColInfo struct {
 	Sortable    bool
 }
 
-type BetweenFilter struct {
-	ColName   string
-	Value     string
-	Direction bool // left is false, right is true
-}
-
-type SearchFilter struct {
-	ColName string
-	Value   string
-}
-
 type Filter struct {
-	Search          []SearchFilter
-	Between         []BetweenFilter
+	Search          map[string]string
 	Pagination      Pagination
 	OrderBy         string
 	OrderDescending bool
 }
 
 type Pagination struct {
+	Enabled         bool
 	CurrentPage     int
 	NextPage        int
 	PreviousPage    int
@@ -60,29 +50,14 @@ type Pagination struct {
 
 func ParseFilterFromRequest(r *http.Request) Filter {
 	filter := Filter{}
+	filter.Search = make(map[string]string)
 
 	for k, v := range r.URL.Query() {
 		if strings.HasPrefix(k, SEARCH_URL_KEY_PREFIX) {
 			qValue := strings.Join(v, "")
 
 			if qValue != "" {
-				filter.Search = append(filter.Search, SearchFilter{ColName: strings.TrimPrefix(k, SEARCH_URL_KEY_PREFIX), Value: qValue})
-			}
-		}
-
-		if strings.HasPrefix(k, BETWEEN_LEFT_URL_KEY_PREFIX) {
-			qValue := strings.Join(v, "")
-
-			if qValue != "" {
-				filter.Between = append(filter.Between, BetweenFilter{ColName: strings.TrimPrefix(k, BETWEEN_LEFT_URL_KEY_PREFIX), Value: qValue, Direction: false})
-			}
-		}
-
-		if strings.HasPrefix(k, BETWEEN_RIGHT_URL_KEY_PREFIX) {
-			qValue := strings.Join(v, "")
-
-			if qValue != "" {
-				filter.Between = append(filter.Between, BetweenFilter{ColName: strings.TrimPrefix(k, BETWEEN_RIGHT_URL_KEY_PREFIX), Value: qValue, Direction: true})
+				filter.Search[strings.TrimPrefix(k, SEARCH_URL_KEY_PREFIX)]  = qValue
 			}
 		}
 	}
@@ -92,36 +67,11 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 	filter.Pagination.CurrentPage, _ = strconv.Atoi(r.URL.Query().Get(PAGE_NUM_URL_KEY))
 	filter.Pagination.MaxItemsPerPage, _ = strconv.Atoi(r.URL.Query().Get(ITEMS_PER_PAGE_URL_KEY))
 
+	if filter.Pagination.MaxItemsPerPage == 0 {
+		filter.Pagination.MaxItemsPerPage = FILTER_DEFAULT_MAX_ITEMS
+	}
+
 	return filter
-}
-
-// "Input" is the target column name, which is usually retrieved from Jet mappings
-func GetBetweenFilterValuesFromColName(b []BetweenFilter, input string) (string, string) {
-	left := ""
-	right := ""
-
-	for _, v := range b {
-		if v.ColName == input && !v.Direction {
-			left = v.Value
-		}
-
-		if v.ColName == input && v.Direction {
-			right = v.Value
-		}
-	}
-
-	return left, right
-}
-
-// "Input" is the target column name, which is usually retrieved from Jet mappings
-func GetSearchFilterValueFromColName(s []SearchFilter, input string) string {
-	for _, v := range s {
-		if v.ColName == input {
-			return v.Value
-		}
-	}
-
-	return ""
 }
 
 func QueryParamsFromPagenum(pageNum int, f Filter) string {
@@ -147,16 +97,8 @@ func QueryParamsFromFilter(f Filter) string {
 		f.Pagination.MaxItemsPerPage,
 	)
 
-	for _, v := range f.Search {
-		output += "&" + SEARCH_URL_KEY_PREFIX + v.ColName + "=" + v.Value
-	}
-
-	for _, v := range f.Between {
-		if v.Direction {
-			output += "&" + BETWEEN_RIGHT_URL_KEY_PREFIX + v.ColName + "=" + v.Value
-		} else {
-			output += "&" + BETWEEN_LEFT_URL_KEY_PREFIX + v.ColName + "=" + v.Value
-		}
+	for k, v := range f.Search {
+		output += "&" + SEARCH_URL_KEY_PREFIX + k + "=" + v
 	}
 
 	return output
@@ -187,7 +129,14 @@ func GetColInfoFromJet(cl ColumnList) []ColInfo {
 	return list
 }
 
-func (p *Pagination) GeneratePagination() {
+func (p *Pagination) GeneratePagination(totalItemsInSet int, itemsDisplayedThisPage int) {
+	p.TotalItems = totalItemsInSet
+	p.ItemsThisPage = itemsDisplayedThisPage
+
+	if p.MaxItemsPerPage == 0 {
+		p.MaxItemsPerPage = FILTER_DEFAULT_MAX_ITEMS
+	}
+
 	if p.MaxItemsPerPage == 0 {
 		p.TotalPages = 1
 	} else {
