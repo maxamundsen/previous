@@ -530,8 +530,14 @@ func compileJet() {
 }
 
 func generateJetModels() {
-	bin := "./tools/jet-2.12.0/jet"
+	bin := ""
 	jetdir := ".jet"
+
+	if runtime.GOOS == "windows" {
+		bin = "./tools/jet-2.12.0/jet.exe"
+	} else {
+		bin = "./tools/jet-2.12.0/jet"
+	}
 
 	os.RemoveAll(jetdir)
 
