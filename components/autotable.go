@@ -45,7 +45,7 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 			Form(ID(tableId+FORM_BIND_SUFFIX),
 				AutoComplete("off"),
 				Attr("hx-get", url),
-				Attr("hx-trigger", "keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
+				Attr("hx-trigger", "keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
 				Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId),
 				Attr("hx-select", "#"+tableId),
 				Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
