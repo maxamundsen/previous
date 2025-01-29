@@ -522,6 +522,8 @@ func generatePageData() {
 func compileJet() {
 	fmt.Printf("Compiling Jet generator")
 
+	os.Setenv("CGO_ENABLED", "1")
+
 	cmd := exec.Command("go", "build", "./cmd/jet")
 	cmd.Dir = "./tools/jet-2.12.0"
 	handleCmdOutput(cmd.CombinedOutput())
