@@ -293,6 +293,8 @@ func generatePageData() {
 					}
 
 					// if the route is in the "root" folder, make sure it imports the correct package.
+					ri.Package = filepath.ToSlash(ri.Package)
+					
 					if ri.Package == "/" {
 						ri.Package = "pages"
 						ri.Import = module_name + "/" + ri.Package
