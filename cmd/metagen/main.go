@@ -66,8 +66,12 @@ func main() {
 
 	for _, arg := range args {
 		switch arg {
-		case "build":
+		case "build-all":
+			preBuild()
 			build()
+			goto End
+		case "build":
+			preBuild()
 			goto End
 		case "migrate":
 			if len(args) >= 2 {
@@ -99,8 +103,6 @@ End:
 	if len(args) == 0 {
 		helpmsg()
 	}
-
-	fmt.Printf("\n")
 }
 
 func helpmsg() {
@@ -110,7 +112,7 @@ func helpmsg() {
 	os.Exit(1)
 }
 
-func build() {
+func preBuild() {
 	if envtype == ENVIRONMENT_DEV {
 		fmt.Println("[DEBUG ENVIRONMENT]")
 	} else if envtype == ENVIRONMENT_STAGING || envtype == ENVIRONMENT_PRODUCTION {
@@ -122,8 +124,10 @@ func build() {
 	generatePageData()
 	generateJetModels()
 	generateTailwindCSS()
+}
 
-	// compileServer()
+func build() {
+	compileServer()
 }
 
 func generateTailwindCSS() {
@@ -137,35 +141,27 @@ func generateTailwindCSS() {
 		tailwindcmd = "tailwindcss-macos-arm64"
 	}
 
-	out, err := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify").CombinedOutput()
-	if err != nil {
-		printStatus(false)
-		fmt.Printf("%s", out)
-		os.Exit(1)
-	} else {
-		printStatus(true)
-	}
-
-	fmt.Printf("\n")
+	cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify")
+	handleCmdOutput(cmd.CombinedOutput())
 }
 
-// func compileServer() {
-// 	var out []byte
-// 	var err error
 
-// 	fmt.Printf("Compiling Server Binary")
+func compileServer() {
+	var out []byte
+	var err error
 
-// 	if envtype == ENVIRONMENT_DEV {
-// 		// include extra flags for the GC
-// 		out, err = exec.Command("go", "build", "-gcflags=all=-N -l", "./cmd/server").CombinedOutput()
-// 	} else {
-// 		out, err = exec.Command("go", "build", "./cmd/server").CombinedOutput()
-// 	}
+	fmt.Printf("Compiling Server Binary")
 
-// 	handleCmdOutput(out, err)
+	if envtype == ENVIRONMENT_DEV {
+		// include extra flags for the GC
+		out, err = exec.Command("go", "build", "-gcflags=all=-N -l", "./cmd/server").CombinedOutput()
+	} else {
+		out, err = exec.Command("go", "build", "./cmd/server").CombinedOutput()
+	}
 
-// 	fmt.Printf("\n")
-// }
+	handleCmdOutput(out, err)
+
+}
 
 // set debug constant inside the "config" package
 func generateDebugConfig() {
@@ -188,7 +184,6 @@ func generateDebugConfig() {
 	handleErr(err)
 
 	printStatus(true)
-	fmt.Printf("\n")
 }
 
 // Generates routes from files named `*_page.go` found recursively inside the `/src/pages` directory.
@@ -310,7 +305,7 @@ func generatePageData() {
 
 	for _, v := range routeList {
 		if v.Identity || v.CookieSession {
-			routeCode += "	. \"previous/middleware\"\n"
+			routeCode += "	. \"" + module_name + "/middleware\"\n"
 			break
 		}
 	}
@@ -465,7 +460,7 @@ func generatePageData() {
 			route.CookieSession,
 		)
 
-		if i != len(routeList) - 1 {
+		if i != len(routeList)-1 {
 			structCode += "\n"
 		}
 	}
@@ -475,7 +470,7 @@ func generatePageData() {
 	structCode += "func init() {\n"
 	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
 
-	for _, route := range routeList{
+	for _, route := range routeList {
 		upperPath := strings.ToUpper(route.URL)
 		identName := strings.ReplaceAll(upperPath, "/", "_")
 		identName = strings.ReplaceAll(identName, "-", "")
@@ -492,7 +487,7 @@ func generatePageData() {
 
 	structCode += "\n\tPageInfoList = []PageInfo{\n"
 
-	for _, route := range routeList{
+	for _, route := range routeList {
 		upperPath := strings.ToUpper(route.URL)
 		identName := strings.ReplaceAll(upperPath, "/", "_")
 		identName = strings.ReplaceAll(identName, "-", "")
@@ -515,7 +510,6 @@ func generatePageData() {
 	handleErr(structFileErr)
 
 	printStatus(true)
-	fmt.Printf("\n")
 }
 
 func compileJet() {
@@ -527,7 +521,6 @@ func compileJet() {
 	cmd.Dir = "./tools/jet-2.12.0"
 	handleCmdOutput(cmd.CombinedOutput())
 
-	fmt.Printf("\n")
 }
 
 func generateJetModels() {
@@ -578,7 +571,6 @@ func generateJetModels() {
 
 	handleCmdOutput(cmd.CombinedOutput())
 
-	fmt.Printf("\n")
 }
 
 func parseSQLiteFilename(dsn string) (string, error) {
@@ -605,7 +597,6 @@ func compileMigrator() {
 
 	handleCmdOutput(exec.Command("cd", "./tools/migrate-4.18.1", "&&", "go", "build", "./cmd/migrate").CombinedOutput())
 
-	fmt.Printf("\n")
 }
 
 // given an ast.Decl, and destination struct, look at the struct for any
@@ -684,14 +675,14 @@ func printStatus(b bool) {
 		status = "FAILED"
 	}
 
-	fmt.Printf("... %s", status)
+	fmt.Printf("... %s\n", status)
 }
 
 func handleCmdOutput(out []byte, err error) {
 	if err != nil {
 		printStatus(false)
-		fmt.Printf("\n")
-		fmt.Printf("%s", out)
+		fmt.Printf("%s\n", out)
+		fmt.Printf("%s\n", err.Error())
 		os.Exit(1)
 	} else {
 		printStatus(true)

@@ -32,5 +32,5 @@ clear_build_output_before_running:      true
 open_panel_on_build:                    true
 
 [Build Debug Macos]
-build_command: go run ./cmd/metagen --env=dev build
+build_command: go run ./cmd/metagen --env=dev build-all
 key_binding:   Cmd-Shift-B

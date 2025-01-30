@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"previous/.jet/model"
 	"previous/finance"
 
@@ -77,7 +76,7 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 		}
 	}
 
-	fmt.Println(stmt.DebugSql())
+	// fmt.Println(stmt.DebugSql())
 
 	err := stmt.Query(db, &orders)
 	return orders, err
