@@ -6,7 +6,6 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"log"
 	"net/url"
 	"os"
 	"os/exec"
@@ -133,7 +132,7 @@ func generateTailwindCSS() {
 	fmt.Printf("Generating TailwindCSS stylesheet(s)")
 
 	if runtime.GOOS == "windows" {
-		log.Fatal("OS unsupported. Compilation failed.")
+		tailwindcmd = "tailwindcss-windows-x64.exe"
 	} else if runtime.GOOS == "darwin" {
 		tailwindcmd = "tailwindcss-macos-arm64"
 	}
