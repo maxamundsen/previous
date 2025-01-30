@@ -148,7 +148,7 @@ func generateTailwindCSS() {
 	// if not found, try to install it
 	if _, err := os.Stat(tailwindcmd); err != nil {
 		if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
-			handleCmdOutput(exec.Command("curl.exe", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-windows-x64.exe").CombinedOutput())
+			handleCmdOutput(exec.Command("curl.exe", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-windows-x64.exe").CombinedOutput())
 		} else if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
 			handleCmdOutput(exec.Command("curl", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-macos-arm64").CombinedOutput())
 			handleCmdOutput(exec.Command("chmod", "+x", tailwindcmd).CombinedOutput())
