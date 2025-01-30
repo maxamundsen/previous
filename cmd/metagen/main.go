@@ -235,6 +235,8 @@ func generatePageData() {
 
 	// Walk the filesystem recursively
 	err := filepath.Walk(root, func(pathStr string, info os.FileInfo, err error) error {
+		pathStr = filepath.ToSlash(pathStr)
+
 		handleErr(err)
 
 		// Only process .go files
