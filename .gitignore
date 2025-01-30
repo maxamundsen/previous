@@ -48,3 +48,6 @@ metagen_config.json
 
 server
 !./cmd/server
+
+# tailwind stuff
+tailwindcss-*

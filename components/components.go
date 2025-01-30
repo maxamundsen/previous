@@ -15,7 +15,7 @@ func Container(n ...Node) Node {
 }
 
 func Card(header string, body ...Node) Node {
-	return Div(Class("mt-5 p-10 bg-white border border-neutral-200 shadow"),
+	return Div(Class("mt-5 p-10 bg-white border border-neutral-200 shadow-sm"),
 		H5(Class("mb-2 text-2xl font-bold text-neutral-900"), Text(header)),
 		Group(body),
 	)
@@ -52,7 +52,7 @@ func ToText(i interface{}) Node {
 
 // FORMS
 func FormInput(children ...Node) Node {
-	return Input(Class("p-1 block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6"),
+	return Input(Class("bg-white p-1 block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6"),
 		Group(children),
 	)
 }
