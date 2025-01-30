@@ -135,14 +135,29 @@ func generateTailwindCSS() {
 
 	fmt.Printf("Generating TailwindCSS stylesheet(s)")
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
 		tailwindcmd = "tailwindcss-windows-x64.exe"
-	} else if runtime.GOOS == "darwin" {
+	} else if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
 		tailwindcmd = "tailwindcss-macos-arm64"
+	} else {
+		printStatus(false)
+		fmt.Println("OS or ARCH not supported.")
+		os.Exit(1)
 	}
 
-	cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify")
+	// if not found, try to install it
+	if _, err := os.Stat(tailwindcmd); err != nil {
+		if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
+			handleCmdOutput(exec.Command("curl.exe", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-windows-x64.exe").CombinedOutput())
+		} else if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
+			handleCmdOutput(exec.Command("curl", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-macos-arm64").CombinedOutput())
+			handleCmdOutput(exec.Command("chmod", "+x", tailwindcmd).CombinedOutput())
+		}
+	}
+
+	cmd := exec.Command("./" + tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify")
 	handleCmdOutput(cmd.CombinedOutput())
+	printStatus(true)
 }
 
 
@@ -160,7 +175,7 @@ func compileServer() {
 	}
 
 	handleCmdOutput(out, err)
-
+	printStatus(true)
 }
 
 // set debug constant inside the "config" package
@@ -570,7 +585,7 @@ func generateJetModels() {
 	cmd := exec.Command(bin, "-source="+databaseType, "-dsn="+connectionString, "-schema="+databaseSchema, "-path="+jetdir)
 
 	handleCmdOutput(cmd.CombinedOutput())
-
+	printStatus(true)
 }
 
 func parseSQLiteFilename(dsn string) (string, error) {
@@ -680,12 +695,9 @@ func printStatus(b bool) {
 
 func handleCmdOutput(out []byte, err error) {
 	if err != nil {
-		printStatus(false)
 		fmt.Printf("%s\n", out)
 		fmt.Printf("%s\n", err.Error())
 		os.Exit(1)
-	} else {
-		printStatus(true)
 	}
 }
 
