@@ -13,6 +13,14 @@ type Pair struct {
 	Value string
 }
 
+func IntAbs(x int) int {
+	if x < 0 {
+		return -x
+	}
+
+	return x
+}
+
 func MakeURLParams(base string, params ...Pair) string {
 	output := base
 
