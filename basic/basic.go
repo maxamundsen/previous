@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Pair struct {
+type StrPair struct {
 	Key   string
 	Value string
 }
@@ -21,7 +21,7 @@ func IntAbs(x int) int {
 	return x
 }
 
-func MakeURLParams(base string, params ...Pair) string {
+func MakeURLParams(base string, params ...StrPair) string {
 	output := base
 
 	for i, v := range params {

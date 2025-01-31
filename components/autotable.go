@@ -28,7 +28,7 @@ func BindSearch(elId string, identifier string) Node {
 // Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
 func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, cols []repository.ColInfo, belowTable Node) Node {
 	paginationButton := func(icon string, page int) Node {
-		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease"), Icon(icon, 16),
+		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease cursor-pointer"), Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
 			Attr("hx-swap", "#"+tableId),
 			Attr("hx-target", "#"+tableId),
