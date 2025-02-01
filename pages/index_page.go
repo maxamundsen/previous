@@ -11,7 +11,7 @@ import (
 func IndexPage(w http.ResponseWriter, r *http.Request) {
 	// serve home page if route is literally '/'
 	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/docs", http.StatusFound)
+		http.Redirect(w, r, "/auth/login", http.StatusFound)
 		return
 	}
 
