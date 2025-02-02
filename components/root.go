@@ -37,7 +37,15 @@ func RootLayout(title string, children ...Node) Node {
 
 				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
 				Link(Rel("stylesheet"), Href("/fonts/lora.css")),
-				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+
+				IfElse(TW_FALLBACK,
+					Group{
+						StyleEl(Type("text/tailwindcss")),
+						Script(Src("/lib/tailwind/index.global.js")),
+					},
+					Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+				),
+
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
 				// use minified htmx only in prod

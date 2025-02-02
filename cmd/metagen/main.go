@@ -154,29 +154,74 @@ func generateTailwindCSS() {
 
 	fmt.Printf("Generating TailwindCSS stylesheet(s)")
 
+	useFallback := true
 	if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
 		tailwindcmd = "tailwindcss-windows-x64.exe"
+		if _, err1 := os.Stat(tailwindcmd); err1 != nil {
+			fmt.Printf("\n    Tailwind CLI not found. Attempting to download from Github.")
+			_, err2 := exec.Command("curl.exe", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-windows-x64.exe").CombinedOutput()
+			if err2 != nil {
+				printStatus(false)
+			} else {
+				useFallback = false
+			}
+		} else {
+			useFallback = false
+		}
 	} else if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
 		tailwindcmd = "tailwindcss-macos-arm64"
-	} else {
-		printStatus(false)
-		fmt.Println("OS or ARCH not supported.")
-		os.Exit(1)
-	}
-
-	// if not found, try to install it
-	if _, err := os.Stat(tailwindcmd); err != nil {
-		if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
-			handleCmdOutput(exec.Command("curl.exe", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-windows-x64.exe").CombinedOutput())
-		} else if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
-			handleCmdOutput(exec.Command("curl", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-macos-arm64").CombinedOutput())
-			handleCmdOutput(exec.Command("chmod", "+x", tailwindcmd).CombinedOutput())
+		if _, err1 := os.Stat(tailwindcmd); err1 != nil {
+			fmt.Printf("\n    Tailwind CLI not found. Attempting to download from Github")
+			_, err2 := exec.Command("curl", "-LJO", "--output", tailwindcmd, "https://github.com/tailwindlabs/tailwindcss/releases/download/v4.0.1/tailwindcss-macos-arm64").CombinedOutput()
+			if err2 != nil {
+				printStatus(false)
+			} else {
+				handleCmdOutput(exec.Command("chmod", "+x", tailwindcmd).CombinedOutput())
+				useFallback = false
+			}
+		} else {
+			useFallback = false
 		}
 	}
 
-	cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify")
-	handleCmdOutput(cmd.CombinedOutput())
-	printStatus(true)
+	if !useFallback {
+		cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/style.css", "--minify")
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Printf("%s\n", out)
+			fmt.Printf("%s\n", err.Error())
+			useFallback = true
+		}
+	}
+
+	generateTailwindConstant(useFallback)
+
+	if !useFallback {
+		printStatus(true)
+	} else {
+		fmt.Printf("\n")
+	}
+}
+
+// true = use fallback (playcdn), false = use local
+func generateTailwindConstant(b bool) {
+	code := METAGEN_AUTO_COMMENT + "\npackage components\n\nconst (\n"
+
+	if b {
+		code += "\tTW_FALLBACK = true"
+		fmt.Printf("    Using Tailwind PlayCDN fallback. DO NOT RUN THIS BUILD IN PRODUCTION")
+	} else {
+		code += "\tTW_FALLBACK = false"
+	}
+
+	code += "\n)\n"
+
+	// open file and write code to it
+	in := []byte(code)
+
+	err := os.WriteFile("./components/tailwind_fallback.metagen.go", in, 0644)
+	handleErr(err)
 }
 
 func compileServer() {
