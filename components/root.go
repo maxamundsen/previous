@@ -10,9 +10,9 @@ import (
 
 func RootLayout(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
-	css_hash, err := crypt.QuickFileHash("./wwwroot/css/style.css")
+	css_hash, err := crypt.QuickFileHash("./wwwroot/css/tailwind.css")
 	if err != nil {
-		return Text("Error hashing style.css")
+		return Text("Error hashing tailwind.css")
 	}
 
 	// automatically invalidates cached js when file hash changes
@@ -38,13 +38,7 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
 				Link(Rel("stylesheet"), Href("/fonts/lora.css")),
 
-				IfElse(TW_FALLBACK,
-					Group{
-						StyleEl(Type("text/tailwindcss")),
-						Script(Src("/lib/tailwind/index.global.js")),
-					},
-					Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
-				),
+				Link(Rel("stylesheet"), Href("/css/tailwind.css?v="+css_hash)),
 
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
