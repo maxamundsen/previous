@@ -4,11 +4,10 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"log"
-	"os"
+
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -35,36 +34,21 @@ const (
 )
 
 type configuration struct {
-	Host                    string `json:"Host"`
-	Port                    string `json:"Port"`
-	IdentityPrivateKey      string `json:"IdentityPrivateKey"`
-	IdentityDefaultPassword string `json:"IdentityDefaultPassword"`
-	SessionPrivateKey       string `json:"SessionPrivateKey"`
-	DbConnectionString      string `json:"DbConnectionString"`
-	SmtpServer              string `json:"SmtpServer"`
-	SmtpPort                string `json:"SmtpPort"`
-	SmtpUsername            string `json:"SmtpUsername"`
-	SmtpDisplayFrom         string `json:"SmtpDisplayFrom"`
-	SmtpPassword            string `json:"SmtpPassword"`
-	SmtpRequireAuth         bool   `json:"SmtpRequireAuth"`
+	Host                    string `env:"HOST"`
+	Port                    string `env:"PORT"`
+	IdentityPrivateKey      string `env:"IDENTITY_PRIVATE_KEY"`
+	IdentityDefaultPassword string `env:"IDENTITY_DEFAULT_PASSWORD"`
+	SessionPrivateKey       string `env:"SESSION_PRIVATE_KEY"`
+	DbConnectionString      string `env:"DB_CONNECTION_STRING"`
+	SmtpServer              string `env:"SMTP_SERVER"`
+	SmtpPort                string `env:"SMTP_PORT"`
+	SmtpUsername            string `env:"SMTP_USERNAME"`
+	SmtpDisplayFrom         string `env:"SMTP_DISPLAY_FROM"`
+	SmtpPassword            string `env:"SMTP_PASSWORD"`
+	SmtpRequireAuth         bool   `env:"SMTP_REQUIRE_AUTH"`
 }
 
 //mysql:    "DbConnectionString": "root:PASSWORD@tcp(localhost:3306)/example?parseTime=true",
-
-const DEFAULT_CONFIG = `{
-    "Host": "localhost",
-    "Port": "9090",
-    "SessionPrivateKey": "key",
-    "IdentityPrivateKey": "key",
-    "IdentityDefaultPassword": "password",
-    "DbConnectionString": "file:example.db?parseTime=true",
-    "SmtpServer": "server",
-    "SmtpPort": "587",
-    "SmtpUsername": "username",
-    "SmtpDisplayFrom": "displayname",
-    "SmtpPassword": "password",
-    "SmtpRequireAuth": true
-}`
 
 var config configuration
 
@@ -73,40 +57,14 @@ func GetConfig() configuration {
 }
 
 func LoadConfig() {
-	configFile, err := os.Open("config.json")
-
-	var configBytes []byte
-	var readErr error
-
-	if configFile != nil && err == nil {
-		configBytes, readErr = io.ReadAll(configFile)
-		defer configFile.Close()
-
-		if readErr != nil {
-			log.Fatal(readErr)
-		}
-		log.Println("Config file loaded from disk.")
-	} else {
-		//attempt to generate default config
-		log.Println("Config file not found, attempting to generate a default.")
-		configBytes = []byte(DEFAULT_CONFIG)
-
-		f, err := os.Create("config.json")
-		if err != nil {
-			log.Fatal("Error generating default config file. Aborting.")
-		}
-
-		defer f.Close()
-
-		_, err = f.Write(configBytes)
-		if err != nil {
-			log.Fatal("Error writing the default config to disk. Aborting")
-		}
+	// When in debug mode, set environment variables from the `.env` file.
+	// Just a developer convenience.
+	if DEBUG {
+		godotenv.Load()
 	}
 
-	jsonErr := json.Unmarshal(configBytes, &config)
-
-	if jsonErr != nil {
-		log.Fatal(fmt.Errorf("Config error: %v", jsonErr))
+	envErr := env.Parse(&config)
+	if envErr != nil {
+		log.Fatal("Error parsing environment variables.")
 	}
 }

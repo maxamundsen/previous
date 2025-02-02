@@ -1,11 +1,11 @@
 {
     "version": "2.0.0",
     "type": "shell",
-    "command": "go",
     "cwd": "${workspaceFolder}",
     "tasks": [
         {
             "label": "Metagen: Build",
+            "command": "go",
             "args": ["run", "./cmd/metagen", "--env=dev", "build"],
             "group": "build",
         },

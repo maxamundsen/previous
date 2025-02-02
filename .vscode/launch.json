@@ -20,7 +20,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/server",
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Metagen: Build"
+            "preLaunchTask": "Metagen: Build",
         }
     ]
 }
