@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 
 CREATE TABLE IF NOT EXISTS "order" (
-	"id"	INTEGER NOT NULL,
-	"product_id"	INTEGER NOT NULL,
-	"price"	INTEGER NOT NULL,
-	"purchaser_name"	TEXT NOT NULL,
-	"purchaser_email"	TEXT NOT NULL,
-	PRIMARY KEY("id")
+    "id" INTEGER NOT NULL,
+    "product_id" INTEGER NOT NULL,
+    "price" INTEGER NOT NULL,
+    "purchaser_name" TEXT NOT NULL,
+    "purchaser_email" TEXT NOT NULL,
+    PRIMARY KEY("id")
 );

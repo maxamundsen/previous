@@ -1,2 +1,5 @@
-DELETE FROM "user";
-DELETE FROM "order";
+DELETE FROM
+    "user";
+
+DELETE FROM
+    "order";
