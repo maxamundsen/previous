@@ -34,6 +34,7 @@ const (
 )
 
 type configuration struct {
+	Domain                  string `env:"DOMAIN"`
 	Host                    string `env:"HOST"`
 	Port                    string `env:"PORT"`
 	IdentityPrivateKey      string `env:"IDENTITY_PRIVATE_KEY"`
@@ -57,7 +58,7 @@ func GetConfig() configuration {
 }
 
 func LoadConfig() {
-	// When in debug mode, set environment variables from the `.env` file.
+	// When in debug mode, set environment variables from the `.env` file directly.
 	// Just a developer convenience.
 	if DEBUG {
 		godotenv.Load()

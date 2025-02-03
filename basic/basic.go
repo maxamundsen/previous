@@ -107,7 +107,10 @@ func DateToString(utcTime time.Time) string {
 }
 
 func StringToDate(ds string) time.Time {
-	nt, _ := time.Parse("01/02/06", ds)
+	nt, err := time.Parse("01/02/06", ds)
+	if err != nil {
+		nt, _ = time.Parse("2006-01-02", ds)
+	}
 	return nt
 }
 
