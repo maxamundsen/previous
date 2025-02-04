@@ -51,7 +51,7 @@ server
 
 # tailwind stuff
 tailwindcss-*
-tailwind.css
+tw.min.css
 
 #env / secrets
 .env
