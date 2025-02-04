@@ -55,3 +55,7 @@ tailwind.css
 
 #env / secrets
 .env
+
+#database
+*.sqlite
+*.db

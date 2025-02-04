@@ -92,6 +92,8 @@ func main() {
 
 	args := flag.Args()
 
+	maybeCreateSqliteDb()
+
 	for _, arg := range args {
 		switch arg {
 		case "build-all":
@@ -117,6 +119,18 @@ End:
 	}
 }
 
+// create
+func maybeCreateSqliteDb() {
+	if _, err := os.Stat("./example.db"); err != nil {
+		err := os.WriteFile("./example.db", nil, 0755)
+		if err != nil {
+			fmt.Printf("Error creating Sqlite database.")
+			os.Exit(1)
+		}
+	}
+}
+
+// handle the running and creation of migrations
 func migrations(args []string) {
 	if len(args) < 2 {
 		fmt.Println("Usage: metagen migrate [up, down, goto {V}, create {migration name}]")
