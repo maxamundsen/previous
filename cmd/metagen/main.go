@@ -1,3 +1,5 @@
+// Warning - code contained in this file is kinda ugly. If the scope of this tool expands maybe we'll factor some things out,
+// but for now we're just going to leave everything in one place.
 package main
 
 import (
