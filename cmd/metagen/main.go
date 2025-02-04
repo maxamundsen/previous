@@ -92,8 +92,6 @@ func main() {
 
 	args := flag.Args()
 
-	maybeCreateSqliteDb()
-
 	for _, arg := range args {
 		switch arg {
 		case "build-all":
@@ -122,11 +120,32 @@ End:
 // create
 func maybeCreateSqliteDb() {
 	if _, err := os.Stat("./example.db"); err != nil {
+		fmt.Printf("Creating new sqlite database")
 		err := os.WriteFile("./example.db", nil, 0755)
 		if err != nil {
 			fmt.Printf("Error creating Sqlite database.")
 			os.Exit(1)
 		}
+
+		m, err := migrate.New(
+			"file://./migrations",
+			config.MigrationConnectionString,
+		)
+
+		if err != nil {
+			printStatus(false)
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+
+		mErr := m.Up()
+		if mErr != nil {
+			printStatus(false)
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+
+		printStatus(true)
 	}
 }
 
@@ -136,6 +155,8 @@ func migrations(args []string) {
 		fmt.Println("Usage: metagen migrate [up, down, goto {V}, create {migration name}]")
 		os.Exit(1)
 	}
+
+	maybeCreateSqliteDb()
 
 	m, err := migrate.New(
 		"file://./migrations",
@@ -332,6 +353,9 @@ func preBuild() {
 	} else if envtype == ENVIRONMENT_STAGING || envtype == ENVIRONMENT_PRODUCTION {
 		fmt.Println("[RELEASE ENVIRONMENT]")
 	}
+
+	// db creation
+	maybeCreateSqliteDb()
 
 	// codegen
 	generateDebugConfig()
