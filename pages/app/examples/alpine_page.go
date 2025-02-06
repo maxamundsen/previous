@@ -1,10 +1,11 @@
 package examples
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	. "previous/components"
 	. "previous/pages/app"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 
 	"previous/middleware"
 
@@ -17,8 +18,14 @@ import (
 func AlpinePage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
-	func () Node {
+	data := make(AlpineStore)
+	data["some_value"] = "10"
+
+	func() Node {
 		return AppLayout("Alpine Example", *identity,
+			// Map store values from Go to Javascript
+			AlpineStoreInit(data),
+
 			Div(Attr("x-data", "{ count: 0 }"),
 				P(Class("mb-5"),
 					Text("Click the button to increase the counter. This interaction relies on client-side scripting."),
@@ -29,6 +36,11 @@ func AlpinePage(w http.ResponseWriter, r *http.Request) {
 				P(Class("mt-5"),
 					Text("To learn more about Alpine.js, click "), PageLink("https://alpinejs.dev", Text("here"), true), Text("."),
 				),
+			),
+			Div(
+				FormInput(Attr("x-bind", "$store.some_value")),
+				P(Attr("x-html", "$store.some_value")),
+				H1(Attr("x-html", "$store.some_value")),
 			),
 		)
 	}().Render(w)

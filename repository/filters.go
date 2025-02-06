@@ -142,8 +142,6 @@ func (p *Pagination) GeneratePagination(totalItemsInSet int, itemsDisplayedThisP
 	} else {
 		p.TotalPages = p.TotalItems / p.MaxItemsPerPage
 
-		// Gofmt sucks ass wtf is this ???
-		// It won't let me put a space between the modulo sign
 		if p.TotalItems%p.MaxItemsPerPage != 0 {
 			p.TotalPages++
 		}

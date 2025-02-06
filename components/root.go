@@ -48,6 +48,7 @@ func RootLayout(title string, children ...Node) Node {
 					Script(Src("/lib/htmx/htmx.min.js")),
 				),
 
+				Script(Src("/lib/alpine/alpine-focus.min.js"), Defer()),
 				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
 				Script(Src("/lib/highlight/highlight.min.js")),
 				Script(Src("/js/index.js?v="+js_hash)),

@@ -200,6 +200,10 @@ func migrations(args []string) {
 			fmt.Println(err.Error())
 		}
 	case "create":
+		if len(args) < 3 {
+			fmt.Println("Please provide a name for the new migration.")
+			os.Exit(1)
+		}
 		createCmd("./migrations", time.Now(), defaultTimeFormat, args[2], "sql", true, 7, true)
 	}
 }
@@ -927,7 +931,7 @@ func printStatus(b bool) {
 
 func handleCmdOutput(out []byte, err error) {
 	if err != nil {
-		fmt.Printf("%s\n", out)
+		fmt.Printf("\n%s\n", out)
 		fmt.Printf("%s\n", err.Error())
 		os.Exit(1)
 	}

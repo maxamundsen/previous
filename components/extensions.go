@@ -1,3 +1,6 @@
+// This file contains a few extensions to the "gomponents" library.
+// I deliberately keep these extensions separated from the library to indicate
+
 package components
 
 import (
@@ -46,4 +49,8 @@ func IffElse(condition bool, t func() Node, f func() Node) Node {
 	} else {
 		return f()
 	}
+}
+
+func Template(children ...Node) Node {
+	return El("template", children...)
 }

@@ -30,7 +30,8 @@ run_working_dir: ./
 error_regex:                            ^(?P<file>.*):(?P<line>\d+):(?P<col>\d+): (?P<msg>.*)$
 clear_build_output_before_running:      true
 open_panel_on_build:                    true
+close_panel_on_success:                 true
 
-[Build Debug Macos]
+[Metagen: Build All - MacOS]
 build_command: go run ./cmd/metagen --env=dev build-all
 key_binding:   Cmd-Shift-B

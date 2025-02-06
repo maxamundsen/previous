@@ -1,63 +1,43 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 10%;
-    --badge: 0 100%, 50%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 10%;
-    --radius: 0.5rem;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  }
+@theme {
+  /* Light Theme */
+  --color-surface: var(--color-white);
+  --color-surface-alt: var(--color-neutral-50);
+  --color-on-surface: var(--color-neutral-600);
+  --color-on-surface-strong: var(--color-neutral-900);
+  --color-primary: var(--color-black);
+  --color-on-primary: var(--color-neutral-100);
+  --color-secondary: var(--color-neutral-800);
+  --color-on-secondary: var(--color-white);
+  --color-outline: var(--color-neutral-300);
+  --color-outline-strong: var(--color-neutral-800);
 
-  [data-theme='dark'] {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 90%;
-    --card: 0 0% 15%;
-    --card-foreground: 0 0% 90%;
-    --popover: 0 0% 20%;
-    --popover-foreground: 0 0% 90%;
-    --primary: 0 0% 90%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 30%;
-    --secondary-foreground: 0 0% 90%;
-    --muted: 0 0% 30%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 0 0% 30%;
-    --accent-foreground: 0 0% 90%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 10%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 90%;
-    --radius: 0rem;
-    --shadow: 0 1px 3px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(255, 255, 255, 0.06);
-  }
-}
+  /* Dark Theme */
+  --color-surface-dark: var(--color-neutral-950);
+  --color-surface-dark-alt: var(--color-neutral-900);
+  --color-on-surface-dark: var(--color-neutral-300);
+  --color-on-surface-dark-strong: var(--color-white);
+  --color-primary-dark: var(--color-white);
+  --color-on-primary-dark: var(--color-black);
+  --color-secondary-dark: var(--color-neutral-300);
+  --color-on-secondary-dark: var(--color-black);
+  --color-outline-dark: var(--color-neutral-700);
+  --color-outline-dark-strong: var(--color-neutral-300);
 
-.border {
-  border: 1px solid hsl(var(--border));
-}
+  /* Shared Colors */
+  --color-info: var(--color-sky-500);
+  --color-on-info: var(--color-white);
+  --color-success: var(--color-green-500);
+  --color-on-success: var(--color-white);
+  --color-warning: var(--color-amber-500);
+  --color-on-warning: var(--color-white);
+  --color-danger: var(--color-red-500);
+  --color-on-danger: var(--color-white);
 
-.shadow {
-  box-shadow: var(--shadow);
+  /* Border Radius */
+  --radius-radius: var(--radius-sm);
 }
 
 /* Optional: Add smooth scrolling */
@@ -72,4 +52,6 @@ body {
 }
 
 /* AlpineJS*/
-[x-cloak] { display: none !important; }
+[x-cloak] {
+  display: none !important;
+}
