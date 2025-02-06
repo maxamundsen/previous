@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// manually mapped routes->controllers go here.
+// manually mapped routes->http handlers go here.
 func mapManualRoutes(mux *http.ServeMux) {
 
 }

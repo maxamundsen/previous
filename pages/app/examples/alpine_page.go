@@ -24,7 +24,7 @@ func AlpinePage(w http.ResponseWriter, r *http.Request) {
 	func() Node {
 		return AppLayout("Alpine Example", *identity,
 			// Map store values from Go to Javascript
-			AlpineStoreInit(data),
+			data.Init(),
 
 			Div(Attr("x-data", "{ count: 0 }"),
 				P(Class("mb-5"),

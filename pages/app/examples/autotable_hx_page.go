@@ -19,7 +19,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-func OrdersHxPage(w http.ResponseWriter, r *http.Request) {
+func AutoTableHxPage(w http.ResponseWriter, r *http.Request) {
 	filter := repository.ParseFilterFromRequest(r)
 	filter.Pagination.Enabled = true
 

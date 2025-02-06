@@ -692,6 +692,7 @@ func generatePageData() {
 	structCode += "\tIdentity      bool\n"
 	structCode += "\tProtected     bool\n"
 	structCode += "\tCookieSession bool\n"
+	structCode += "\tEnableCors    bool\n"
 	structCode += "}\n\n"
 
 	structCode += "type PageInfo struct {\n"
@@ -722,6 +723,7 @@ func generatePageData() {
 			Identity:      %t,
 			Protected:     %t,
 			CookieSession: %t,
+			EnableCors:    %t,
 		},
 	}
 `,
@@ -731,6 +733,7 @@ func generatePageData() {
 			route.Identity,
 			route.Protected,
 			route.CookieSession,
+			route.EnableCors,
 		)
 
 		if i != len(routeList)-1 {

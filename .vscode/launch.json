@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/metagen",
-            "args": ["--env=dev", "migrate", "up", "1"],
+            "args": ["--env=dev", "build-all"],
             "cwd": "${workspaceFolder}",
         },
         {

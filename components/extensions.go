@@ -1,22 +1,11 @@
 // This file contains a few extensions to the "gomponents" library.
-// I deliberately keep these extensions separated from the library to indicate
-
 package components
 
 import (
 	. "maragu.dev/gomponents"
 )
 
-func MapMapWithKey[T comparable, U comparable](m map[T]U, cb func(T, U) Node) Group {
-	var nodes []Node
-
-	for k, _ := range m {
-		nodes = append(nodes, cb(k, m[k]))
-	}
-
-	return nodes
-}
-
+// Map a `map[T]U` to a [Group]
 func MapMap[T comparable, U comparable](m map[T]U, cb func(U) Node) Group {
 	var nodes []Node
 
@@ -27,6 +16,20 @@ func MapMap[T comparable, U comparable](m map[T]U, cb func(U) Node) Group {
 	return nodes
 }
 
+// Map a `map[T]U` to a [Group]
+// The callback provided must take the map key as an argument
+func MapMapWithKey[T comparable, U comparable](m map[T]U, cb func(T, U) Node) Group {
+	var nodes []Node
+
+	for k, _ := range m {
+		nodes = append(nodes, cb(k, m[k]))
+	}
+
+	return nodes
+}
+
+// Map a slice of anything to a [Group] (which is just a slice of [Node]-s).
+// The callback must accept the index as an argument.
 func MapWithIndex[T any](collection []T, callback func(index int, item T) Node) Group {
 	nodes := make([]Node, 0, len(collection))
 	for index, item := range collection {
@@ -51,6 +54,11 @@ func IffElse(condition bool, t func() Node, f func() Node) Node {
 	}
 }
 
+func CSSID(input string) string {
+	return "#" + input
+}
+
+// For some reason this isn't included in the base distribution
 func Template(children ...Node) Node {
 	return El("template", children...)
 }

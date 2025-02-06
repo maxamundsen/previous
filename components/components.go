@@ -10,7 +10,7 @@ import (
 )
 
 // DUMMY TEXT
-const LOREM_IPSUM = ` Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ultrices iaculis dui sed porttitor. Integer sed est fringilla, condimentum magna ac, sodales dui. Sed tempor pretium scelerisque. Vivamus pulvinar iaculis libero nec blandit. Mauris tempus velit in neque elementum, ac elementum diam feugiat. Aenean malesuada, nunc a interdum volutpat, diam est lacinia magna, nec fermentum massa lectus non urna. Cras vitae turpis finibus, porta est tincidunt, efficitur neque. Suspendisse suscipit a nulla mollis sodales. Nam vitae nulla vulputate, dictum purus eget, malesuada justo. Vestibulum ultricies eget neque ac volutpat. Mauris et molestie elit. Donec et suscipit urna. Duis in mi in ipsum faucibus finibus.`
+const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ultrices iaculis dui sed porttitor. Integer sed est fringilla, condimentum magna ac, sodales dui. Sed tempor pretium scelerisque. Vivamus pulvinar iaculis libero nec blandit. Mauris tempus velit in neque elementum, ac elementum diam feugiat. Aenean malesuada, nunc a interdum volutpat, diam est lacinia magna, nec fermentum massa lectus non urna. Cras vitae turpis finibus, porta est tincidunt, efficitur neque. Suspendisse suscipit a nulla mollis sodales. Nam vitae nulla vulputate, dictum purus eget, malesuada justo. Vestibulum ultricies eget neque ac volutpat. Mauris et molestie elit. Donec et suscipit urna. Duis in mi in ipsum faucibus finibus.`
 
 // DIALOG / MODAL
 func ModalActuator(id string, contents Node) Node {
@@ -21,7 +21,7 @@ func ModalActuator(id string, contents Node) Node {
 
 func Modal(id string, title string, body Node, closeElements []Node) Node {
 	return Div(
-		Div(Attr("x-cloak", ""), Attr("x-show", "$store."+id), Attr("x-transition.opacity.duration.50ms", ""), Attr("x-trap.inert.noscroll", "$store."+id+""), Attr("x-on:keydown.esc.window", "$store."+id+" = false"), Attr("x-on:click.self", "$store."+id+" = false"), Class("fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"), Role("dialog"), Aria("modal", "true"), Aria("labelledby", "defaultModalTitle"),
+		Div(Attr("x-cloak", ""), Attr("x-show", "$store."+id), Attr("x-transition.opacity.duration.50ms", ""), Attr("x-trap.inert.noscroll", "$store."+id+""), Attr("x-on:keydown.esc.window", "$store."+id+" = false"), Attr("x-on:click.self", "$store."+id+" = false"), Class("fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 pb-8 sm:items-center lg:p-8"), Role("dialog"), Aria("modal", "true"), Aria("labelledby", "defaultModalTitle"),
 			Div(Attr("x-show", "$store."+id+""), Attr("x-transition:enter", "transition ease-out duration-50 delay-20 motion-reduce:transition-opacity"), Attr("x-transition:enter-start", "opacity-0 scale-50"), Attr("x-transition:enter-end", "opacity-100 scale-100"), Class("flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"),
 				Div(Class("flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4"),
 					H3(Class("font-semibold tracking-wide text-on-surface-strong"), Text(title)),
@@ -125,7 +125,7 @@ func ButtonRed(children ...Node) Node {
 }
 
 func ButtonBlue(children ...Node) Node {
-	return Button(Class("cursor-pointer group relative shadow inline-flex items-center overflow-hidden bg-neutral-600 px-8 py-1 text-white focus:outline-none focus:ring hover:bg-neutral-800 active:bg-neutral-800 text-sm"),
+	return Button(Class("cursor-pointer group relative shadow inline-flex items-center overflow-hidden bg-blue-600 px-8 py-1 text-white focus:outline-none focus:ring hover:bg-blue-800 active:bg-neutral-800 text-sm"),
 		Group(children),
 	)
 }

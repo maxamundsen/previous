@@ -35,7 +35,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 												A(Href(pageinfo.APP_EXAMPLES_FORMS.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Form Submission")),
 												A(Href(pageinfo.APP_EXAMPLES_HTMX.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTMX")),
 												A(Href(pageinfo.APP_EXAMPLES_ALPINE.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Alpine.js")),
-												A(Href(pageinfo.APP_EXAMPLES_UIELEMENTS.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("UI Elements")),
+												A(Href(pageinfo.APP_EXAMPLES_UIPLAYGROUND.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("UI Elements")),
 												A(Href(pageinfo.APP_EXAMPLES_UPLOAD.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("File Uploading")),
 												A(Href(pageinfo.APP_EXAMPLES_SMTP.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("SMTP Client")),
 												A(Href(pageinfo.APP_EXAMPLES_MARKDOWN.Url), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Markdown Rendering")),

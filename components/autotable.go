@@ -30,9 +30,9 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 	paginationButton := func(icon string, page int) Node {
 		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease cursor-pointer"), Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
-			Attr("hx-swap", "#"+tableId),
-			Attr("hx-target", "#"+tableId),
-			Attr("hx-select", "#"+tableId),
+			Attr("hx-swap", CSSID(tableId)),
+			Attr("hx-target", CSSID(tableId)),
+			Attr("hx-select", CSSID(tableId)),
 			Attr("hx-trigger", "click"),
 		)
 	}
@@ -46,8 +46,8 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 				AutoComplete("off"),
 				Attr("hx-get", url),
 				Attr("hx-trigger", "keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
-				Attr("hx-swap", "outerHTML"), Attr("hx-target", "#"+tableId),
-				Attr("hx-select", "#"+tableId),
+				Attr("hx-swap", "outerHTML"), Attr("hx-target", CSSID(tableId)),
+				Attr("hx-select", CSSID(tableId)),
 				Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
 				Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 				Input(Type("hidden"), Name(repository.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
@@ -61,9 +61,9 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 									if col.Sortable {
 										return Th(Class("p-4 border-b border-neutral-200 transition-colors cursor-pointer bg-neutral-100 hover:bg-neutral-200"),
 											Attr("hx-get", url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
-											Attr("hx-swap", "#"+tableId),
-											Attr("hx-target", "#"+tableId),
-											Attr("hx-select", "#"+tableId),
+											Attr("hx-swap", CSSID(tableId)),
+											Attr("hx-target", CSSID(tableId)),
+											Attr("hx-select", CSSID(tableId)),
 											Attr("hx-trigger", "click"),
 											P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
 												If(f.OrderBy == col.DbName,
@@ -108,8 +108,8 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 							Form(ID(tableId+FORM_PAGINATION_SUFFIX), Class("py-3 px-3 min-h-9 block"),
 								Attr("hx-get", url),
 								Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
-								Attr("hx-target", "#"+tableId),
-								Attr("hx-select", "#"+tableId),
+								Attr("hx-target", CSSID(tableId)),
+								Attr("hx-select", CSSID(tableId)),
 								Attr("hx-swap", "outerHTML"),
 
 								MapMapWithKey(f.Search, func(s string, v string) Node {
