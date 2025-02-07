@@ -763,10 +763,10 @@ func generateRecursivePageInfoStructs(code *string, tree *Tree, level int) {
 	if tree.Children != nil {
 		printVar := ""
 		if level == 0 {
-			printVar = "var"
+			printVar = "var "
 		}
 
-		*code += fmt.Sprintf("%s%s %s struct {\n", strings.Repeat("\t", level), printVar, CapitalizeFirstLetter(tree.Name))
+		*code += fmt.Sprintf("%s%s%s struct {\n", strings.Repeat("\t", level), printVar, CapitalizeFirstLetter(tree.Name))
 	} else {
 		*code += fmt.Sprintf("%s%s PageInfo\n", strings.Repeat("\t", level), strings.ReplaceAll(CapitalizeFirstLetter(tree.Name), "-", "_"))
 	}
