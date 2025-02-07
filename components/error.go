@@ -14,7 +14,7 @@ func ErrorPage(status int) Node {
 				Div(Class("mx-auto max-w-screen-sm text-center"),
 					H1(Class("mb-4 text-7xl tracking-tight lg:text-9xl text-neutral-950"), ToText(status)),
 					P(Class("mb-4 text-lg text-neutral-500"), Text("We're sorry, an error has occured.")),
-					A(Href(pageinfo.INDEX.Url), Class("inline-flex text-white bg-neutral-900 hover:bg-neutral-950 font-medium text-sm px-5 py-2.5 text-center my-4"), Text("Back to Homepage")),
+					A(Href(pageinfo.INDEX.Url()), Class("inline-flex text-white bg-neutral-900 hover:bg-neutral-950 font-medium text-sm px-5 py-2.5 text-center my-4"), Text("Back to Homepage")),
 				),
 			),
 		),

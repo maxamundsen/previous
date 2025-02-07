@@ -21,7 +21,7 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 
 	// You can get page info from the PageInfoMap, a mapping between urls and PageInfo.
 	// Since this handler handles requests to that URL, we can guarantee that the incoming URL matches the correct PageInfo
-	thisPageInfo := pageinfo.PageInfoMap[r.URL.Path]
+	this := pageinfo.PageInfoMap[r.URL.Path]
 
 	func() Node {
 		return AppLayout("Dashboard", *identity,
@@ -53,15 +53,15 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 			P(
 				Text("Page handlers support \"reflection.\" For example, the page you are reading right now is defined in:"),
 				Br(),
-				B(Text(thisPageInfo.FileDef)),
+				B(Text(this.FileDef())),
 				Br(),
 				Text("the URL is:"),
 				Br(),
-				B(Text(thisPageInfo.Url)),
+				B(Text(this.Url())),
 				Br(),
 				Text("and has the following middleware:"),
 				Br(),
-				B(Text(fmt.Sprintf("%+v", thisPageInfo.Middleware))),
+				B(Text(fmt.Sprintf("%+v", this.Middleware()))),
 			),
 			If(identity.User.PermissionAdmin != 0,
 				Div(Class("mt-10 p-10 bg-white border border-neutral-200 shadow"),

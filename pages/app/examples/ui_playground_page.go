@@ -63,7 +63,7 @@ func UIPlaygroundPage(w http.ResponseWriter, r *http.Request) {
 
 			ButtonGray(
 				Text("Swap contents of Modal 1 via HTMX"),
-				Attr("hx-get", pageinfo.APP_EXAMPLES_LIPSUMHX.Url),
+				Attr("hx-get", pageinfo.APP_EXAMPLES_LIPSUMHX.Url()),
 				Attr("hx-target", CSSID(MODAL1)),
 			),
 		)

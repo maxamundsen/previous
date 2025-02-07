@@ -21,7 +21,7 @@ func ApiFetchPage(w http.ResponseWriter, r *http.Request) {
 	func() Node {
 		return AppLayout("API Fetch Example", *identity,
 			PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
-			HxLoad(pageinfo.APP_EXAMPLES_APIFETCHHX.Url),
+			HxLoad(pageinfo.APP_EXAMPLES_APIFETCHHX.Url()),
 		)
 	}().Render(w)
 }

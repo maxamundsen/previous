@@ -20,11 +20,11 @@ func SitemapPage(w http.ResponseWriter, r *http.Request) {
 		return AppLayout("Sitemap", *identity,
 			Map(pageinfo.PageInfoList, func(p pageinfo.PageInfo) Node {
 				return Group{
-					PageLink(p.Url, Text(p.Url), false),
+					PageLink(p.Url(), Text(p.Url()), false),
 					Div(Class("ml-3"),
-						Text("Source: "), Text(p.FileDef),
+						Text("Source: "), Text(p.FileDef()),
 						Br(),
-						Text("Active Middleware: "), Text(fmt.Sprintf("%+v", p.Middleware)),
+						Text("Active Middleware: "), Text(fmt.Sprintf("%+v", p.Middleware())),
 					),
 					Br(),
 				}

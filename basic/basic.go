@@ -6,7 +6,64 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"unicode"
 )
+
+// Takes a tree pointer and a slice of path segments to insert.
+// It looks for an existing child with the current segment name; if none is found,
+// it creates a new Node. Then it recurses on the remaining segments.
+func GetPathParts(path string) []string {
+	trimmed := strings.TrimPrefix(path, "/")
+	return strings.Split(trimmed, "/")
+}
+
+func ConvertPathPartsToTree(tree *Tree, parts []string) {
+	if len(parts) == 0 {
+		return
+	}
+
+	for i, _ := range parts {
+		if parts[i] == "" {
+			parts[i] = "index"
+		}
+	}
+
+	if tree.Children == nil {
+		tree.Children = new([]Tree)
+	}
+
+	// Search for an existing child with the current part's name.
+	var child *Tree
+	for i := range *tree.Children {
+		if (*tree.Children)[i].Name == parts[0] {
+			child = &((*tree.Children)[i])
+			break
+		}
+	}
+
+	// If no child is found, create a new one and append it.
+	if child == nil {
+		newNode := Tree{Name: parts[0]}
+		*tree.Children = append(*tree.Children, newNode)
+		child = &((*tree.Children)[len(*tree.Children)-1])
+	}
+
+	ConvertPathPartsToTree(child, parts[1:])
+}
+
+type Tree struct {
+	Name     string
+	Children *[]Tree
+}
+
+func CapitalizeFirstLetter(s string) string {
+	if s == "" {
+		return s
+	}
+	// Convert the first rune to uppercase
+	first := []rune(s)[0]
+	return string(unicode.ToUpper(first)) + s[1:]
+}
 
 type StrPair struct {
 	Key   string
@@ -39,7 +96,7 @@ func SnakeCaseToTitleCase(s string) string {
 	parts := strings.Split(s, "_")
 
 	for i, part := range parts {
-		parts[i] = strings.Title(part)
+		parts[i] = CapitalizeFirstLetter(part)
 	}
 
 	return strings.Join(parts, " ")
@@ -116,8 +173,8 @@ func StringToDate(ds string) time.Time {
 
 func Reverse[T comparable](s []T) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-        s[i], s[j] = s[j], s[i]
-    }
+		s[i], s[j] = s[j], s[i]
+	}
 }
 
 func Contains[T comparable](s []T, e T) bool {
@@ -127,6 +184,19 @@ func Contains[T comparable](s []T, e T) bool {
 		}
 	}
 	return false
+}
+
+func IndexOf[T comparable](collection []T, el T) int {
+    for i, x := range collection {
+        if x == el {
+            return i
+        }
+    }
+    return -1
+}
+
+func Remove[T comparable](arr []T, s T) []T {
+	return append(arr[:IndexOf(arr, s)], arr[IndexOf(arr, s)+1:]...)
 }
 
 func RemoveDuplicates[T comparable](sliceList []T) []T {

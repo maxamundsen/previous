@@ -172,7 +172,7 @@ func migrations(args []string) {
 
 	migrateNum := 0
 
-	if len(args) >= 3 && args[1] != "create"{
+	if len(args) >= 3 && args[1] != "create" {
 		var parseErr error
 		migrateNum, parseErr = strconv.Atoi(args[2])
 		if parseErr != nil {
@@ -267,7 +267,6 @@ func nextSeqVersion(matches []string, seqDigits int) (string, error) {
 	return version, nil
 }
 
-
 func timeVersion(startTime time.Time, format string) (version string, err error) {
 	switch format {
 	case "":
@@ -348,8 +347,8 @@ func createCmd(dir string, startTime time.Time, format string, name string, ext 
 
 func helpmsg() {
 	fmt.Println("Usage: metagen [options...]")
-	fmt.Println("build                          Build dependencies, generate code, then build final executables.")
-	fmt.Println("migrate [up, down, goto {V}, create {migration name}]     Deploy and create SQL migrations.")
+	fmt.Println("build :: Build dependencies, generate code, then build final executables.")
+	fmt.Println("migrate [up, down, goto {V}, create {migration name}] :: Deploy and create SQL migrations.")
 	os.Exit(1)
 }
 
@@ -452,27 +451,27 @@ func generateDebugConfig() {
 
 // Generates routes from files named `*_page.go` found recursively inside the `/src/pages` directory.
 // When parsing files, we search for the first function suffixed with `Page`, if one is not found, return an error and fail compilation.
+type RouteInfo struct {
+	FileDef  string
+	URL      string
+	PageName string
+	Package  string
+	Import   string
+
+	Identity      bool `note:"true"`
+	Protected     bool `note:"true"`
+	CookieSession bool `note:"true"`
+	EnableCors    bool `note:"true"`
+
+	// http verbs
+	HttpPost   bool `note:"true"`
+	HttpGet    bool `note:"true"`
+	HttpPut    bool `note:"true"`
+	HttpPatch  bool `note:"true"`
+	HttpDelete bool `note:"true"`
+}
+
 func generatePageData() {
-	type RouteInfo struct {
-		FileDef  string
-		URL      string
-		PageName string
-		Package  string
-		Import   string
-
-		Identity      bool `note:"true"`
-		Protected     bool `note:"true"`
-		CookieSession bool `note:"true"`
-		EnableCors    bool `note:"true"`
-
-		// http verbs
-		HttpPost   bool `note:"true"`
-		HttpGet    bool `note:"true"`
-		HttpPut    bool `note:"true"`
-		HttpPatch  bool `note:"true"`
-		HttpDelete bool `note:"true"`
-	}
-
 	const root = "pages" // Use the /pages directory for autogenerating routes
 
 	bi, _ := debug.ReadBuildInfo()
@@ -567,7 +566,7 @@ func generatePageData() {
 
 	handleErr(err)
 
-	// generate code
+	// -- GENERATE ROUTE FILE --
 	routeCode := METAGEN_AUTO_COMMENT + "\npackage main\n"
 
 	routeCode += "\nimport (\n\t\"net/http\"\n"
@@ -668,6 +667,7 @@ func generatePageData() {
 	fileErr := os.WriteFile("./cmd/server/generated_routes.metagen.go", in, 0644)
 	handleErr(fileErr)
 
+	// -- GENERATE PAGEINFO STRUCTS --
 	// generate recursive structs representing pages
 	// this is used in order to reference a page without needing to actually write out the link as a string literal
 	// it also lets you jump to page code whenever that page is referenced in view links or something like that.
@@ -688,7 +688,21 @@ func generatePageData() {
 
 	// structCode += ")\n\n"
 
-	structCode += "type Middleware struct {\n"
+	// 	var Root struct {
+	// 	Auth struct {
+	// 		Login PageInfo
+	// 		Logout PageInfo
+	// 	}
+	// 	Api struct {
+	// 		Auth struct {
+	// 			Login PageInfo
+	// 		}
+	// 		Test PageInfo
+	// 		Account PageInfo
+	// 	}
+	// }
+
+	structCode += "type middleware struct {\n"
 	structCode += "\tIdentity      bool\n"
 	structCode += "\tProtected     bool\n"
 	structCode += "\tCookieSession bool\n"
@@ -696,89 +710,38 @@ func generatePageData() {
 	structCode += "}\n\n"
 
 	structCode += "type PageInfo struct {\n"
-	structCode += "\tUrl            string\n"
-	structCode += "\tFileDef        string\n"
-	structCode += "\tMiddleware Middleware\n"
+	structCode += "\turl            string\n"
+	structCode += "\tfileDef        string\n"
+	structCode += "\tmiddleware middleware\n"
+	structCode += "}\n\n"
+
+	structCode += "func (info PageInfo) Url() string {\n"
+	structCode += "\t return info.url\n"
+	structCode += "}\n\n"
+
+	structCode += "func (info PageInfo) FileDef() string {\n"
+	structCode += "\t return info.fileDef\n"
+	structCode += "}\n\n"
+
+	structCode += "func (info PageInfo) Middleware() middleware {\n"
+	structCode += "\t return info.middleware\n"
 	structCode += "}\n\n"
 
 	structCode += "var (\n"
 	structCode += "\tPageInfoList []PageInfo\n"
-	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n\n"
-
-	for i, route := range routeList {
-		upperPath := strings.ToUpper(route.URL)
-		identName := strings.ReplaceAll(upperPath, "/", "_")
-		identName = strings.ReplaceAll(identName, "-", "")
-
-		if identName == "_" {
-			identName = "_INDEX"
-		}
-
-		identName = strings.TrimPrefix(identName, "_")
-
-		structCode += fmt.Sprintf(`	%s PageInfo = PageInfo{
-		Url:     "%s",
-		FileDef: "/%s",
-		Middleware: Middleware{
-			Identity:      %t,
-			Protected:     %t,
-			CookieSession: %t,
-			EnableCors:    %t,
-		},
-	}
-`,
-			identName,
-			route.URL,
-			route.FileDef,
-			route.Identity,
-			route.Protected,
-			route.CookieSession,
-			route.EnableCors,
-		)
-
-		if i != len(routeList)-1 {
-			structCode += "\n"
-		}
-	}
-
+	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n"
 	structCode += ")\n\n"
 
-	structCode += "func init() {\n"
-	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
+
+	var pageTree Tree
+
+	pageTree.Name = "Root"
 
 	for _, route := range routeList {
-		upperPath := strings.ToUpper(route.URL)
-		identName := strings.ReplaceAll(upperPath, "/", "_")
-		identName = strings.ReplaceAll(identName, "-", "")
-
-		if identName == "_" {
-			identName = "_INDEX"
-		}
-
-		identName = strings.TrimPrefix(identName, "_")
-
-		structCode += fmt.Sprintf("\tPageInfoMap[\"%s\"] = %s\n", route.URL, identName)
-
+		ConvertPathPartsToTree(&pageTree, GetPathParts(route.URL))
 	}
 
-	structCode += "\n\tPageInfoList = []PageInfo{\n"
-
-	for _, route := range routeList {
-		upperPath := strings.ToUpper(route.URL)
-		identName := strings.ReplaceAll(upperPath, "/", "_")
-		identName = strings.ReplaceAll(identName, "-", "")
-
-		if identName == "_" {
-			identName = "_INDEX"
-		}
-
-		identName = strings.TrimPrefix(identName, "_")
-
-		structCode += fmt.Sprintf("\t\t%s,\n", identName)
-	}
-
-	structCode += "\t}\n"
-	structCode += "}\n"
+	generateRecursivePageInfoStructs(&structCode, &pageTree, 0)
 
 	structCode_b := []byte(structCode)
 
@@ -786,6 +749,28 @@ func generatePageData() {
 	handleErr(structFileErr)
 
 	printStatus(true)
+}
+
+func generateRecursivePageInfoStructs(code *string, tree *Tree, level int) {
+	if code == nil {
+		return
+	}
+
+	if tree == nil {
+		return
+	}
+
+	// Print the current node with indentation.
+	*code += fmt.Sprintf("%s%s\n", strings.Repeat("\t", level), tree.Name)
+
+	// Recursively print each child.
+	if tree.Children != nil {
+		for _, child := range *tree.Children {
+			generateRecursivePageInfoStructs(code, &child, level+1)
+		}
+	} else if tree.Name != "" {
+		*code += "test"
+	}
 }
 
 func compileJet() {
