@@ -732,7 +732,6 @@ func generatePageData() {
 	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n"
 	structCode += ")\n\n"
 
-
 	var pageTree Tree
 
 	pageTree.Name = "Root"
@@ -761,16 +760,25 @@ func generateRecursivePageInfoStructs(code *string, tree *Tree, level int) {
 	}
 
 	// Print the current node with indentation.
-	*code += fmt.Sprintf("%s%s\n", strings.Repeat("\t", level), tree.Name)
+	if tree.Children != nil {
+		printVar := ""
+		if level == 0 {
+			printVar = "var"
+		}
+
+		*code += fmt.Sprintf("%s%s %s struct {\n", strings.Repeat("\t", level), printVar, CapitalizeFirstLetter(tree.Name))
+	} else {
+		*code += fmt.Sprintf("%s%s PageInfo\n", strings.Repeat("\t", level), strings.ReplaceAll(CapitalizeFirstLetter(tree.Name), "-", "_"))
+	}
 
 	// Recursively print each child.
 	if tree.Children != nil {
 		for _, child := range *tree.Children {
 			generateRecursivePageInfoStructs(code, &child, level+1)
 		}
-	} else if tree.Name != "" {
-		*code += "test"
+		*code += strings.Repeat("\t", level) + "}\n"
 	}
+
 }
 
 func compileJet() {
