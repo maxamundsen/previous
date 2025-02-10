@@ -21,7 +21,7 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 
 	// You can get page info from the PageInfoMap, a mapping between urls and PageInfo.
 	// Since this handler handles requests to that URL, we can guarantee that the incoming URL matches the correct PageInfo
-	this := pageinfo.PageInfoMap[r.URL.Path]
+	this := pageinfo.Reflect(r)
 
 	func() Node {
 		return AppLayout("Dashboard", *identity,

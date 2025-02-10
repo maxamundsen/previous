@@ -30,7 +30,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Class("cursor-pointer relative flex px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon(ICON_CHEVRON_DOWN, 16))),
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg focus:outline-none"), TabIndex("-1"),
-												// A(Href(pageinfo.Root.App.Examples.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
+												A(Href(pageinfo.Root.App.Examples.Index.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
 												A(Href(pageinfo.Root.App.Examples.Autotable.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Auto Table")),
 												A(Href(pageinfo.Root.App.Examples.Forms.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Form Submission")),
 												A(Href(pageinfo.Root.App.Examples.Htmx.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTMX")),

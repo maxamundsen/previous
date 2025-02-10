@@ -13,7 +13,7 @@ import (
 // Entry point for the application, initializes package globals
 // such as the database connections, http multiplexer, config, etc.
 func main() {
-	fmt.Println("Previous: A simple web codebase.\n")
+	fmt.Println("Previous: A powerful web codebase.\n")
 
 	if config.DEBUG {
 		fmt.Println("DEBUG BUILD")

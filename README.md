@@ -1,4 +1,4 @@
-# Previous: A simple web codebase.
+# Previous: A powerful web codebase.
 
 Previous is a reference codebase that provides simple, and powerful facilities for building websites and web applications. Previous is not a framework, or library. This project is a showcase of what a web application can look like with simple procedural code, while avoiding needlessly overcomplicated abstractions.
 

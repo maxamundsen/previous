@@ -635,6 +635,10 @@ func generatePageData() {
 	for _, routeInfo := range routeList {
 		printablePage := routeInfo.Package + "." + routeInfo.PageName
 
+		if routeInfo.Static {
+			printablePage += "_STATIC"
+		}
+
 		if routeInfo.CookieSession {
 			printablePage = fmt.Sprintf("LoadSessionFromCookie(%s)", printablePage)
 		}
@@ -683,8 +687,9 @@ func generatePageData() {
 	structCode := METAGEN_AUTO_COMMENT
 	structCode += "\npackage pageinfo\n\n"
 
+	structCode += "import \"net/http\"\n"
+
 	structCode += "type middleware struct {\n"
-	structCode += "\tStatic        bool\n"
 	structCode += "\tIdentity      bool\n"
 	structCode += "\tProtected     bool\n"
 	structCode += "\tCookieSession bool\n"
@@ -692,26 +697,42 @@ func generatePageData() {
 	structCode += "}\n\n"
 
 	structCode += "type PageInfo struct {\n"
+	structCode += "\tstatic         bool\n"
 	structCode += "\turl            string\n"
 	structCode += "\tfileDef        string\n"
 	structCode += "\tmiddleware middleware\n"
 	structCode += "}\n\n"
 
+	structCode += "func (info PageInfo) IsStatic() bool {\n"
+	structCode += "\treturn info.static\n"
+	structCode += "}\n\n"
+
 	structCode += "func (info PageInfo) Url() string {\n"
-	structCode += "\t return info.url\n"
+	structCode += "\treturn info.url\n"
 	structCode += "}\n\n"
 
 	structCode += "func (info PageInfo) FileDef() string {\n"
-	structCode += "\t return info.fileDef\n"
+	structCode += "\treturn info.fileDef\n"
 	structCode += "}\n\n"
 
 	structCode += "func (info PageInfo) Middleware() middleware {\n"
-	structCode += "\t return info.middleware\n"
+	structCode += "\treturn info.middleware\n"
+	structCode += "}\n\n"
+
+	structCode += "func GetPageInfoMap() map[string]PageInfo {\n"
+	structCode += "\tnewMap := make(map[string]PageInfo)\n\n"
+	structCode += "\tfor k, v := range pageInfoMap {\n"
+	structCode += "\t\tnewMap[k] = v\n"
+	structCode += "\t}\n\n"
+	structCode += "\treturn newMap\n"
+	structCode += "}\n\n"
+
+	structCode += "func Reflect(r *http.Request) PageInfo {\n"
+	structCode += "\treturn pageInfoMap[r.URL.Path]\n"
 	structCode += "}\n\n"
 
 	structCode += "var (\n"
-	structCode += "\tPageInfoList []PageInfo\n"
-	structCode += "\tPageInfoMap map[string]PageInfo //maps URLs to PageInfo\n"
+	structCode += "\tpageInfoMap map[string]PageInfo //maps URLs to PageInfo\n"
 	structCode += ")\n\n"
 
 	var pageTree Tree
@@ -733,7 +754,7 @@ func generatePageData() {
 
 	structCode += "\n\n"
 	structCode += "func init() {\n"
-	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
+	structCode += "\tpageInfoMap = make(map[string]PageInfo)\n\n"
 
 	for _, v := range routeList {
 		structExpansion := strings.ReplaceAll(strings.ReplaceAll(strings.TrimPrefix(v.URL, "/"), "/", "."), "-", "_")
@@ -753,11 +774,11 @@ func generatePageData() {
 
 		// initialize each pageinfo struct
 		structCode += fmt.Sprintf("\tRoot.%s.url = \"%s\"\n", structExpansion, v.URL)
+		structCode += fmt.Sprintf("\tRoot.%s.static = %t\n", structExpansion, v.Static)
 		structCode += fmt.Sprintf("\tRoot.%s.fileDef = \"/%s\"\n", structExpansion, v.FileDef)
 		structCode += fmt.Sprintf(
-			"\tRoot.%s.middleware = middleware{\n\t\tStatic: %t,\n\t\tIdentity: %t,\n\t\tProtected: %t,\n\t\tCookieSession: %t,\n\t\tEnableCors: %t,\n\t}\n",
+			"\tRoot.%s.middleware = middleware{\n\t\tIdentity: %t,\n\t\tProtected: %t,\n\t\tCookieSession: %t,\n\t\tEnableCors: %t,\n\t}\n",
 			structExpansion,
-			v.Static,
 			v.Identity,
 			v.Protected,
 			v.CookieSession,
@@ -765,7 +786,7 @@ func generatePageData() {
 		)
 
 		// add to pageinfomap *after* providing the value (duh)
-		structCode += fmt.Sprintf("\tPageInfoMap[\"%s\"] = Root.%s\n\n", v.URL, structExpansion)
+		structCode += fmt.Sprintf("\tpageInfoMap[\"%s\"] = Root.%s\n\n", v.URL, structExpansion)
 	}
 
 	structCode += "}\n"
