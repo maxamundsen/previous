@@ -463,6 +463,9 @@ type RouteInfo struct {
 	CookieSession bool `note:"true"`
 	EnableCors    bool `note:"true"`
 
+	// Used to determine if page should be pre-rendered at compile time.
+	Static bool `note:"true"`
+
 	// http verbs
 	HttpPost   bool `note:"true"`
 	HttpGet    bool `note:"true"`
@@ -679,30 +682,9 @@ func generatePageData() {
 
 	structCode := METAGEN_AUTO_COMMENT
 	structCode += "\npackage pageinfo\n\n"
-	// structCode += "import (\n"
-	// structCode += "\t \"net/http\"\n"
-
-	// for i, _ := range result {
-	// 	structCode += fmt.Sprintf("\t%s\n", result[i].Import)
-	// }
-
-	// structCode += ")\n\n"
-
-	// 	var Root struct {
-	// 	Auth struct {
-	// 		Login PageInfo
-	// 		Logout PageInfo
-	// 	}
-	// 	Api struct {
-	// 		Auth struct {
-	// 			Login PageInfo
-	// 		}
-	// 		Test PageInfo
-	// 		Account PageInfo
-	// 	}
-	// }
 
 	structCode += "type middleware struct {\n"
+	structCode += "\tStatic        bool\n"
 	structCode += "\tIdentity      bool\n"
 	structCode += "\tProtected     bool\n"
 	structCode += "\tCookieSession bool\n"
@@ -737,10 +719,56 @@ func generatePageData() {
 	pageTree.Name = "Root"
 
 	for _, route := range routeList {
-		ConvertPathPartsToTree(&pageTree, GetPathParts(route.URL))
+		if route.PageName == "IndexPage" && route.Import != module_name + "/pages" {
+			parts := GetPathParts(route.URL)
+			parts = append(parts, "index")
+
+			AddStringPartsToTree(&pageTree, parts)
+		} else {
+			AddStringPartsToTree(&pageTree, GetPathParts(route.URL))
+		}
 	}
 
 	generateRecursivePageInfoStructs(&structCode, &pageTree, 0)
+
+	structCode += "\n\n"
+	structCode += "func init() {\n"
+	structCode += "\tPageInfoMap = make(map[string]PageInfo)\n\n"
+
+	for _, v := range routeList {
+		structExpansion := strings.ReplaceAll(strings.ReplaceAll(strings.TrimPrefix(v.URL, "/"), "/", "."), "-", "_")
+		parts := strings.Split(structExpansion, ".")
+
+		for i, _ := range parts {
+			parts[i] = CapitalizeFirstLetter(parts[i])
+		}
+
+		structExpansion = strings.Join(parts, ".")
+
+		if structExpansion == "" {
+			structExpansion = "Index"
+		} else if v.PageName == "IndexPage" {
+			structExpansion += ".Index"
+		}
+
+		// initialize each pageinfo struct
+		structCode += fmt.Sprintf("\tRoot.%s.url = \"%s\"\n", structExpansion, v.URL)
+		structCode += fmt.Sprintf("\tRoot.%s.fileDef = \"/%s\"\n", structExpansion, v.FileDef)
+		structCode += fmt.Sprintf(
+			"\tRoot.%s.middleware = middleware{\n\t\tStatic: %t,\n\t\tIdentity: %t,\n\t\tProtected: %t,\n\t\tCookieSession: %t,\n\t\tEnableCors: %t,\n\t}\n",
+			structExpansion,
+			v.Static,
+			v.Identity,
+			v.Protected,
+			v.CookieSession,
+			v.EnableCors,
+		)
+
+		// add to pageinfomap *after* providing the value (duh)
+		structCode += fmt.Sprintf("\tPageInfoMap[\"%s\"] = Root.%s\n\n", v.URL, structExpansion)
+	}
+
+	structCode += "}\n"
 
 	structCode_b := []byte(structCode)
 
@@ -760,15 +788,17 @@ func generateRecursivePageInfoStructs(code *string, tree *Tree, level int) {
 	}
 
 	// Print the current node with indentation.
+	sanitizedName := strings.ReplaceAll(CapitalizeFirstLetter(tree.Name), "-", "_")
+
 	if tree.Children != nil {
 		printVar := ""
 		if level == 0 {
 			printVar = "var "
 		}
 
-		*code += fmt.Sprintf("%s%s%s struct {\n", strings.Repeat("\t", level), printVar, CapitalizeFirstLetter(tree.Name))
+		*code += fmt.Sprintf("%s%s%s struct {\n", strings.Repeat("\t", level), printVar, sanitizedName)
 	} else {
-		*code += fmt.Sprintf("%s%s PageInfo\n", strings.Repeat("\t", level), strings.ReplaceAll(CapitalizeFirstLetter(tree.Name), "-", "_"))
+		*code += fmt.Sprintf("%s%s PageInfo\n", strings.Repeat("\t", level), sanitizedName)
 	}
 
 	// Recursively print each child.

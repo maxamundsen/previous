@@ -9,15 +9,37 @@ import (
 	"unicode"
 )
 
-// Takes a tree pointer and a slice of path segments to insert.
-// It looks for an existing child with the current segment name; if none is found,
-// it creates a new Node. Then it recurses on the remaining segments.
 func GetPathParts(path string) []string {
 	trimmed := strings.TrimPrefix(path, "/")
 	return strings.Split(trimmed, "/")
 }
 
-func ConvertPathPartsToTree(tree *Tree, parts []string) {
+// Takes a tree pointer and a slice of path segments to insert.
+// It looks for an existing child with the current segment name; if none is found,
+// it creates a new node on the tree. Then it recurses on the remaining segments.
+//
+// Ex: Generate tree nodes from url segments
+// `/app/examples/webpage`     -> {"app", "examples", "webpage"}
+// `/app/examples/hello-world` -> {"app", "examples", "hello-world"
+// `/auth/login`               -> {"auth", "login"}
+//
+// =>
+// root {
+//     app {
+//         examples {
+//             webpage
+//             hello-world
+//         }
+//     }
+//
+//     auth {
+//         login
+//     }
+// }
+//
+// This function is used in the code generation process to generate `pageinfo` structs
+// from all known application page URLs.
+func AddStringPartsToTree(tree *Tree, parts []string) {
 	if len(parts) == 0 {
 		return
 	}
@@ -48,7 +70,7 @@ func ConvertPathPartsToTree(tree *Tree, parts []string) {
 		child = &((*tree.Children)[len(*tree.Children)-1])
 	}
 
-	ConvertPathPartsToTree(child, parts[1:])
+	AddStringPartsToTree(child, parts[1:])
 }
 
 type Tree struct {

@@ -30,6 +30,6 @@ func PaginationView(identity auth.Identity) Node {
 		P(Text("This codebase provides an API for generating filterable, sortable, and paginated datagrids such as the one shown below. You do not need to write a single line of JavaScript in order for this to work, as the \"interactivity\" is provided by HTMX.")),
 		P(Text("Each interaction with an element of this table generates a dynamic SQL query.")),
 		Br(),
-		HxLoad(pageinfo.APP_EXAMPLES_AUTOTABLEHX.Url()),
+		HxLoad(pageinfo.Root.App.Examples.Autotable_hx.Url()),
 	)
 }
