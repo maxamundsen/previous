@@ -8,7 +8,7 @@ import (
 // @Identity
 // @Protected
 // @EnableCors
-func AccountPage(w http.ResponseWriter, r *http.Request) {
+func AccountApiPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	ApiWriteJSON(w, identity.User)
 }

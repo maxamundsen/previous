@@ -467,7 +467,8 @@ type RouteInfo struct {
 	EnableCors    bool `note:"true"`
 
 	// Used to determine if page should be pre-rendered at compile time.
-	Static bool `note:"true"`
+	Static    bool `note:"true"`
+	StaticAPI bool `note:"true"`
 
 	// http verbs
 	HttpPost   bool `note:"true"`
@@ -643,10 +644,11 @@ func generatePageData() {
 	routeCode += ")\n"
 	routeCode += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
 
-	for _, routeInfo := range routeList {
+	for i, routeInfo := range routeList {
 		printablePage := routeInfo.Package + "." + routeInfo.PageName
 
-		if routeInfo.Static {
+		if routeInfo.Static || routeInfo.StaticAPI{
+			routeList[i].Static = true
 			staticErr := generateStaticPage(module_name, routeInfo)
 			if staticErr != nil {
 				fmt.Println(staticErr.Error())
@@ -835,7 +837,7 @@ func generatePageData() {
 //
 // -mta
 func generateStaticPage(module_name string, ri RouteInfo) error {
-	if !ri.Static {
+	if !ri.Static && !ri.StaticAPI{
 		return errors.New("attmept to generate static page from non-static RouteInfo")
 	}
 
@@ -883,10 +885,15 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 	staticPageCode := METAGEN_AUTO_COMMENT + "\n"
 	staticPageCode += fmt.Sprintf("package %s\n\n", ri.Package)
 	staticPageCode += "import \"net/http\"\n\n"
-
 	staticPageCode += fmt.Sprintf("func %s_STATIC(w http.ResponseWriter, r *http.Request) {\n", ri.PageName)
+
+	if ri.StaticAPI {
+		staticPageCode += "\tw.Header().Set(\"Content-Type\", \"application/json\")\n"
+		} else {
+			staticPageCode += "\tw.Header().Set(\"Content-Type\", \"text/html\")\n"
+		}
+
 	staticPageCode += "\tw.WriteHeader(http.StatusOK)\n"
-	staticPageCode += "\tw.Header().Set(\"Content-Type\", \"text/html\")\n"
 	staticPageCode += fmt.Sprintf("\tw.Write([]byte(`%s`))\n", out)
 	staticPageCode += "}\n"
 

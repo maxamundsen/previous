@@ -9,7 +9,6 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 	return RootLayout(title+" | Previous",
 		Body(Class("bg-neutral-50 h-full"),
@@ -21,13 +20,13 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 								Div(Class("flex-shrink-0"),
 									A(Href(pageinfo.Root.Index.Url()), Img(Class("h-12 w-12"), Src("/images/logo.svg"), Alt("Previous"))),
 								),
-								Div(Attr("x-data", "{ examplesDropdownOpen: false }"), Class("hidden md:block"),
+								Div(Attr("x-data", "{ examplesDropdownOpen: false, apiDropdownOpen: false}"), Class("hidden md:block"),
 									Div(Class("ml-10 flex items-baseline space-x-4"),
 										A(Href(pageinfo.Root.App.Dashboard.Url()), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Dashboard")),
 										A(Href(pageinfo.Root.App.Sitemap.Url()), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Sitemap")),
 										Div(Attr("x-on:click.outside", "examplesDropdownOpen = false"), Class("relative ml-3"),
 											Div(
-												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Class("cursor-pointer relative flex px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon(ICON_CHEVRON_DOWN, 16))),
+												Button(Attr("x-on:click", "examplesDropdownOpen = !examplesDropdownOpen;"), Class("cursor-pointer relative flex pl-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("Examples ")), Icon(ICON_CHEVRON_DOWN, 16))),
 											),
 											Div(Attr("x-cloak"), Attr("x-show", "examplesDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg focus:outline-none"), TabIndex("-1"),
 												A(Href(pageinfo.Root.App.Examples.Index.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Example Index Page")),
@@ -40,6 +39,16 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 												A(Href(pageinfo.Root.App.Examples.Smtp.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("SMTP Client")),
 												A(Href(pageinfo.Root.App.Examples.Markdown.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Markdown Rendering")),
 												A(Href(pageinfo.Root.App.Examples.Api_fetch.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-side API Fetch")),
+												A(Href(pageinfo.Root.App.Examples.Static.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Static Pages")),
+											),
+										),
+										Div(Attr("x-on:click.outside", "apiDropdownOpen = false"), Class("relative ml-3"),
+											Div(
+												Button(Attr("x-on:click", "apiDropdownOpen = !apiDropdownOpen;"), Class("cursor-pointer relative flex py-2 text-sm font-medium text-neutral-100 hover:text-white"), Div(Class("flex items-center"), Span(Text("API ")), Icon(ICON_CHEVRON_DOWN, 16))),
+											),
+											Div(Attr("x-cloak"), Attr("x-show", "apiDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg focus:outline-none"), TabIndex("-1"),
+												A(Href(pageinfo.Root.Api.Test.Url()), Target("_blank"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Test")),
+												A(Href(pageinfo.Root.Api.Account.Url()), Target("_blank"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Account Info")),
 											),
 										),
 										A(Href("https://github.com/maxamundsen/Previous/wiki"), Target("_blank"), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Documentation")),
