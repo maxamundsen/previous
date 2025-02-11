@@ -49,6 +49,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											Div(Attr("x-cloak"), Attr("x-show", "apiDropdownOpen"), Class("absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white py-1 shadow-lg focus:outline-none"), TabIndex("-1"),
 												A(Href(pageinfo.Root.Api.Test.Url()), Target("_blank"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Test")),
 												A(Href(pageinfo.Root.Api.Account.Url()), Target("_blank"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Account Info")),
+												A(Href(pageinfo.Root.Api.Static.Url()), Target("_blank"), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Static API")),
 											),
 										),
 										A(Href("https://github.com/maxamundsen/Previous/wiki"), Target("_blank"), Class("px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white"), Text("Documentation")),

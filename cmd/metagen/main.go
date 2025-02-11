@@ -581,117 +581,6 @@ func generatePageData() {
 
 	handleErr(err)
 
-	// -- GENERATE ROUTE FILE --
-	routeCode := METAGEN_AUTO_COMMENT + "\npackage main\n"
-
-	routeCode += "\nimport (\n\t\"net/http\"\n"
-
-	for _, v := range routeList {
-		if v.Identity || v.CookieSession || v.EnableCors {
-			routeCode += "	. \"" + module_name + "/middleware\"\n"
-			break
-		}
-	}
-
-	// the go import system is horrible, so the following is a package auto-importer/ de-duplicator for code generation.
-	// search through all routes, figure out their package based on the import, and possibly rename it if there already exists an import in
-	// the same namespace.
-
-	packageMap := make(map[string][]RouteInfo)
-	seenImport := make(map[string]bool)
-
-	// group by package
-	for _, route := range routeList {
-		// entry de-duplication
-		if !seenImport[route.Import] {
-			packageMap[route.Package] = append(packageMap[route.Package], route)
-		}
-
-		seenImport[route.Import] = true
-	}
-
-	// iterate over each sub-group
-	for _, routes := range packageMap {
-		// don't give the first instance a named import, only subsequent entries
-		if len(routes) > 0 {
-			routes[0].Import = fmt.Sprintf("\"%s\"", routes[0].Import)
-		}
-
-		if len(routes) > 1 {
-			// modify the package name in the routeList to include the index of the sublist
-			// (this is the whole point -- automatically giving duplicate packages named imports)
-			for i := 1; i < len(routes); i += 1 {
-				for j, v := range routeList {
-					if v.Import == routes[i].Import {
-						routeList[j].Package = fmt.Sprintf("%s%d", routes[i].Package, i)
-					}
-				}
-
-				routes[i].Import = fmt.Sprintf("%s%d \"%s\"", routes[i].Package, i, routes[i].Import)
-			}
-		}
-	}
-
-	var result []RouteInfo
-	for _, routes := range packageMap {
-		result = append(result, routes...)
-	}
-
-	for i := range result {
-		routeCode += fmt.Sprintf("\t%s\n", result[i].Import)
-	}
-
-	routeCode += ")\n"
-	routeCode += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
-
-	for i, routeInfo := range routeList {
-		printablePage := routeInfo.Package + "." + routeInfo.PageName
-
-		if routeInfo.Static || routeInfo.StaticAPI{
-			routeList[i].Static = true
-			staticErr := generateStaticPage(module_name, routeInfo)
-			if staticErr != nil {
-				fmt.Println(staticErr.Error())
-			}
-
-			printablePage += "_STATIC"
-		}
-
-		if routeInfo.CookieSession {
-			printablePage = fmt.Sprintf("LoadSessionFromCookie(%s)", printablePage)
-		}
-
-		if routeInfo.Identity {
-			printablePage = fmt.Sprintf("LoadIdentity(%s, %t)", printablePage, routeInfo.Protected)
-		}
-
-		if routeInfo.EnableCors {
-			printablePage = fmt.Sprintf("EnableCors(%s)", printablePage)
-		}
-
-		httpVerb := ""
-		if routeInfo.HttpGet {
-			httpVerb = "GET "
-		} else if routeInfo.HttpPost {
-			httpVerb = "POST "
-		} else if routeInfo.HttpPut {
-			httpVerb = "PUT "
-		} else if routeInfo.HttpPatch {
-			httpVerb = "PATCH "
-		} else if routeInfo.HttpDelete {
-			httpVerb = "DELETE "
-		}
-
-		routeCode += fmt.Sprintf("\tmux.HandleFunc(\"%s%s\", %s)\n", httpVerb, routeInfo.URL, printablePage)
-	}
-
-	routeCode += "}"
-
-	in := []byte(routeCode)
-
-	fileErr := os.WriteFile("./cmd/server/generated_routes.metagen.go", in, 0644)
-	handleErr(fileErr)
-
 	// -- GENERATE PAGEINFO STRUCTS --
 	// generate recursive structs representing pages
 	// this is used in order to reference a page without needing to actually write out the link as a string literal
@@ -813,6 +702,117 @@ func generatePageData() {
 
 	structFileErr := os.WriteFile("./.metagen/pageinfo/pageinfo.metagen.go", structCode_b, 0644)
 	handleErr(structFileErr)
+
+	// -- GENERATE ROUTE FILE --
+	routeCode := METAGEN_AUTO_COMMENT + "\npackage main\n"
+
+	routeCode += "\nimport (\n\t\"net/http\"\n"
+
+	for _, v := range routeList {
+		if v.Identity || v.CookieSession || v.EnableCors {
+			routeCode += "	. \"" + module_name + "/middleware\"\n"
+			break
+		}
+	}
+
+	// the go import system is horrible, so the following is a package auto-importer/ de-duplicator for code generation.
+	// search through all routes, figure out their package based on the import, and possibly rename it if there already exists an import in
+	// the same namespace.
+
+	packageMap := make(map[string][]RouteInfo)
+	seenImport := make(map[string]bool)
+
+	// group by package
+	for _, route := range routeList {
+		// entry de-duplication
+		if !seenImport[route.Import] {
+			packageMap[route.Package] = append(packageMap[route.Package], route)
+		}
+
+		seenImport[route.Import] = true
+	}
+
+	// iterate over each sub-group
+	for _, routes := range packageMap {
+		// don't give the first instance a named import, only subsequent entries
+		if len(routes) > 0 {
+			routes[0].Import = fmt.Sprintf("\"%s\"", routes[0].Import)
+		}
+
+		if len(routes) > 1 {
+			// modify the package name in the routeList to include the index of the sublist
+			// (this is the whole point -- automatically giving duplicate packages named imports)
+			for i := 1; i < len(routes); i += 1 {
+				for j, v := range routeList {
+					if v.Import == routes[i].Import {
+						routeList[j].Package = fmt.Sprintf("%s%d", routes[i].Package, i)
+					}
+				}
+
+				routes[i].Import = fmt.Sprintf("%s%d \"%s\"", routes[i].Package, i, routes[i].Import)
+			}
+		}
+	}
+
+	var result []RouteInfo
+	for _, routes := range packageMap {
+		result = append(result, routes...)
+	}
+
+	for i := range result {
+		routeCode += fmt.Sprintf("\t%s\n", result[i].Import)
+	}
+
+	routeCode += ")\n"
+	routeCode += "\nfunc mapAutoRoutes(mux *http.ServeMux) {\n"
+
+	for i, routeInfo := range routeList {
+		printablePage := routeInfo.Package + "." + routeInfo.PageName
+
+		if routeInfo.Static || routeInfo.StaticAPI{
+			routeList[i].Static = true
+			staticErr := generateStaticPage(module_name, routeInfo)
+			if staticErr != nil {
+				fmt.Println(staticErr.Error())
+			}
+
+			printablePage += "_STATIC"
+		}
+
+		if routeInfo.CookieSession {
+			printablePage = fmt.Sprintf("LoadSessionFromCookie(%s)", printablePage)
+		}
+
+		if routeInfo.Identity {
+			printablePage = fmt.Sprintf("LoadIdentity(%s, %t)", printablePage, routeInfo.Protected)
+		}
+
+		if routeInfo.EnableCors {
+			printablePage = fmt.Sprintf("EnableCors(%s)", printablePage)
+		}
+
+		httpVerb := ""
+		if routeInfo.HttpGet {
+			httpVerb = "GET "
+		} else if routeInfo.HttpPost {
+			httpVerb = "POST "
+		} else if routeInfo.HttpPut {
+			httpVerb = "PUT "
+		} else if routeInfo.HttpPatch {
+			httpVerb = "PATCH "
+		} else if routeInfo.HttpDelete {
+			httpVerb = "DELETE "
+		}
+
+		routeCode += fmt.Sprintf("\tmux.HandleFunc(\"%s%s\", %s)\n", httpVerb, routeInfo.URL, printablePage)
+	}
+
+	routeCode += "}"
+
+	in := []byte(routeCode)
+
+	fileErr := os.WriteFile("./cmd/server/generated_routes.metagen.go", in, 0644)
+	handleErr(fileErr)
 
 	os.RemoveAll("./cmd/metagen/.staticgen")
 
