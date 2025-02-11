@@ -882,7 +882,7 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 
 	staticPageCode += fmt.Sprintf("func %s_STATIC(w http.ResponseWriter, r *http.Request) {\n", ri.PageName)
 	staticPageCode += "\tw.WriteHeader(http.StatusOK)\n"
-	staticPageCode += "\tw.Header().Set(\"Content-Type\", \"text/plain\")\n"
+	staticPageCode += "\tw.Header().Set(\"Content-Type\", \"text/html\")\n"
 	staticPageCode += fmt.Sprintf("\tw.Write([]byte(`%s`))\n", out)
 	staticPageCode += "}\n"
 
