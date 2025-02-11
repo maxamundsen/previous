@@ -449,7 +449,7 @@ func generateDebugConfig() {
 	printStatus(true)
 }
 
-// Generates routes from files named `*_page.go` found recursively inside the `/src/pages` directory.
+// Generates routes from files named `*.page.go` found recursively inside the `/src/pages` directory.
 // When parsing files, we search for the first function suffixed with `Page`, if one is not found, return an error and fail compilation.
 type RouteInfo struct {
 	FileDef  string
@@ -492,7 +492,7 @@ func generatePageData() {
 		handleErr(err)
 
 		// Only process .go files
-		if strings.HasSuffix(info.Name(), "_page.go") {
+		if strings.HasSuffix(info.Name(), ".page.go") {
 			file, err := os.Open(pathStr)
 			handleErr(err)
 
@@ -526,7 +526,7 @@ func generatePageData() {
 					handleErr(parseNotesFromDocComment(decl, file, &ri))
 
 					relativePath := strings.TrimPrefix(pathStr, root)
-					relativePath = strings.TrimSuffix(relativePath, "_page.go")
+					relativePath = strings.TrimSuffix(relativePath, ".page.go")
 
 					dirPath := filepath.Dir(relativePath)
 					lastDir := filepath.Base(dirPath)
@@ -540,7 +540,7 @@ func generatePageData() {
 					ri.FileDef = file.Name()
 
 					// strip names from route and use the base package name if file is index
-					if strings.HasSuffix(pathStr, "/index_page.go") {
+					if strings.HasSuffix(pathStr, "/index.page.go") {
 						ri.URL = path.Dir(ri.URL)
 					}
 
