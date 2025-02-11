@@ -849,10 +849,14 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 	metacode += "\t\"net/http\"\n"
 	metacode += "\t\"net/http/httptest\"\n"
 	metacode += fmt.Sprintf("\t. \"%s/middleware\"\n", module_name)
+	metacode += fmt.Sprintf("\t. \"%s/preload\"\n", module_name)
 	metacode += fmt.Sprintf("\t\"%s\"\n", ri.Import)
 	metacode += ")\n\n"
 
 	metacode += "func main() {\n"
+	metacode += "\tPreload(PreloadOptions{\n"
+	metacode += "\t\tShouldInitDatabase: true,\n"
+	metacode += "\t})\n"
 	metacode += "\tmux := http.NewServeMux()\n"
 	metacode += fmt.Sprintf("\tmux.HandleFunc(\"%s\", LoadIdentity(LoadSessionFromCookie(%s), false))\n", ri.URL, pageController)
 	metacode += fmt.Sprintf("\treq, _ := http.NewRequest(\"GET\", \"%s\", nil)\n", ri.URL)

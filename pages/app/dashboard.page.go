@@ -16,7 +16,6 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
-// @Static
 func DashboardPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

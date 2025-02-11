@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"log"
 	"previous/config"
 
 	"database/sql"
@@ -13,7 +12,7 @@ import (
 
 var db *sql.DB
 
-func init() {
+func Init() {
 	var err error
 
 	db, err = sql.Open("sqlite3", config.GetConfig().DbConnectionString)
@@ -25,6 +24,4 @@ func init() {
 	// db.SetMaxOpenConns(0)
 	// db.SetMaxIdleConns(200)
 	// db.SetConnMaxLifetime(5 * time.Minute)
-
-	log.Println("Initialized sqlite3 application database connection")
 }
