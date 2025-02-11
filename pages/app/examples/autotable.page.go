@@ -19,6 +19,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
+// @Static
 func AutoTablePage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

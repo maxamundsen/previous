@@ -33,7 +33,6 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 		viewModel.field2 = r.FormValue("field2")
 	}
 
-	// Is this a good idea? The capture is nice...
 	func() Node {
 		return AppLayout("Form Submit Example", *identity,
 			If(viewModel.display,

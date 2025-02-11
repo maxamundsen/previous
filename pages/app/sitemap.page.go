@@ -14,6 +14,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
+// @Static
 func SitemapPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	func() Node {
@@ -23,6 +24,8 @@ func SitemapPage(w http.ResponseWriter, r *http.Request) {
 					PageLink(p.Url(), Text(p.Url()), false),
 					Div(Class("ml-3"),
 						Text("Source: "), Text(p.FileDef()),
+						Br(),
+						Text("Static: "), ToText(p.IsStatic()),
 						Br(),
 						Text("Active Middleware: "), Text(fmt.Sprintf("%+v", p.Middleware())),
 					),

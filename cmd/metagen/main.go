@@ -494,6 +494,14 @@ func generatePageData() {
 
 		handleErr(err)
 
+		// remove old metagen files first
+		if strings.HasSuffix(info.Name(), ".page.metagen.go") {
+			err := os.Remove(pathStr)
+			if err != nil {
+				return fmt.Errorf("error deleting file %s: %v", pathStr, err)
+			}
+		}
+
 		// Only process .go files
 		if strings.HasSuffix(info.Name(), ".page.go") {
 			file, err := os.Open(pathStr)
@@ -809,7 +817,23 @@ func generatePageData() {
 	printStatus(true)
 }
 
-// given a static route
+// If @Static tag is set on page handler, compile the page and generate a new handler
+// that serves the compiled output. This is similar to `#run` in Jai, where you can
+// run arbitrary code at compile time.
+//
+// Unfortunately, Go does not have the ability to execute itself inside the compiler,
+// so we must resort to generating and running a Go program for each page we want to prerender.
+// After this generated program runs, the output is captured, and used to generate a static page handler,
+// which is injected back into your program, and mapped correctly in the generated routes file.
+//
+// Honestly, this is pretty far out, since `metagen` is now acting as a second order metaprogram
+// (a program that generates a program that generates a program),
+// which is quite difficult to reason about. This is probably as far as we would like to push the metaprogramming stuff.
+//
+// This type of system increases compile time complexity, for the sake of runtime performance gains.
+// Pages that take advantage of @Static are now just dumb HTML pages that contain NO server-side logic.
+//
+// -mta
 func generateStaticPage(module_name string, ri RouteInfo) error {
 	if !ri.Static {
 		return errors.New("attmept to generate static page from non-static RouteInfo")
@@ -849,7 +873,6 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 		return err
 	}
 
-
 	newFilePath := strings.TrimSuffix(ri.FileDef, ".page.go")
 	newFilePath += ".page.metagen.go"
 
@@ -870,7 +893,6 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 
 	return nil
 }
-
 
 func generateRecursivePageInfoStructs(code *string, tree *Tree, level int) {
 	if code == nil {

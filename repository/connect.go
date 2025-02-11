@@ -13,7 +13,7 @@ import (
 
 var db *sql.DB
 
-func Init() {
+func init() {
 	var err error
 
 	db, err = sql.Open("sqlite3", config.GetConfig().DbConnectionString)

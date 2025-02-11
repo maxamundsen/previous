@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"previous/config"
 	"previous/pages"
-	"previous/repository"
 	"previous/tasks"
 )
 
@@ -22,8 +21,6 @@ func main() {
 	}
 
 	config.LoadConfig()
-
-	repository.Init()
 
 	// create http multiplexer, map routes
 	mux := http.NewServeMux()
