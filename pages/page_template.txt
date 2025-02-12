@@ -1,0 +1,21 @@
+package packagename
+
+import (
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
+	"net/http"
+	"previous/middleware"
+	. "previous/pages/app"
+)
+
+// @Identity
+// @Protected
+// @CookieSession
+func NamePage(w http.ResponseWriter, r *http.Request) {
+	identity := middleware.GetIdentity(r)
+	func() Node {
+		return AppLayout("Another Page", *identity,
+			P(Text("This is another test page")),
+		)
+	}().Render(w)
+}

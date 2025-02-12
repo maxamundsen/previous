@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"previous/auth"
 	"previous/config"
-	"previous/crypt"
 	"previous/repository"
+	"previous/security"
 	"strings"
 	"time"
 )
@@ -35,7 +35,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 			if len(splitToken) >= 2 {
 				token = splitToken[1]
-				identity, _ = crypt.DecryptData[auth.Identity](token)
+				identity, _ = security.DecryptData[auth.Identity](token)
 			}
 
 			if identity == nil {
@@ -53,7 +53,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 		} else {
 			identityCookie, err := r.Cookie(config.IDENTITY_COOKIE_NAME)
 			if err == nil {
-				identity, _ = crypt.DecryptData[auth.Identity](identityCookie.Value)
+				identity, _ = security.DecryptData[auth.Identity](identityCookie.Value)
 			}
 
 			if identity == nil {
@@ -139,7 +139,7 @@ func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *auth.Id
 	// The key should not be checked into VCS, and be regenerated if theft is
 	// suspected. Resetting the key will log *everyone* out, since no sessions
 	// or identities will validate.
-	cookieString, err := crypt.EncryptData(identity)
+	cookieString, err := security.EncryptData(identity)
 	if err != nil {
 		return
 	}

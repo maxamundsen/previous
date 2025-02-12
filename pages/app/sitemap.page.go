@@ -22,10 +22,14 @@ func SitemapPage(w http.ResponseWriter, r *http.Request) {
 			MapMap(pageinfo.GetPageInfoMap(), func(p pageinfo.PageInfo) Node {
 				return Group{
 					PageLink(p.Url(), Text(p.Url()), false),
+					Span(Class("ml-3"),
+						IfElse(p.IsStatic(),
+							BadgeWarning(Text("Static")),
+							BadgeSuccess(Text("Dynamic")),
+						),
+					),
 					Div(Class("ml-3"),
 						Text("Source: "), Text(p.FileDef()),
-						Br(),
-						Text("Static: "), ToText(p.IsStatic()),
 						Br(),
 						Text("Active Middleware: "), Text(fmt.Sprintf("%+v", p.Middleware())),
 					),

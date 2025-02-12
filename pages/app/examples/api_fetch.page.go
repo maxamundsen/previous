@@ -15,6 +15,7 @@ import (
 // @Identity
 // @Protected
 // @CookieSession
+// @Static
 func ApiFetchPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

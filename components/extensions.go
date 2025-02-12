@@ -3,6 +3,7 @@ package components
 
 import (
 	. "maragu.dev/gomponents"
+	"previous/security"
 )
 
 // Map a `map[T]U` to a [Group]
@@ -52,6 +53,12 @@ func IffElse(condition bool, t func() Node, f func() Node) Node {
 	} else {
 		return f()
 	}
+}
+
+// Sanitizes user input HTML
+func SafeRaw(html string) Node {
+	sanitized := security.SanitizationPolicy.Sanitize(html)
+	return Raw(sanitized)
 }
 
 func CSSID(input string) string {

@@ -3,8 +3,8 @@ package auth
 import (
 	"net/http"
 	"previous/auth"
-	"previous/crypt"
 	"previous/pages/api"
+	"previous/security"
 
 	"log"
 )
@@ -32,7 +32,7 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 
 	identity := auth.NewIdentity(userid, false)
 
-	encrypted, err := crypt.EncryptData(identity)
+	encrypted, err := security.EncryptData(identity)
 	if err != nil {
 		http.Error(w, "An error occured while generating the api token.", http.StatusUnauthorized)
 		return

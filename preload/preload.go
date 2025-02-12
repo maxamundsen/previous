@@ -7,6 +7,7 @@ import (
 	"previous/config"
 	"previous/pages"
 	"previous/repository"
+	"previous/security"
 	"previous/tasks"
 )
 
@@ -23,15 +24,18 @@ type PreloadOptions struct {
 func PreloadOptionsAll() PreloadOptions {
 	return PreloadOptions{
 		ShouldCreateHttpMux: true,
-		ShouldInitTasks: true,
-		ShouldInitDatabase: true,
+		ShouldInitTasks:     true,
+		ShouldInitDatabase:  true,
 	}
 }
 
+// When adding dependencies to preload, ensure that they are loaded in the correct order.
+// For example, database initialization reads from the config, so config must be loaded first.
 func Preload(options PreloadOptions) PreloadResourceBundle {
 	bundle := PreloadResourceBundle{}
 
-	config.LoadConfig()
+	config.Init()
+	security.Init()
 	pages.Init()
 
 	if options.ShouldInitDatabase {

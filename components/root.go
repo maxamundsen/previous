@@ -2,7 +2,7 @@ package components
 
 import (
 	"previous/config"
-	"previous/crypt"
+	"previous/security"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -10,13 +10,13 @@ import (
 
 func RootLayout(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
-	css_hash, err := crypt.QuickFileHash("./wwwroot/css/tw.min.css")
+	css_hash, err := security.QuickFileHash("./wwwroot/css/tw.min.css")
 	if err != nil {
 		return Text("Error hashing tw.min.css")
 	}
 
 	// automatically invalidates cached js when file hash changes
-	js_hash, err := crypt.QuickFileHash("./wwwroot/js/index.js")
+	js_hash, err := security.QuickFileHash("./wwwroot/js/index.js")
 	if err != nil {
 		return Text("Error hashing index.js")
 	}

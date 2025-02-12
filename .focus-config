@@ -15,6 +15,7 @@
 *.min.css
 *.min.js.map
 *.min.css.map
+*.metagen.go
 lib**
 fonts**
 *.sqlite
@@ -22,7 +23,7 @@ __debug*
 
 [[ settings ]]
 tab_size: 4
-indent_using:                                       spaces
+indent_using: tabs
 
 [[ build commands ]]
 build_working_dir: ./

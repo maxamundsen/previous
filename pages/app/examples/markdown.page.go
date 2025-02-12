@@ -35,6 +35,10 @@ func Sum(a, b int) int {
 	return a + b
 }
 ` + "```" + `
+
+[XSS LINK](javascript:alert('User input protected against XSS. This doesn't work.'))
+
+<script>console.log("XSS is protected against. This message will NOT be evaluated.")</script>
 `
 
 	if r.Method == http.MethodPost {

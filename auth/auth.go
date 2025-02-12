@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"previous/.jet/model"
 	"previous/config"
-	"previous/crypt"
 	"previous/repository"
+	"previous/security"
 	"strconv"
 	"strings"
 	"time"
@@ -65,11 +65,11 @@ func Authenticate(username string, password string) (int32, bool) {
 	if userErr != nil || user.FailedAttempts > int32(config.MAX_LOGIN_ATTEMPTS) {
 		// set user password to dummy password to keep timing consistent when validating password
 		user.Password = "$2a$14$KW5OO1wZqGGq3SrpBFj0Oema5DG8Ph7lZJvq0ECkkYBpNFom6b9vO"
-		crypt.ComparePasswords(password, user.Password)
+		security.ComparePasswords(password, user.Password)
 		return 0, false
 	}
 
-	result := crypt.ComparePasswords(password, user.Password)
+	result := security.ComparePasswords(password, user.Password)
 
 	if !result {
 		user.FailedAttempts += 1
@@ -147,12 +147,12 @@ func CheckPasswordCriteria(password string) error {
 // 			return user, critErr
 // 		}
 
-// 		if !crypt.ComparePasswords(oldPassword, user.Password) {
+// 		if !security.ComparePasswords(oldPassword, user.Password) {
 // 			return user, errors.New("old password incorrect")
 // 		}
 // 	}
 
-// 	newHash, hashErr := crypt.HashPassword(newPassword)
+// 	newHash, hashErr := security.HashPassword(newPassword)
 // 	if hashErr != nil {
 // 		return user, errors.New("could not hash password")
 // 	}
@@ -181,7 +181,7 @@ func CheckPasswordCriteria(password string) error {
 // 		return user, err
 // 	}
 
-// 	hash, hashErr := crypt.HashPassword(config.GetConfig().IdentityDefaultPassword)
+// 	hash, hashErr := security.HashPassword(config.GetConfig().IdentityDefaultPassword)
 // 	if hashErr != nil {
 // 		return user, hashErr
 // 	}

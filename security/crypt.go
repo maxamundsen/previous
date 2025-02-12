@@ -1,19 +1,19 @@
-package crypt
+package security
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"github.com/btcsuite/btcutil/base58"
+	"encoding/base64"
+	"encoding/gob"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"previous/config"
-	"encoding/gob"
-	"encoding/base64"
-	"bytes"
 
+	"github.com/btcsuite/btcutil/base58"
 
 	"github.com/minio/highwayhash"
 	"golang.org/x/crypto/bcrypt"

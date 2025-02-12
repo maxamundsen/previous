@@ -37,6 +37,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 												A(Href(pageinfo.Root.App.Examples.Ui_playground.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("UI Elements")),
 												A(Href(pageinfo.Root.App.Examples.Upload.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("File Uploading")),
 												A(Href(pageinfo.Root.App.Examples.Smtp.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("SMTP Client")),
+												A(Href(pageinfo.Root.App.Examples.Html_sanitization.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("HTML Sanitization")),
 												A(Href(pageinfo.Root.App.Examples.Markdown.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Markdown Rendering")),
 												A(Href(pageinfo.Root.App.Examples.Api_fetch.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Server-side API Fetch")),
 												A(Href(pageinfo.Root.App.Examples.Static.Url()), Class("block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"), TabIndex("-1"), Text("Static Pages")),

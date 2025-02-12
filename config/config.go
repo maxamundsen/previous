@@ -57,7 +57,7 @@ func GetConfig() configuration {
 	return config
 }
 
-func LoadConfig() {
+func Init() {
 	// When in debug mode, set environment variables from the `.env` file directly.
 	// Just a developer convenience.
 	if DEBUG {
