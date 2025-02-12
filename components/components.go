@@ -121,7 +121,7 @@ func FormLabel(children ...Node) Node {
 
 // TEXT
 func PageLink(location string, display Node, newPage bool) Node {
-	return A(Href(location), Class("underline text-neutral-600 hover:text-neutral-800"), display, If(newPage, Target("_blank")))
+	return A(Href(location), Class("underline text-blue-600 hover:text-blue-800"), display, If(newPage, Target("_blank")))
 }
 
 // BUTTONS
