@@ -36,7 +36,7 @@ func HtmlSanitizationPage(w http.ResponseWriter, r *http.Request) {
 				Group{
 					Br(),
 					Card("",
-						Div(Class("prose prose-pre:rounded-none prose-pre:text-neutral-700 prose-pre:bg-neutral-50 prose-pre:border-1 prose-pre:border-gray-200 prose-pre:shadow max-w-none rose-a:text-neutral-700 prose-headings:text-neutral-950"),
+						Div(StyleReset(),
 							SafeRaw(input),
 						),
 					),

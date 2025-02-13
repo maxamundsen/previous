@@ -50,12 +50,12 @@ func SmtpPage(w http.ResponseWriter, r *http.Request) {
 
 func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
 	return AppLayout("SMTP Client Example", identity,
-		Div(Class("p-10 bg-white border border-neutral-200 shadow mb-5"),
+		Div(InlineStyle("padding: calc(var(--spacing) * 10); background: var(--color-white); border: 1px solid var(--color-neutral-200); shadow: var(--shadow-md); margin-bottom: calc(var(--spacing) * 5);"),
 			P(Class("font-bold text-neutral-800"), Text("Note:")),
 			P(Text("This demo requires you to connect a valid SMTP server. These options are set in the runtime configuration file.")),
 		),
-		If(errorMsg != "", P(Class("text-red-600"), Text(errorMsg))),
-		If(successMsg != "", P(Class("text-red-600"), Text(successMsg))),
+		If(errorMsg != "", P(InlineStyle("color: var(--text-red-600)"), Text(errorMsg))),
+		If(successMsg != "", P(InlineStyle("color: var(--text-red-600)"), Text(successMsg))),
 		Form(Method("post"), AutoComplete("off"),
 			FormLabel(Text("To:")),
 			FormInput(Type("email"), Name("to")),

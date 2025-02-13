@@ -11,16 +11,19 @@ import (
 	"previous/tasks"
 )
 
+// Any data that must be returned to your program from a `preload` call belongs here
 type PreloadResourceBundle struct {
 	HttpMux *http.ServeMux
 }
 
+// Expose options to programs utilizing preload
 type PreloadOptions struct {
 	ShouldCreateHttpMux bool
 	ShouldInitTasks     bool
 	ShouldInitDatabase  bool
 }
 
+// If you don't care about setting options and just want to include everything, just use this:
 func PreloadOptionsAll() PreloadOptions {
 	return PreloadOptions{
 		ShouldCreateHttpMux: true,

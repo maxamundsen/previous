@@ -35,21 +35,21 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "16x16"), Href("/favicon-16x16.png")),
 				Link(Rel("manifest"), Href("/site.webmanifest")),
 
-				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
-				Link(Rel("stylesheet"), Href("/fonts/lora.css")),
-
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
 
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
+
+				// Small helpers that allow for very powerful interactivity, while remaining "vanilla"
+				// https://github.com/gnat/surreal
+				// https://github.com/gnat/css-scope-inline
+				Script(Src("/lib/surreal/surreal.js")),
+				Script(Src("/lib/css-scope-inline/script.js")),
 
 				// use minified htmx only in prod
 				IfElse(config.DEBUG,
 					Script(Src("/lib/htmx/htmx.js")),
 					Script(Src("/lib/htmx/htmx.min.js")),
 				),
-
-				Script(Src("/lib/surreal/surreal.js")),
-				Script(Src("/lib/css-scope-inline/script.js")),
 
 				Script(Src("/lib/alpine/alpine-focus.min.js"), Defer()),
 				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
