@@ -403,6 +403,7 @@ func generatePageData() {
 // Pages that take advantage of @Static are now just dumb HTML pages that contain NO server-side logic.
 //
 // -mta
+// @todo: fix this - this waaaay slower than you thought :D
 func generateStaticPage(module_name string, ri RouteInfo) error {
 	if !ri.Static && !ri.StaticAPI {
 		return errors.New("attmept to generate static page from non-static RouteInfo")

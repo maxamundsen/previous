@@ -8,8 +8,11 @@ import (
 	"previous/preload"
 )
 
-// Entry point for the application, initializes package globals
-// such as the database connections, http multiplexer, config, etc.
+// WARNING:
+// DO NOT INITIALIZE GLOBAL STATE HERE!!
+// Global state should be initialized by the `preload` package.
+// This is to ensure that `metagen`, the codebase metaprogram, can arbitrarily execute
+// code at compile time.
 func main() {
 	fmt.Println("Previous: A powerful web codebase.\n")
 

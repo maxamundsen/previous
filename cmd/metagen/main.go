@@ -161,7 +161,7 @@ func generateTailwindCSS() {
 		}
 	}
 
-	cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/tw.min.css", "--minify")
+	cmd := exec.Command("./"+tailwindcmd, "-i", "styles/global.css", "-o", "wwwroot/css/tw.min.css")
 	handleCmdOutput(cmd.CombinedOutput())
 	printStatus(true)
 }

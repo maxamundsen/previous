@@ -10,9 +10,9 @@ import (
 
 func RootLayout(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
-	css_hash, err := security.QuickFileHash("./wwwroot/css/tw.min.css")
+	css_hash, err := security.QuickFileHash("./wwwroot/css/style.css")
 	if err != nil {
-		return Text("Error hashing tw.min.css")
+		return Text("Error hashing style.css")
 	}
 
 	// automatically invalidates cached js when file hash changes
@@ -38,7 +38,7 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("stylesheet"), Href("/fonts/inter.css")),
 				Link(Rel("stylesheet"), Href("/fonts/lora.css")),
 
-				Link(Rel("stylesheet"), Href("/css/tw.min.css?v="+css_hash)),
+				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
 
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
@@ -47,6 +47,9 @@ func RootLayout(title string, children ...Node) Node {
 					Script(Src("/lib/htmx/htmx.js")),
 					Script(Src("/lib/htmx/htmx.min.js")),
 				),
+
+				Script(Src("/lib/surreal/surreal.js")),
+				Script(Src("/lib/css-scope-inline/script.js")),
 
 				Script(Src("/lib/alpine/alpine-focus.min.js"), Defer()),
 				Script(Src("/lib/alpine/alpine.min.js"), Defer()),

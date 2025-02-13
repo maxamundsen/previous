@@ -21,7 +21,6 @@
             "program": "${workspaceFolder}/cmd/server",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/.env",
-            "preLaunchTask": "Metagen: Build",
         }
     ]
 }

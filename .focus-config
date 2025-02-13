@@ -32,3 +32,12 @@ error_regex:                            ^(?P<file>.*):(?P<line>\d+):(?P<col>\d+)
 clear_build_output_before_running:      true
 open_panel_on_build:                    true
 close_panel_on_success:                 true
+
+[Metagen Build]
+build_command: go run ./cmd/metagen build
+key_binding: Cmd-Shift-B
+
+[Run]
+build_command: go build ./cmd/server
+run_command: ./server
+key_binding: F5

@@ -2,8 +2,11 @@
 package components
 
 import (
-	. "maragu.dev/gomponents"
 	"previous/security"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
+	"strings"
 )
 
 // Map a `map[T]U` to a [Group]
@@ -63,6 +66,14 @@ func SafeRaw(html string) Node {
 
 func CSSID(input string) string {
 	return "#" + input
+}
+
+func InlineStyle(input string) Node {
+	// minify
+	input = strings.ReplaceAll(input, "\n", "")
+	input = strings.ReplaceAll(input, "\t", "")
+
+	return StyleEl(Raw(input))
 }
 
 // For some reason this isn't included in the base distribution
