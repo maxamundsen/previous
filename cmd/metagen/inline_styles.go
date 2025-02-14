@@ -12,13 +12,13 @@ import (
 // string key is NOT the css, but an encoded []string by converting to []byte, which can be converted to a string
 // this is because dynamic arrays (slices) cannot be used as map keys, but strings can
 var dedupMap map[string]bool
-var dedupNum = 1
+var dedupNum = 0
 
 // For each input directory, walk the filesystem tree for *.go files, and expand calls to `InlineStyle(..)`
-func expandInlineStyles(dirs []string) {
+func expandInlineStyles(dirs ...string) {
 	// module_name := getCurrentModuleName()
 
-	inlineStyleRegex := regexp.MustCompile(`InlineStyle\((.*?)\)`)
+	inlineStyleRegex := regexp.MustCompile("InlineStyle\\(((?:\"|'|`).*?(?:\"|'|`))\\)")
 
 	var matches []string
 
@@ -34,11 +34,12 @@ func expandInlineStyles(dirs []string) {
 
 				defer file.Close()
 
-				var b []byte
+				content, contentErr := os.ReadFile(pathStr)
+				if contentErr != nil {
+					return contentErr
+				}
 
-				file.Read(b)
-
-				s := string(b)
+				s := string(content)
 
 				output := inlineStyleRegex.ReplaceAllStringFunc(s, func(match string) string {
 					submatch := inlineStyleRegex.FindStringSubmatch(match)
@@ -50,11 +51,22 @@ func expandInlineStyles(dirs []string) {
 					// input = strings.ReplaceAll(input, "\n", "")
 					// input = strings.ReplaceAll(input, "\t", "")
 
+					dedupNum += 1
+
 					return fmt.Sprintf("Attr(\"__INLINECSS_%d\")", dedupNum)
 				})
 
-				fmt.Printf("%s", output)
+				mkdirErr := os.MkdirAll("./.metagen/"+ removeLastPart(pathStr) +"/", 0755)
+				if mkdirErr != nil {
+					return mkdirErr
+				}
 
+				output = METAGEN_AUTO_COMMENT + "\n" + output
+
+				writeErr := os.WriteFile("./.metagen/" + pathStr, []byte(output), 0664)
+				if writeErr != nil {
+					return writeErr
+				}
 			}
 
 			return nil
@@ -62,4 +74,21 @@ func expandInlineStyles(dirs []string) {
 
 		handleErr(err)
 	}
+
+	for i, _ := range matches {
+		matches[i] = strings.TrimPrefix(matches[i], "\"")
+		matches[i] = strings.TrimPrefix(matches[i], "'")
+		matches[i] = strings.TrimPrefix(matches[i], "`")
+		matches[i] = strings.TrimSuffix(matches[i], "\"")
+		matches[i] = strings.TrimSuffix(matches[i], "'")
+		matches[i] = strings.TrimSuffix(matches[i], "`")
+
+		//@TODO handle custom shorthand media queries + alternate syntax here
+
+		matches[i] = fmt.Sprintf("[__INLINECSS_%d] { %s }\n", i + 1, matches[i])
+	}
+
+	outputCSS := "/* " +  METAGEN_AUTO_COMMENT + " */\n"
+	outputCSS += strings.Join(matches, "")
+	os.WriteFile("./wwwroot/css/output.css", []byte(outputCSS), 0664)
 }
