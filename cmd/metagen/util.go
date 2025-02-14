@@ -8,8 +8,17 @@ import (
 	. "previous/basic"
 	"reflect"
 	"regexp"
+	"runtime/debug"
 	"strings"
 )
+
+func getCurrentModuleName() string {
+	bi, _ := debug.ReadBuildInfo()
+	parts := strings.Split(bi.Path, "/")
+	module_name := parts[0]
+
+	return module_name
+}
 
 // given /foo/bar/baz -> baz
 func removeLastPart(s string) string {

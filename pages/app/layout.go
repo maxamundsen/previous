@@ -13,15 +13,15 @@ import (
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 	navbarDropdown := func (name string, items []StrPair) Node {
 		return Div(
-			InlineStyle("position: relative; margin-left: calc(var(--spacing) * 3);"),
+			InlineStyle("cursor: pointer; position: relative; margin-left: calc(var(--spacing) * 3);"),
 			Attr("x-data", "{" + name + "DropdownOpen: false}"),
 			Attr("x-on:click.outside", name+"DropdownOpen = false"),
 			Div(
-				InlineStyle(`display: flex; position: relative; padding-top: calc(var(--spacing) * 2); padding-bottom: calc(var(--spacing) * 2); padding-left: calc(var(--spacing) * 3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: var(--color-neutral-100);`),
+				InlineStyle(`cursor: pointer; display: flex; position: relative; padding-top: calc(var(--spacing) * 2); padding-bottom: calc(var(--spacing) * 2); padding-left: calc(var(--spacing) * 3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: var(--color-neutral-100);`),
 				InlineStylePseudo(":hover", "color: var(--color-white);"),
 				Attr("x-on:click", name+"DropdownOpen = !"+name+"DropdownOpen;"),
 				Button(
-					Div(InlineStyle("display: flex; align-items: center;"),
+					Div(InlineStyle("cursor: pointer; display: flex; align-items: center;"),
 						Span(Text(name + " ")),
 						Icon(ICON_CHEVRON_DOWN, 16),
 					),
@@ -110,7 +110,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											),
 										),
 										Div(
-											InlineStyle("position: absolsute; right: 0; z-index: 10; margin-top: calc(var(--spacing) * 2); width: calc(var(--spacing) * 48); transform-origin: top right; shadow: var(--shadow-lg); background: var(--color-white); padding: calc(var(--spacing) * 1)"),
+											InlineStyle("position: absolsute; right: 0; z-index: 10; margin-top: calc(var(--spacing) * 2); width: calc(var(--spacing) * 48); transform-origin: top right; box-shadow: var(--shadow-lg); background: var(--color-white); padding: calc(var(--spacing) * 1)"),
 											Attr("x-cloak"),
 											Attr("x-show", "profileDropdownOpen"),
 											TabIndex("-1"),
@@ -153,9 +153,9 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 						),
 					),
 				),
-				Header(InlineStyle("background-color: var(--color-white); shadow: var(--shadow-md);"),
-					Div(InlineStyle("margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: calc(var(--spacing) * 6), calc(var(--spacing) * 4); media"),Class("mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"),
-						H1(Class("text-3xl font-bold tracking-tight text-neutral-950"), Text(title)),
+				Header(InlineStyle("background-color: var(--color-white); box-shadow: var(--shadow-md);"),
+					Div(InlineStyle("margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: calc(var(--spacing) * 4) calc(var(--spacing) * 4); @media sm { padding-left: calc(var(--spacing) * 4); padding-right: calc(var(--spacing) * 4); } @media lg { padding-left: calc(var(--spacing) * 8); padding-right: calc(var(--spacing) * 8); }"),
+						H1(InlineStyle("font-size: var(--text-3xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-950); letter-spacing: var(--tracking-tight);"), Text(title)),
 					),
 				),
 				Main(

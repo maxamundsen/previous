@@ -11,7 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	. "previous/basic"
-	"runtime/debug"
 	"strings"
 )
 
@@ -44,9 +43,7 @@ type RouteInfo struct {
 func generatePageData() {
 	const root = "pages" // Use the /pages directory for autogenerating routes
 
-	bi, _ := debug.ReadBuildInfo()
-	parts := strings.Split(bi.Path, "/")
-	module_name := parts[0]
+	module_name := getCurrentModuleName()
 
 	fmt.Printf("Generating HTTP routes")
 
