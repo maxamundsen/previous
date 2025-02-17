@@ -110,7 +110,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											),
 										),
 										Div(
-											InlineStyle("position: absolsute; right: 0; z-index: 10; margin-top: calc(var(--spacing) * 2); width: calc(var(--spacing) * 48); transform-origin: top right; box-shadow: var(--shadow-lg); background: var(--color-white); padding: calc(var(--spacing) * 1)"),
+											InlineStyle("position: absolute; right: 0; z-index: 10; margin-top: calc(var(--spacing) * 2); width: calc(var(--spacing) * 48); transform-origin: top right; box-shadow: var(--shadow-lg); background: var(--color-white); padding: calc(var(--spacing) * 1)"),
 											Attr("x-cloak"),
 											Attr("x-show", "profileDropdownOpen"),
 											TabIndex("-1"),

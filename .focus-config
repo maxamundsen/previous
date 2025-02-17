@@ -16,6 +16,7 @@
 *.min.js.map
 *.min.css.map
 *.metagen.go
+./.metagen/**
 lib**
 fonts**
 *.sqlite
@@ -33,11 +34,11 @@ clear_build_output_before_running:      true
 open_panel_on_build:                    true
 close_panel_on_success:                 true
 
-[Metagen Build]
-build_command: go run ./cmd/metagen build
-key_binding: Cmd-Shift-B
+# [Metagen Build]
+# build_command: go run ./cmd/metagen build
+# key_binding: Cmd-Shift-B
 
-[Run]
-build_command: go build ./cmd/server
-run_command: ./server
-key_binding: F5
+# [Run]
+# build_command: go build ./cmd/server
+# run_command: ./server
+# key_binding: F5

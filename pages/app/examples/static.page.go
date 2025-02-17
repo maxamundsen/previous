@@ -35,6 +35,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 					),
 					Br(),
 					P(
+						InlineStyle("color: red;"),
 						Text("You can run arbitary code at the page level, and the result will be baked in at compile time. For example, 1 + 1 = "),
 						ToText(1+1),
 						Text(". This page was generated at "), FormatDateTime(time.Now()), Text("."),

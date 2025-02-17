@@ -10,7 +10,7 @@ import (
 
 func RootLayout(title string, children ...Node) Node {
 	// automatically invalidates cached css when file hash changes
-	css_hash, err := security.QuickFileHash("./wwwroot/css/style.css")
+	css_hash, err := security.QuickFileHash("./wwwroot/css/style.metagen.css")
 	if err != nil {
 		return Text("Error hashing style.css")
 	}
@@ -35,7 +35,8 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "16x16"), Href("/favicon-16x16.png")),
 				Link(Rel("manifest"), Href("/site.webmanifest")),
 
-				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+				Link(Rel("stylesheet"), Href("/css/global.css")),
+				Link(Rel("stylesheet"), Href("/css/style.metagen.css?v="+css_hash)),
 
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 

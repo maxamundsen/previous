@@ -5,20 +5,18 @@ package preload
 import (
 	"net/http"
 	"previous/config"
-	"previous/pages"
 	"previous/repository"
 	"previous/security"
 	"previous/tasks"
 )
 
 // Any data that must be returned to your program from a `preload` call belongs here
-type PreloadResourceBundle struct {
-	HttpMux *http.ServeMux
-}
+var HttpFS  http.Handler
+var HttpMux *http.ServeMux
 
 // Expose options to programs utilizing preload
 type PreloadOptions struct {
-	ShouldCreateHttpMux bool
+	ShouldCreateHTTPResources bool
 	ShouldInitTasks     bool
 	ShouldInitDatabase  bool
 }
@@ -26,7 +24,7 @@ type PreloadOptions struct {
 // If you don't care about setting options and just want to include everything, just use this:
 func PreloadOptionsAll() PreloadOptions {
 	return PreloadOptions{
-		ShouldCreateHttpMux: true,
+		ShouldCreateHTTPResources: true,
 		ShouldInitTasks:     true,
 		ShouldInitDatabase:  true,
 	}
@@ -34,24 +32,20 @@ func PreloadOptionsAll() PreloadOptions {
 
 // When adding dependencies to preload, ensure that they are loaded in the correct order.
 // For example, database initialization reads from the config, so config must be loaded first.
-func Preload(options PreloadOptions) PreloadResourceBundle {
-	bundle := PreloadResourceBundle{}
-
+func PreloadInit(options PreloadOptions) {
 	config.Init()
 	security.Init()
-	pages.Init()
 
 	if options.ShouldInitDatabase {
 		repository.Init()
 	}
 
-	if options.ShouldCreateHttpMux {
-		bundle.HttpMux = http.NewServeMux()
+	if options.ShouldCreateHTTPResources {
+		HttpMux = http.NewServeMux()
+		HttpFS = http.FileServer(http.Dir("wwwroot"))
 	}
 
 	if options.ShouldInitTasks {
 		tasks.InitTasks()
 	}
-
-	return bundle
 }
