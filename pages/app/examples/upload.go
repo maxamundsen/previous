@@ -14,10 +14,6 @@ import (
 	"previous/middleware"
 	"time"
 )
-
-// @Identity
-// @Protected
-// @CookieSession
 func UploadPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

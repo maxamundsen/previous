@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"previous/.metagen/router"
 	"previous/config"
-	"previous/preload"
+	"previous/pages"
+	"previous/repository"
+	"previous/security"
+	"previous/tasks"
 )
 
-// WARNING:
-// DO NOT INITIALIZE GLOBAL STATE HERE!!
-// Global state should be initialized by the `preload` package.
-// This is to ensure that `metagen`, the codebase metaprogram, can arbitrarily execute
-// code at compile time.
 func main() {
 	fmt.Println("Previous: A powerful web codebase.\n")
 
@@ -23,17 +20,19 @@ func main() {
 		fmt.Println("RELEASE BUILD")
 	}
 
-	// Preload module handles global state because Golang import system is weird...
-	preload.PreloadInit(preload.PreloadOptionsAll())
+	config.Init()
+	security.Init()
+	repository.Init()
+	pages.Init()
+	tasks.Init()
 
-	router.MetagenAutoRouter(preload.HttpMux)
-	mapManualRoutes(preload.HttpMux)
+	mux := http.NewServeMux()
+	mapRoutes(mux)
 
 	log.Println("Mapped HTTP routes")
-
 	log.Println("Listening on http://" + config.GetConfig().Host + ":" + config.GetConfig().Port)
 
-	serveErr := http.ListenAndServe(config.GetConfig().Host+":"+config.GetConfig().Port, preload.HttpMux)
+	serveErr := http.ListenAndServe(config.GetConfig().Host+":"+config.GetConfig().Port, mux)
 
 	if serveErr != nil {
 		log.Fatal(serveErr)

@@ -9,9 +9,6 @@ import (
 	. "previous/pages/app"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func HtmlSanitizationPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

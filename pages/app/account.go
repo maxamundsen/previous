@@ -11,9 +11,6 @@ import (
 	"net/http"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func AccountPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

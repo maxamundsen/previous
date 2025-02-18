@@ -11,9 +11,6 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func IndexPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	IndexView(*identity).Render(w)

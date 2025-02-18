@@ -6,7 +6,6 @@ import (
 	"previous/repository"
 
 	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
 )
 
@@ -26,9 +25,23 @@ func BindSearch(elId string, identifier string) Node {
 
 // THE TABLE
 // Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
-func AutoTable[E any](tableId string, url string, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, cols []repository.ColInfo, belowTable Node) Node {
+func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, belowTable Node) Node {
 	paginationButton := func(icon string, page int) Node {
-		return Button(Class("px-3 py-1 min-h-9 text-sm font-normal text-neutral-800 transition duration-200 ease cursor-pointer"), Icon(icon, 16),
+		return Button(
+			InlineStyle(`
+				me {
+					padding-left: $(3);
+					padding-right: $(3);
+					padding-top: $(1);
+					padding-bottom: $(1);
+					min-height: $(9);
+					font-size: var(--text-sm);
+					font-weight: var(--font-weight-normal);
+					color: var(--color-neutral-800);
+					cursor: pointer;
+				}
+			`),
+			Icon(icon, 16),
 			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
 			Attr("hx-swap", CSSID(tableId)),
 			Attr("hx-target", CSSID(tableId)),
@@ -52,31 +65,100 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 				Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 				Input(Type("hidden"), Name(repository.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
 			),
-			Div(Class("relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md"),
-				Div(Class("overflow-scroll flex flex-col w-full h-full"),
-					Table(Class("table-fixed"),
+			Div(
+				InlineStyle(`
+					me {
+						position: relative;
+						display: flex;
+						flex-direction: column;
+						width: 100%;
+						height: 100%;
+						color: var(--color-gray-700);
+						background-color: var(--color-white);
+						box-shadow: var(--shadow-md);
+					}
+				`),
+				Div(
+					InlineStyle(`
+						me {
+							overflow: scroll;
+							display: flex;
+							flex-direction: column;
+							width: 100%;
+							height: 100%;
+						}
+					`),
+					Table(
+						InlineStyle("me { table-layout: fixed; }"),
 						THead(
 							Tr(
 								Map(cols, func(col repository.ColInfo) Node {
 									if col.Sortable {
-										return Th(Class("p-4 border-b border-neutral-200 transition-colors cursor-pointer bg-neutral-100 hover:bg-neutral-200"),
+										return Th(
+											InlineStyle(`
+												me {
+													padding: $(4);
+													border-bottom: 1px solid var(--color-neutral-200);
+													cursor: pointer;
+													background-color: var(--color-neutral-100);
+													transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+													transition-timing-function: var(--default-transition-timing-function);
+													transition-duration: var(--default-transition-duration);
+												}
+												me:hover {
+													background-color: var(--color-neutral-200);
+												}
+											`),
 											Attr("hx-get", url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
 											Attr("hx-swap", CSSID(tableId)),
 											Attr("hx-target", CSSID(tableId)),
 											Attr("hx-select", CSSID(tableId)),
 											Attr("hx-trigger", "click"),
-											P(Classes{"flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500": true, "font-bold": f.OrderBy == col.DbName, "font-normal": f.OrderBy != col.DbName}, Text(col.DisplayName),
-												If(f.OrderBy == col.DbName,
-													IfElse(f.OrderDescending,
-														Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
-														Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
-													),
+											P(
+												InlineStyle(`
+													me {
+														display: flex;
+														align-items: center;
+														justify-content: between;
+														gap: $(2);
+														font-size: var(--text-sm);
+														color: var(--color-neutral-500);
+													}
+												`),
+												Text(col.DisplayName),
+												IfElse(f.OrderBy == col.DbName,
+													Group{
+														InlineStyle("me { font-weight: var(--font-weight-bold) ; }"),
+														IfElse(f.OrderDescending,
+															Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
+															Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+														),
+													},
+													InlineStyle("me { font-weight: var(--font-weight-normal); }"),
 												),
 											),
 										)
 									} else {
-										return Th(Class("p-4 border-b border-neutral-200 transition-colors bg-neutral-100"),
-											P(Class("flex items-center justify-between gap-2 font-sans text-sm leading-none text-neutral-500 font-normal"),
+										return Th(
+											InlineStyle(`
+												me {
+													padding: $(4);
+													border-bottom: 1px solid var(--color-neutral-200);
+													background-color: var(--color-neutral-100);
+												}
+											`),
+											P(
+												InlineStyle(`
+													me {
+														display: flex;
+														align-items: center;
+														justify-content: between;
+														gap: $(2);
+														font-size: var(--text-sm);
+														font-weight: var(--font-weight-normal);
+														color: var(--color-neutral-500);
+													}
+												`),
 												Text(col.DisplayName),
 											),
 										)
@@ -87,25 +169,29 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 						TBody(
 							IfElse(len(entities) > 0,
 								Map(entities, nf),
-								Td(Class("p-4 py-5"),
-									P(Class("block text-sm text-neutral-800"), Text("Dataset contains no entries.")),
+								Td(InlineStyle("me { padding: $(4); }"),
+									P(InlineStyle("me {display: block; font-size: var(--text-sm); color: var(--color-neutral-800);}"), Text("Dataset contains no entries.")),
 								),
 							),
 						),
 					),
 				),
 				If(f.Pagination.Enabled,
-					Div(Class("flex justify-between items-center px-4 py-3"),
-						Div(Class("text-sm text-neutral-500"),
+					Div(
+						InlineStyle("me { display: flex; justify-content: between; align-items: center; padding: $(3) $(4); }"),
+						Div(
+							InlineStyle("me { font-size: var(--text-sm); color: var(--color-neutral-500); }"),
 							B(Icon(ICON_LIST_ORDERED, 16)),
-							Span(Class("mr-3")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
+							Span(InlineStyle("me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
 
-						Div(Class("flex"),
-							Div(Class("content-center text-sm text-neutral-500"),
+						Div(InlineStyle("me { display: flex;}"),
+							Div(InlineStyle("me { justify-content: center; font-size: var(--text-sm); color: var(--color-neutral-500);}"),
 								Span(Text("Items per page:")),
 							),
-							Form(ID(tableId+FORM_PAGINATION_SUFFIX), Class("py-3 px-3 min-h-9 block"),
+							Form(
+								InlineStyle("me { padding: $(3); min-height: $(9); display: block;}"),
+								ID(tableId+FORM_PAGINATION_SUFFIX),
 								Attr("hx-get", url),
 								Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
 								Attr("hx-target", CSSID(tableId)),
@@ -118,14 +204,26 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 
 								Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
 								Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
-								Select(
-									Class("bg-gray-50 py-3 px-3 min-h-9 border border-gray-300 text-gray-900 text-sm block p-1.5 shadow-sm"),
-									Name(repository.ITEMS_PER_PAGE_URL_KEY),
-									Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
-									Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
-									Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),
-									Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50"), Value("50")),
-									Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100"), Value("100")),
+								Div(
+									InlineStyle(`
+										me > select {
+											background-color: var(--color-gray-50);
+											padding: $(3);
+											min-height: $(9);
+											border: 1px solid var(--color-gray-50);
+											font-size: var(--text-sm);
+											display: block;
+											box-shadow: var(--shadow-sm);
+										}
+									`),
+									Select(
+										Name(repository.ITEMS_PER_PAGE_URL_KEY),
+										Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
+										Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
+										Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),
+										Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50"), Value("50")),
+										Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100"), Value("100")),
+									),
 								),
 							),
 
@@ -148,4 +246,64 @@ func AutoTable[E any](tableId string, url string, f repository.Filter, entities 
 			belowTable,
 		),
 	}
+}
+
+func AutotableRow(children ...Node) Node {
+	return Tr(InlineStyle("me:hover{ background-color: var(--color-neutral-50);} me {border-bottom: 1px solid var(--color-neutral-200); }"),
+		Group(children),
+	)
+}
+
+func AutotableItem(children ...Node) Node {
+	return Td(InlineStyle("me { padding: $(4); }"),
+		P(InlineStyle("me { width: 100%; display: block; font-size: var(--text-sm); color: var(--color-neutral-800); }"),
+			Group(children),
+		),
+	)
+}
+
+func AutotableItemBold(children ...Node) Node {
+	return Td(InlineStyle("me { padding: $(4); }"),
+		P(InlineStyle("me { width: 100%; display: block; font-weight: var(--font-weight-semibold); font-size: var(--text-sm); color: var(--color-neutral-800); }"),
+			Group(children),
+		),
+	)
+}
+
+func AutotableSearchGroup(children ...Node) Node {
+	return Div(InlineStyle("me { width: 100%; display: flex; justify-content: between; margin-bottom: $(3); margin-top: $(1); }"),
+		Div(InlineStyle("me { width: 100%; position: relative; }"),
+			Div(InlineStyle("me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $(1);}"),
+				Group(children),
+			),
+		),
+	)
+}
+
+func AutotableSearch(c ...Node) Node {
+	return Div(
+		InlineStyle(`
+			me {
+				width: 100%;
+			}
+
+			me > input {
+				background-color: var(--color-white);
+				width: 100%;
+				padding-right: $(11);
+				padding-left: $(3);
+				padding-top: $(2);
+				padding-bottom: $(2);
+				height: $(10);
+				font-size: var(--text-sm);
+				border: 1px solid var(--color-neutral-200);
+				box-shadow: var(--shadow-sm);
+			}
+
+			me > input:placeholder {
+				color: var(--color-neutral-400);
+			}
+		`),
+		Input(Group(c)),
+	)
 }

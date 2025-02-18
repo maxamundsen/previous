@@ -12,9 +12,6 @@ import (
 	"net/http"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func HtmxPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	HtmxView(*identity).Render(w)

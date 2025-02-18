@@ -16,9 +16,6 @@ import (
 	"net/http"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func AutoTableHxPage(w http.ResponseWriter, r *http.Request) {
 	filter := repository.ParseFilterFromRequest(r)
 	filter.Pagination.Enabled = true
@@ -64,54 +61,38 @@ func AutoTableHxPage(w http.ResponseWriter, r *http.Request) {
 		return AutoTable(
 			elId,
 			r.URL.Path,
+			cols,
 			filter,
 			orders,
-			Group{
-				Div(Class("w-full flex justify-between mb-3 mt-1"),
-					Div(Class("w-full relative"),
-						Div(Class("relative flex flex-row items-center"),
-							TableSearch(
-								Placeholder("Search Customer Name..."),
-								BindSearch(elId, table.Order.PurchaserName.Name()),
-								AutoFocus(),
-							),
-							TableSearch(
-								Placeholder("Search Customer Email..."),
-								BindSearch(elId, table.Order.PurchaserEmail.Name()),
-								AutoFocus(),
-							),
-							TableSearch(
-								Placeholder("Price Min"),
-								BindSearch(elId, table.Order.Price.Name() + "_left"),
-							),
-							TableSearch(
-								Placeholder("Price Max"),
-								BindSearch(elId, table.Order.Price.Name() + "_right"),
-							),
-						),
-					),
+			AutotableSearchGroup(
+				AutotableSearch(
+					Placeholder("Search Customer Name..."),
+					BindSearch(elId, table.Order.PurchaserName.Name()),
+					AutoFocus(),
 				),
-			},
+				AutotableSearch(
+					Placeholder("Search Customer Email..."),
+					BindSearch(elId, table.Order.PurchaserEmail.Name()),
+					AutoFocus(),
+				),
+				AutotableSearch(
+					Placeholder("Price Min"),
+					BindSearch(elId, table.Order.Price.Name()+"_left"),
+				),
+				AutotableSearch(
+					Placeholder("Price Max"),
+					BindSearch(elId, table.Order.Price.Name()+"_right"),
+				),
+			),
 			func(order model.Order) Node {
-				return Tr(Class("hover:bg-neutral-50 border-b border-neutral-200"),
-					Td(Class("p-4 py-5"),
-						P(Class("block font-semibold text-sm text-neutral-800"), ToText(order.ID)),
-					),
-					Td(Class("p-4 py-5"),
-						P(Class("block text-sm text-neutral-800"), ToText(order.ProductID)),
-					),
-					Td(Class("p-4 py-5"),
-						P(Class("block text-sm text-neutral-800"), ToText(order.PurchaserName)),
-					),
-					Td(Class("p-4 py-5"),
-						P(Class("block text-sm text-neutral-800"), ToText(order.PurchaserEmail)),
-					),
-					Td(Class("p-4 py-5"),
-						P(Class("block font-semibold text-sm text-neutral-800"), Text("$"), FormatMoney(int64(order.Price))),
-					),
+				return AutotableRow(
+					AutotableItemBold(ToText(order.ID)),
+					AutotableItem(ToText(order.ProductID)),
+					AutotableItem(ToText(order.PurchaserName)),
+					AutotableItem(ToText(order.PurchaserEmail)),
+					AutotableItemBold(Text("$"), FormatMoney(int64(order.Price))),
 				)
 			},
-			cols,
 			nil,
 		)
 	}().Render(w)

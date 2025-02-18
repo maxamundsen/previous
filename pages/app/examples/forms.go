@@ -17,9 +17,6 @@ type FormViewModel struct {
 	field2  string
 }
 
-// @Identity
-// @Protected
-// @CookieSession
 func FormPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
@@ -39,8 +36,8 @@ func FormPage(w http.ResponseWriter, r *http.Request) {
 				Group{
 					P(Text("You input:")),
 					Ul(
-						Li(Class("text-red-400"), Text(viewModel.field1)),
-						Li(Class("text-red-400"), Text(viewModel.field2)),
+						Li(InlineStyle("me { color: var(--color-red-600);}"), Text(viewModel.field1)),
+						Li(InlineStyle("me { color: var(--color-red-600);}"), Text(viewModel.field2)),
 					),
 					Br(),
 				},

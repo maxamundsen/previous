@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
-	"previous/preload"
 )
 
 func IndexPage(w http.ResponseWriter, r *http.Request) {
@@ -27,13 +26,12 @@ func IndexPage(w http.ResponseWriter, r *http.Request) {
 
 	rr := &httptest.ResponseRecorder{Code: http.StatusOK}
 
-	// otherwise, serve a static file (assuming it exists)
-	preload.HttpFS.ServeHTTP(rr, r)
+	HttpFS.ServeHTTP(rr, r)
 
 	if rr.Code != http.StatusOK {
 		w.WriteHeader(rr.Code)
 		ErrorPage(rr.Code).Render(w)
 	} else {
-		preload.HttpFS.ServeHTTP(w, r)
+		HttpFS.ServeHTTP(w, r)
 	}
 }

@@ -98,20 +98,66 @@ func ToText(i interface{}) Node {
 
 // FORMS
 func FormInput(children ...Node) Node {
-	return Input(Class("bg-white p-1 block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6"),
-		Group(children),
+	return Div(
+		InlineStyle(`
+			me > input {
+				background-color: var(--color-white);
+				padding: $(2);
+				display: block;
+				width: 100%;
+				border: 0;
+				color: var(--color-neutral-900);
+				box-shadow: var(--shadow-sm);
+			}
+
+			@media sm {
+				me >input {
+					font-size: var(--text-sm);
+				}
+			}
+		`),
+		Input(Group(children)),
 	)
 }
 
 func FormSelect(children ...Node) Node {
-	return Select(Class("p-3 bg-white block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6"),
-		Group(children),
+	return Div(
+		InlineStyle(`
+			me > select {
+				padding: $(3);
+				background-color: var(--color-white);
+				display: block;
+				width: 100%;
+				border: 0;
+				color: var(--color-neutral-900);
+				box-shadow: var(--shadow-sm);
+			}
+			@media sm {
+				me > select{
+					font-size: var(--text-sm);
+				}
+			}
+		`),
+		Select(Group(children)),
 	)
 }
 
 func FormTextarea(children ...Node) Node {
-	return Textarea(Class("block p-2.5 w-full text-sm text-neutral-900 bg-white shadow-sm border-0 ring-1 ring-inset ring-neutral-300"),
-		Group(children),
+	return Div(
+		InlineStyle(`
+			me > textarea {
+				display: block;
+				padding: $(3);
+				width: 100%;
+				font-size: var(--text-sm);
+				color: var(--color-neutral-900);
+				background-color: var(--color-white);
+				box-shadow: var(--shadow-sm);
+			}
+		`),
+		Textarea(
+			Group(children),
+		),
 	)
 }
 
@@ -121,7 +167,7 @@ func FormLabel(children ...Node) Node {
 
 // TEXT
 func PageLink(location string, display Node, newPage bool) Node {
-	return A(Href(location), Class("underline text-blue-600 hover:text-blue-800"), display, If(newPage, Target("_blank")))
+	return A(Href(location), InlineStyle("me{text-decoration: underline; color: var(--color-blue-600);} this:hover{color: var(--color-blue-800);}"), display, If(newPage, Target("_blank")))
 }
 
 // BUTTONS
@@ -144,12 +190,6 @@ func ButtonBlue(children ...Node) Node {
 }
 
 // TABLES
-func TableSearch(c ...Node) Node {
-	return Input(Class("bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
-		Group(c),
-	)
-}
-
 func TableSearchDropdown(c ...Node) Node {
 	return Select(Class("bg-white w-full px-3 h-10 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
 		Group(c),
@@ -158,10 +198,21 @@ func TableSearchDropdown(c ...Node) Node {
 
 func TableTW(c ...Node) Node {
 	return Div(Class("flex flex-col"),
-		Div(Class("-m-1.5 overflow-x-auto"),
-			Div(Class("p-1.5 min-w-full inline-block align-middle"),
-				Div(Class("overflow-hidden"),
-					Table(Class("min-w-full divide-y divide-neutral-200 table-fixed"),
+		Div(InlineStyle("me {margin: $(2); overflow: x-auto;}"),
+			Div(InlineStyle("me { padding: $(2); min-width: 100%; display: inline-block; vertical-align: middle; }"),
+				Div(InlineStyle("me { overflow: hidden; }"),
+					Table(
+						InlineStyle(`
+							me {
+								min-width: 100%;
+								table-layout: fixed;
+							}
+
+							me > :not(:last-child) {
+								border-top-width: 0px;
+								border-bottom-width: 1px;
+							}
+						`),
 						Group(c),
 					),
 				),
@@ -171,7 +222,16 @@ func TableTW(c ...Node) Node {
 }
 
 func TBodyTW(children ...Node) Node {
-	return TBody(Class("divide-y divide-neutral-200"), Group(children))
+	return TBody(
+		InlineStyle(`
+			me > :not(:last-child) {
+				border-top-width: 0px;
+				border-bottom-width: 1px;
+				border-color: var(--color-neutral-500);
+			}
+		`),
+		Group(children),
+	)
 }
 
 func ThTW(children ...Node) Node {
@@ -185,12 +245,43 @@ func TdTW(children ...Node) Node {
 // HTMX Helpers
 func HxLoad(url string) Node {
 	return Div(Attr("hx-get", url), Attr("hx-trigger", "load"),
-		Spinner(),
+		Loader(),
 	)
 }
 
-func Spinner() Node {
-	// we could make this an "icon" but ... why?
-	// also just return regular HTML because why not
-	return Raw(`<div class="text-center"><div role="status"><svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/> </svg> <span class="sr-only">Loading...</span></div></div>`)
+func Loader() Node {
+	return Span(
+		InlineStyle(`
+		me {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			display: inline-block;
+			border-top: 4px solid #FFF;
+			border-right: 4px solid transparent;
+			box-sizing: border-box;
+			animation: rotation 1s linear infinite;
+		}
+		me::after {
+			content: '';
+			box-sizing: border-box;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			border-bottom: 4px solid #FF3D00;
+			border-left: 4px solid transparent;
+		}
+		@keyframes rotation {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+		`),
+	)
 }

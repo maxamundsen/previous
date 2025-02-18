@@ -11,10 +11,6 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-[x-cloak] {
-	display: none !important;
-}
-
 /* Tailwind Design System (with a few tweaks)*/
 :root {
 	--breakpoint-sm: 640px;

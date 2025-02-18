@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"previous/.metagen/pageinfo"
 	. "previous/components"
 
 	. "maragu.dev/gomponents"
@@ -64,7 +63,7 @@ func LoginView(errorMsg string) Node {
 		Body(Attr("x-data", "{ clickedLogin: false }"), Class("h-full bg-neutral-50"),
 			Div(Class("flex flex-col justify-normal px-6 py-5 lg:px-8 pt-24"),
 				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm mb-3"),
-					A(Href(pageinfo.Root.Index.Url()), Img(Class("mx-auto h-32 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
+					A(Href("/"), Img(Class("mx-auto h-32 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
 				),
 				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm"),
 					If(errorMsg != "",

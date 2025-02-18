@@ -8,28 +8,7 @@ import (
 	. "previous/basic"
 	"reflect"
 	"regexp"
-	"runtime/debug"
-	"strings"
 )
-
-func getCurrentModuleName() string {
-	bi, _ := debug.ReadBuildInfo()
-	parts := strings.Split(bi.Path, "/")
-	module_name := parts[0]
-
-	return module_name
-}
-
-// given /foo/bar/baz -> baz
-func removeLastPart(s string) string {
-	lastSlashIndex := strings.LastIndex(s, "/")
-
-	if lastSlashIndex == -1 {
-		return s
-	}
-
-	return s[:lastSlashIndex]
-}
 
 func printStatus(b bool) {
 	var status string

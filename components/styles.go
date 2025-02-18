@@ -6,5 +6,7 @@ import (
 )
 
 func InlineStyle(input string) Node {
+	// input = strings.ReplaceAll(input, "\n", "")
+	// input = strings.ReplaceAll(input, "\t", "")
 	return StyleEl(Raw(input))
 }

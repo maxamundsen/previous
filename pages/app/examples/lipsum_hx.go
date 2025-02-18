@@ -7,10 +7,6 @@ import (
 	. "maragu.dev/gomponents"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
-// @Static
 func LoremIpsumHxPage(w http.ResponseWriter, r *http.Request) {
 	func() Node {
 		return Text(LOREM_IPSUM)

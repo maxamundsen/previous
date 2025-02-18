@@ -1,7 +1,6 @@
 package examples
 
 import (
-	"previous/.metagen/pageinfo"
 	. "previous/basic"
 	. "previous/components"
 
@@ -12,7 +11,7 @@ import (
 )
 
 func HtmxCounterPage(w http.ResponseWriter, r *http.Request) {
-	count, _ := strconv.Atoi(r.URL.Query().Get("count"))
+	count, _ := strconv.Atoi(r.PathValue("count"))
 	count += 1
 
 	CounterButton(count).Render(w)
@@ -23,7 +22,7 @@ func CounterButton(count int) Node {
 		return ButtonBlue(Icon(ICON_HTMX, 24), Text("Counter reached 10"))
 	} else {
 		return ButtonGray(
-			Attr("hx-get", pageinfo.Root.App.Examples.Htmx_counter.Url() + "?count="+ToString(count)),
+			Attr("hx-get", "/app/examples/htmx-counter/"+ToString(count)),
 			Attr("hx-swap", "outerHTML"),
 			Text("Counter: "), ToText(count),
 		)

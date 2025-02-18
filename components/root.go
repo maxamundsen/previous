@@ -22,7 +22,7 @@ func RootLayout(title string, children ...Node) Node {
 	}
 
 	return Doctype(
-		HTML(Class("h-full"),
+		HTML(InlineStyle("me { height: 100%; }"),
 			Lang("en"),
 			Head(
 				Meta(Charset("utf-8")),
@@ -50,8 +50,6 @@ func RootLayout(title string, children ...Node) Node {
 					Script(Src("/lib/htmx/htmx.min.js")),
 				),
 
-				Script(Src("/lib/alpine/alpine-focus.min.js"), Defer()),
-				Script(Src("/lib/alpine/alpine.min.js"), Defer()),
 				Script(Src("/lib/highlight/highlight.min.js")),
 				Script(Src("/js/index.js?v="+js_hash)),
 			),

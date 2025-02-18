@@ -8,7 +8,7 @@ import (
 
 var Scheduler gocron.Scheduler
 
-func InitTasks() {
+func Init() {
 	var err error
 
 	Scheduler, err := gocron.NewScheduler()

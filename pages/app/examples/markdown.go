@@ -10,9 +10,6 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func MarkdownPage(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 

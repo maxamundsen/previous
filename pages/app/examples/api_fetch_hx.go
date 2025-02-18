@@ -24,8 +24,6 @@ type person struct {
 	Craft string `json:"craft"`
 }
 
-// @Identity
-// @Protected
 func ApiFetchHxPage(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
