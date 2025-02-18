@@ -41,14 +41,12 @@ type RouteInfo struct {
 }
 
 // Automatically generate route mappings and pageinfo structs from pages.
-// Note that this generates against pages AFTER being processed by the CSS preprocessor.
-// This means that it looks at files present in `./.metagen/pages/` instead of `/pages/`.
 func generatePageData() {
-	const root = ".metagen/pages"
+	const root = "pages"
 
 	module_name := getCurrentModuleName()
 
-	fmt.Printf("Generating HTTP routes")
+	fmt.Printf("Generating Page Info")
 
 	var routeList []RouteInfo
 
@@ -124,7 +122,7 @@ func generatePageData() {
 
 					if ri.Package == "/" {
 						ri.Package = "pages"
-						ri.Import = module_name + "/.metagen/" + ri.Package // add .metagen since we are referencing pages that have previous been preprocessed
+						ri.Import = module_name + "/" + ri.Package
 						ri.PageName = strings.ReplaceAll(ri.PageName, "/", "pages")
 					} else {
 						ri.Import = module_name + "/" + root + "/" + removeLastPart(strings.TrimPrefix(relativePath, "/"))
@@ -215,7 +213,7 @@ func generatePageData() {
 			routeList[i].Static = true
 		}
 
-		if route.PageName == "IndexPage" && route.Import != module_name+"/.metagen/pages" {
+		if route.PageName == "IndexPage" && route.Import != module_name+"/pages" {
 			parts := GetPathParts(route.URL)
 			parts = append(parts, "index")
 
@@ -247,13 +245,10 @@ func generatePageData() {
 			structExpansion += ".Index"
 		}
 
-		// remove `.metagen/` from the file def, since we want to point to the original, non-preprocessed, page file
-		newfiledef := strings.TrimPrefix(v.FileDef, ".metagen/")
-
 		// initialize each pageinfo struct
 		structCode += fmt.Sprintf("\tRoot.%s.url = \"%s\"\n", structExpansion, v.URL)
 		structCode += fmt.Sprintf("\tRoot.%s.static = %t\n", structExpansion, v.Static)
-		structCode += fmt.Sprintf("\tRoot.%s.fileDef = \"/%s\"\n", structExpansion, newfiledef)
+		structCode += fmt.Sprintf("\tRoot.%s.fileDef = \"/%s\"\n", structExpansion, v.FileDef)
 		structCode += fmt.Sprintf(
 			"\tRoot.%s.middleware = middleware{\n\t\tIdentity: %t,\n\t\tProtected: %t,\n\t\tCookieSession: %t,\n\t\tEnableCors: %t,\n\t}\n",
 			structExpansion,
@@ -442,30 +437,18 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 		return err
 	}
 
-	out, cmdErr := exec.Command("go", "run", "./cmd/metagen/.staticgen/staticgen.go").CombinedOutput()
+	_, cmdErr := exec.Command("go", "run", "./cmd/metagen/.staticgen/staticgen.go").CombinedOutput()
 	if cmdErr != nil {
 		return err
 	}
 
-	staticPageCode := METAGEN_AUTO_COMMENT + "\n"
-	staticPageCode += fmt.Sprintf("package %s\n\n", ri.Package)
-	staticPageCode += "import \"net/http\"\n\n"
-	staticPageCode += fmt.Sprintf("func %s(w http.ResponseWriter, r *http.Request) {\n", ri.PageName)
+	// newFileDef := strings.TrimSuffix(ri.FileDef, ".go")
+	// newFileDef += ".html"
 
-	if ri.StaticAPI {
-		staticPageCode += "\tw.Header().Set(\"Content-Type\", \"application/json\")\n"
-	} else {
-		staticPageCode += "\tw.Header().Set(\"Content-Type\", \"text/html\")\n"
-	}
-
-	staticPageCode += "\tw.WriteHeader(http.StatusOK)\n"
-	staticPageCode += fmt.Sprintf("\tw.Write([]byte(`%s`))\n", out)
-	staticPageCode += "}\n"
-
-	newFileErr := os.WriteFile(ri.FileDef, []byte(staticPageCode), 0644)
-	if newFileErr != nil {
-		return newFileErr
-	}
+	// newFileErr := os.WriteFile(newFileDef, []byte(out), 0644)
+	// if newFileErr != nil {
+	// 	return newFileErr
+	// }
 
 	return nil
 }
