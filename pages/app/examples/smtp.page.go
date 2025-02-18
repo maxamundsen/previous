@@ -50,12 +50,12 @@ func SmtpPage(w http.ResponseWriter, r *http.Request) {
 
 func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
 	return AppLayout("SMTP Client Example", identity,
-		Div(InlineStyle("$this{padding: $(10); background: var(--color-white); border: 1px solid var(--color-neutral-200); box-shadow: var(--shadow-md); margin-bottom: $(5);}"),
-			P(InlineStyle("$this{font-weight: var(--font-weight-bold); color: var(--color-neutral-800);}"), Text("Note:")),
+		Div(InlineStyle("this{padding: $(10); background: var(--color-white); border: 1px solid var(--color-neutral-200); box-shadow: var(--shadow-md); margin-bottom: $(5);}"),
+			P(InlineStyle("this{font-weight: var(--font-weight-bold); color: var(--color-neutral-800);}"), Text("Note:")),
 			P(Text("This demo requires you to connect a valid SMTP server. These options are set in the runtime configuration file.")),
 		),
-		If(errorMsg != "", P(InlineStyle("$this{color: var(--color-red-600);}"), Text(errorMsg))),
-		If(successMsg != "", P(InlineStyle("$this{color: var(--color-green-600);}"), Text(successMsg))),
+		If(errorMsg != "", P(InlineStyle("this{color: var(--color-red-600);}"), Text(errorMsg))),
+		If(successMsg != "", P(InlineStyle("this{color: var(--color-green-600);}"), Text(successMsg))),
 		Form(Method("post"), AutoComplete("off"),
 			FormLabel(Text("To:")),
 			FormInput(Type("email"), Name("to")),

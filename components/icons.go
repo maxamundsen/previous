@@ -47,5 +47,5 @@ const(
 
 func Icon(icon string, size int) Node {
 	size_string := strconv.Itoa(size)
-	return SVG(InlineStyle("$this{display: inline;}"), Height(size_string), Width(size_string), Raw(icon))
+	return SVG(InlineStyle("this{display: inline;}"), Height(size_string), Width(size_string), Raw(icon))
 }
