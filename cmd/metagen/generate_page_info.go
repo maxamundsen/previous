@@ -442,6 +442,8 @@ func generateStaticPage(module_name string, ri RouteInfo) error {
 		return err
 	}
 
+	// @todo make this output to wwwroot dir under /pages directory
+
 	// newFileDef := strings.TrimSuffix(ri.FileDef, ".go")
 	// newFileDef += ".html"
 
