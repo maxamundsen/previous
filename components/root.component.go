@@ -42,9 +42,7 @@ func RootLayout(title string, children ...Node) Node {
 
 				// Small helpers that allow for very powerful interactivity, while remaining "vanilla"
 				// https://github.com/gnat/surreal
-				// https://github.com/gnat/css-scope-inline
 				Script(Src("/lib/surreal/surreal.js")),
-				Script(Src("/lib/css-scope-inline/script.js")),
 
 				// use minified htmx only in prod
 				IfElse(config.DEBUG,

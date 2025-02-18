@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/metagen",
-            "args": ["--env=dev", "build-all"],
+            "args": ["--env=dev", "build"],
             "cwd": "${workspaceFolder}",
         },
         {
@@ -21,6 +21,7 @@
             "program": "${workspaceFolder}/cmd/server",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/.env",
+            "preLaunchTask": "Metagen: Build"
         }
     ]
 }
