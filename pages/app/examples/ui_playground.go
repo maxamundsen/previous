@@ -3,6 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
+	hx "maragu.dev/gomponents-htmx"
 	"net/http"
 	. "previous/components"
 	"previous/middleware"
@@ -46,8 +47,8 @@ func UIPlaygroundPage(w http.ResponseWriter, r *http.Request) {
 
 			ButtonGray(
 				Text("Swap contents of Modal 1 via HTMX"),
-				Attr("hx-get", "/app/examples/lipsum-hx"),
-				Attr("hx-target", CSSID(MODAL1)),
+				hx.Get("/app/examples/lipsum-hx"),
+				hx.Target(CSSID(MODAL1)),
 			),
 		)
 	}().Render(w)

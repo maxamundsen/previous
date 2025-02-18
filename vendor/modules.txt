@@ -108,5 +108,7 @@ gopkg.in/yaml.v3
 # maragu.dev/gomponents v1.0.0
 ## explicit; go 1.18
 maragu.dev/gomponents
-maragu.dev/gomponents/components
 maragu.dev/gomponents/html
+# maragu.dev/gomponents-htmx v0.6.1
+## explicit; go 1.18
+maragu.dev/gomponents-htmx

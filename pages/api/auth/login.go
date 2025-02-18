@@ -14,7 +14,6 @@ type LoginInfo struct {
 	Password string
 }
 
-// @Identity
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 

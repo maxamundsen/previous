@@ -6,6 +6,7 @@ import (
 	"previous/repository"
 
 	. "maragu.dev/gomponents"
+	hx "maragu.dev/gomponents-htmx"
 	. "maragu.dev/gomponents/html"
 )
 
@@ -42,11 +43,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 				}
 			`),
 			Icon(icon, 16),
-			Attr("hx-get", url+repository.QueryParamsFromPagenum(page, f)),
-			Attr("hx-swap", CSSID(tableId)),
-			Attr("hx-target", CSSID(tableId)),
-			Attr("hx-select", CSSID(tableId)),
-			Attr("hx-trigger", "click"),
+			hx.Get(url+repository.QueryParamsFromPagenum(page, f)),
+			hx.Swap(CSSID(tableId)),
+			hx.Target(CSSID(tableId)),
+			hx.Select(CSSID(tableId)),
+			hx.Trigger("click"),
 		)
 	}
 
@@ -57,10 +58,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 		Div(ID(tableId),
 			Form(ID(tableId+FORM_BIND_SUFFIX),
 				AutoComplete("off"),
-				Attr("hx-get", url),
-				Attr("hx-trigger", "keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
-				Attr("hx-swap", "outerHTML"), Attr("hx-target", CSSID(tableId)),
-				Attr("hx-select", CSSID(tableId)),
+				hx.Get(url),
+				hx.Trigger("keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
+				hx.Swap("outerHTML"),
+				hx.Target(CSSID(tableId)),
+				hx.Select(CSSID(tableId)),
 				Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
 				Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 				Input(Type("hidden"), Name(repository.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
@@ -109,11 +111,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 													background-color: var(--color-neutral-200);
 												}
 											`),
-											Attr("hx-get", url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
-											Attr("hx-swap", CSSID(tableId)),
-											Attr("hx-target", CSSID(tableId)),
-											Attr("hx-select", CSSID(tableId)),
-											Attr("hx-trigger", "click"),
+											hx.Get(url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
+											hx.Swap(CSSID(tableId)),
+											hx.Target(CSSID(tableId)),
+											hx.Select(CSSID(tableId)),
+											hx.Trigger("click"),
 											P(
 												InlineStyle(`
 													me {
@@ -192,11 +194,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 							Form(
 								InlineStyle("me { padding: $(3); min-height: $(9); display: block;}"),
 								ID(tableId+FORM_PAGINATION_SUFFIX),
-								Attr("hx-get", url),
-								Attr("hx-trigger", "change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
-								Attr("hx-target", CSSID(tableId)),
-								Attr("hx-select", CSSID(tableId)),
-								Attr("hx-swap", "outerHTML"),
+								hx.Get(url),
+								hx.Trigger("change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
+								hx.Target(CSSID(tableId)),
+								hx.Select(CSSID(tableId)),
+								hx.Swap("outerHTML"),
 
 								MapMapWithKey(f.Search, func(s string, v string) Node {
 									return Input(Type("hidden"), Name(repository.SEARCH_URL_KEY_PREFIX+s), Value(v))

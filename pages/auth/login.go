@@ -16,9 +16,6 @@ import (
 	"time"
 )
 
-// @Identity
-// @Protected
-// @CookieSession
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		LoginView("").Render(w)

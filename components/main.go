@@ -6,6 +6,7 @@ import (
 	"time"
 
 	. "maragu.dev/gomponents"
+	hx "maragu.dev/gomponents-htmx"
 	. "maragu.dev/gomponents/html"
 )
 
@@ -244,7 +245,7 @@ func TdTW(children ...Node) Node {
 
 // HTMX Helpers
 func HxLoad(url string) Node {
-	return Div(Attr("hx-get", url), Attr("hx-trigger", "load"),
+	return Div(hx.Get(url), hx.Trigger("load"),
 		Loader(),
 	)
 }

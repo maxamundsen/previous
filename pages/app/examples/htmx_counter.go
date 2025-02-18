@@ -5,6 +5,7 @@ import (
 	. "previous/components"
 
 	. "maragu.dev/gomponents"
+	hx "maragu.dev/gomponents-htmx"
 
 	"net/http"
 	"strconv"
@@ -22,8 +23,8 @@ func CounterButton(count int) Node {
 		return ButtonBlue(Icon(ICON_HTMX, 24), Text("Counter reached 10"))
 	} else {
 		return ButtonGray(
-			Attr("hx-get", "/app/examples/htmx-counter/"+ToString(count)),
-			Attr("hx-swap", "outerHTML"),
+			hx.Get("/app/examples/htmx-counter/"+ToString(count)),
+			hx.Swap("outerHTML"),
 			Text("Counter: "), ToText(count),
 		)
 	}
