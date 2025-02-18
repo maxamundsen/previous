@@ -23,7 +23,6 @@ func AutoTableHxPage(w http.ResponseWriter, r *http.Request) {
 	// fetch entities from filter function
 	// this first counts the possible items before pagination
 	searchItems, _ := repository.OrderRepository{}.Filter(repository.Filter{Search: filter.Search})
-	filter.Pagination.TotalItems = len(searchItems)
 
 	// this query gets the data AFTER pagination
 	orders, _ := repository.OrderRepository{}.Filter(filter)

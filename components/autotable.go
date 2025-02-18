@@ -91,7 +91,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 						}
 					`),
 					Table(
-						InlineStyle("me { table-layout: fixed; }"),
+						InlineStyle("me { table-layout: fixed; width: 100%; }"),
 						THead(
 							Tr(
 								Map(cols, func(col repository.ColInfo) Node {
@@ -121,7 +121,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 													me {
 														display: flex;
 														align-items: center;
-														justify-content: between;
+														justify-content: space-between;
 														gap: $(2);
 														font-size: var(--text-sm);
 														color: var(--color-neutral-500);
@@ -154,7 +154,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 													me {
 														display: flex;
 														align-items: center;
-														justify-content: between;
+														justify-content: space-between;
 														gap: $(2);
 														font-size: var(--text-sm);
 														font-weight: var(--font-weight-normal);
@@ -180,19 +180,18 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 				),
 				If(f.Pagination.Enabled,
 					Div(
-						InlineStyle("me { display: flex; justify-content: between; align-items: center; padding: $(3) $(4); }"),
+						InlineStyle("me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
 						Div(
 							InlineStyle("me { font-size: var(--text-sm); color: var(--color-neutral-500); }"),
 							B(Icon(ICON_LIST_ORDERED, 16)),
 							Span(InlineStyle("me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
 
-						Div(InlineStyle("me { display: flex;}"),
-							Div(InlineStyle("me { justify-content: center; font-size: var(--text-sm); color: var(--color-neutral-500);}"),
+						Div(InlineStyle("me { display: flex; }"),
+							Div(InlineStyle("me { margin-right: $(3); align-content: center; font-size: var(--text-sm); color: var(--color-neutral-500);}"),
 								Span(Text("Items per page:")),
 							),
 							Form(
-								InlineStyle("me { padding: $(3); min-height: $(9); display: block;}"),
 								ID(tableId+FORM_PAGINATION_SUFFIX),
 								hx.Get(url),
 								hx.Trigger("change from:(#"+tableId+FORM_PAGINATION_SUFFIX+" select)"),
@@ -211,11 +210,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 										me > select {
 											background-color: var(--color-gray-50);
 											padding: $(3);
-											min-height: $(9);
 											border: 1px solid var(--color-gray-50);
 											font-size: var(--text-sm);
 											display: block;
 											box-shadow: var(--shadow-sm);
+											margin-right: $(3);
 										}
 									`),
 									Select(
@@ -232,7 +231,8 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 							paginationButton(ICON_CHEVRON_FIRST, 1),
 							paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
 
-							Div(Class("text-sm content-center text-neutral-500 py-3 px-3 min-h-9"),
+							Div(
+								InlineStyle("me { font-size: var(--text-sm); display: flex; justify-content: center; color: var(--color-neutral-500); padding: $(3); min-height: $(9); }"),
 								Text("Page "),
 								ToText(f.Pagination.CurrentPage),
 								Text(" of "),
@@ -273,7 +273,7 @@ func AutotableItemBold(children ...Node) Node {
 }
 
 func AutotableSearchGroup(children ...Node) Node {
-	return Div(InlineStyle("me { width: 100%; display: flex; justify-content: between; margin-bottom: $(3); margin-top: $(1); }"),
+	return Div(InlineStyle("me { width: 100%; display: flex; justify-content: space-between; margin-bottom: $(3); margin-top: $(1); }"),
 		Div(InlineStyle("me { width: 100%; position: relative; }"),
 			Div(InlineStyle("me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $(1);}"),
 				Group(children),
