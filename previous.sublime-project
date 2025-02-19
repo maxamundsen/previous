@@ -1,0 +1,22 @@
+{
+    "folders":
+    [
+        {
+            "path": ".",
+        }
+    ],
+    "build_systems":
+    [
+        {
+            "name": "Metagen: Build",
+            "working_dir": "${project_path}",
+            "cmd": ["go", "run", "${project_path}/cmd/metagen", "--env=dev", "build"]
+        },
+        {
+            "name": "Metagen: Build && Run Server",
+            "shell_cmd": "go run ${project_path}/cmd/metagen --env=dev build && go run ${project_path}/cmd/server",
+            "working_dir": "${project_path}",
+            "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+        },
+    ]
+}

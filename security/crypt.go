@@ -58,8 +58,8 @@ func DecryptData[T any](dataString string) (*T, error) {
 	return dest, nil
 }
 
-func HighwayHash(in string) (string, error) {
-	key := []byte("01234567890123456789012345678901")
+func HighwayHash58(in string) (string, error) {
+	key := []byte(config.DATA_HASH_KEY)
 
 	hasher, err := highwayhash.New(key)
 	if err != nil {
@@ -67,13 +67,33 @@ func HighwayHash(in string) (string, error) {
 		return "", err
 	}
 
+	hasher.Write([]byte(in))
+
+	hash := hasher.Sum(nil)
+
+	encodedData := base58.Encode(hash)
+
+	return encodedData, nil
+}
+
+func HighwayHash(in string) (string, error) {
+	key := []byte(config.DATA_HASH_KEY)
+
+	hasher, err := highwayhash.New(key)
+	if err != nil {
+		log.Println("Error generating hasher.")
+		return "", err
+	}
+
+	hasher.Write([]byte(in))
+
 	hash := hasher.Sum(nil)
 
 	return base64.StdEncoding.EncodeToString(hash), nil
 }
 
 func QuickFileHash(filepath string) (string, error) {
-	key := []byte("01234567890123456789012345678901")
+	key := []byte(config.DATA_HASH_KEY)
 
 	file, err := os.Open(filepath)
 	if err != nil {

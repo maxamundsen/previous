@@ -107,6 +107,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 													transition-timing-function: var(--default-transition-timing-function);
 													transition-duration: var(--default-transition-duration);
 												}
+
 												me:hover {
 													background-color: var(--color-neutral-200);
 												}
@@ -179,10 +180,9 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 					),
 				),
 				If(f.Pagination.Enabled,
-					Div(
-						InlineStyle("me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
+					Div(InlineStyle("me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
 						Div(
-							InlineStyle("me { font-size: var(--text-sm); color: var(--color-neutral-500); }"),
+							InlineStyle("me { display: flex; align-items: center; font-size: var(--text-sm); color: var(--color-neutral-500); }"),
 							B(Icon(ICON_LIST_ORDERED, 16)),
 							Span(InlineStyle("me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
@@ -290,6 +290,7 @@ func AutotableSearch(c ...Node) Node {
 			}
 
 			me > input {
+				/* hello */
 				background-color: var(--color-white);
 				width: 100%;
 				padding-right: $(11);

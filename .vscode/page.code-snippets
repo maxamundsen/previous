@@ -9,7 +9,7 @@
     "	. \"maragu.dev/gomponents/html\"",
     "	\"net/http\"",
     "	\"previous/middleware\"",
-    "	. \"previous/pages/app\"",
+    "	. \"previous/handlers/app\"",
 			")",
 			"",
 			"// @Identity",

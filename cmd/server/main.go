@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 	"previous/config"
-	"previous/pages"
+	"previous/handlers"
 	"previous/repository"
 	"previous/security"
 	"previous/tasks"
 )
 
 func main() {
-	fmt.Println("Previous: A powerful web codebase.\n")
+	fmt.Println("Previous: A powerful web codebase.")
 
 	if config.DEBUG {
 		fmt.Println("DEBUG BUILD")
@@ -23,7 +23,7 @@ func main() {
 	config.Init()
 	security.Init()
 	repository.Init()
-	pages.Init()
+	handlers.Init()
 	tasks.Init()
 
 	mux := http.NewServeMux()

@@ -232,3 +232,14 @@ func RemoveDuplicates[T comparable](sliceList []T) []T {
 	}
 	return list
 }
+
+func GetFirstNChars(s string, n int) string {
+    i := 0
+    for j := range s {
+        if i == n {
+            return s[:j]
+        }
+        i++
+    }
+    return s
+}

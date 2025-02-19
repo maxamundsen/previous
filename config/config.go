@@ -24,6 +24,10 @@ const (
 	IDENTITY_DEFAULT_PATH       string = "/app/dashboard"
 	IDENTITY_AUTH_REDIRECT      bool   = true
 
+	// This key is NOT used for the hashing of passwords, or secure session data over the wire.
+	// It is ONLY used for performing quick file and string hashes, where security is not a factor.
+	DATA_HASH_KEY string = "01234567890123456789012345678901"
+
 	PASSWORD_MIN_LENGTH         int = 8
 	PASSWORD_REQUIRED_UPPERCASE int = 1
 	PASSWORD_REQUIRED_LOWERCASE int = 1

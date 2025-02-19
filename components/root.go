@@ -15,6 +15,11 @@ func RootLayout(title string, children ...Node) Node {
 		return Text("Error hashing style.css")
 	}
 
+	metagen_css_hash, err := security.QuickFileHash("./wwwroot/css/style.metagen.css")
+	if err != nil {
+		return Text("Error hashing style.css")
+	}
+
 	// automatically invalidates cached js when file hash changes
 	js_hash, err := security.QuickFileHash("./wwwroot/js/index.js")
 	if err != nil {
@@ -36,12 +41,11 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("manifest"), Href("/site.webmanifest")),
 
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
+				Link(Rel("stylesheet"), Href("/css/style.metagen.css?v="+metagen_css_hash)),
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
 				// Small helpers that allow for very powerful interactivity, while remaining "vanilla"
-				// https://github.com/gnat/css-scope-inline
 				// https://github.com/gnat/surreal
-				Script(Src("/lib/css-scope-inline/script.js")),
 				Script(Src("/lib/surreal/surreal.js")),
 
 				// use minified htmx only in prod
