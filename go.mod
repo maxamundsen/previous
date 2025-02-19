@@ -1,8 +1,6 @@
 module previous
 
-go 1.22.0
-
-toolchain go1.23.0
+go 1.23.0
 
 require golang.org/x/crypto v0.31.0
 
@@ -18,6 +16,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/minio/highwayhash v1.0.3
 	maragu.dev/gomponents v1.0.0
+	maragu.dev/gomponents-htmx v0.6.1
 )
 
 require (
@@ -37,5 +36,4 @@ require (
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	maragu.dev/gomponents-htmx v0.6.1 // indirect
 )

@@ -26,4 +26,3 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 		)
 	}().Render(w)
 }
-

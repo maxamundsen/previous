@@ -3,13 +3,13 @@ package main
 import (
 	// "previous/middleware"
 	"net/http"
-	"previous/middleware"
 	"previous/handlers"
 	"previous/handlers/api"
 	api_auth "previous/handlers/api/auth"
 	"previous/handlers/app"
 	"previous/handlers/app/examples"
 	"previous/handlers/auth"
+	"previous/middleware"
 )
 
 func mapRoutes(mux *http.ServeMux) {
@@ -41,4 +41,3 @@ func mapRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/auth/logout", id(sess(auth.LogoutHandler), true))
 	mux.HandleFunc("/", handlers.IndexHandler)
 }
-

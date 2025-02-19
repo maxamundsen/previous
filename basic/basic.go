@@ -24,18 +24,19 @@ func GetPathParts(path string) []string {
 // `/auth/login`               -> {"auth", "login"}
 //
 // =>
-// root {
-//     app {
-//         examples {
-//             webpage
-//             hello-world
-//         }
-//     }
 //
-//     auth {
-//         login
-//     }
-// }
+//	root {
+//	    app {
+//	        examples {
+//	            webpage
+//	            hello-world
+//	        }
+//	    }
+//
+//	    auth {
+//	        login
+//	    }
+//	}
 //
 // This function is used in the code generation process to generate `pageinfo` structs
 // from all known application page URLs.
@@ -209,12 +210,12 @@ func Contains[T comparable](s []T, e T) bool {
 }
 
 func IndexOf[T comparable](collection []T, el T) int {
-    for i, x := range collection {
-        if x == el {
-            return i
-        }
-    }
-    return -1
+	for i, x := range collection {
+		if x == el {
+			return i
+		}
+	}
+	return -1
 }
 
 func Remove[T comparable](arr []T, s T) []T {
@@ -234,12 +235,12 @@ func RemoveDuplicates[T comparable](sliceList []T) []T {
 }
 
 func GetFirstNChars(s string, n int) string {
-    i := 0
-    for j := range s {
-        if i == n {
-            return s[:j]
-        }
-        i++
-    }
-    return s
+	i := 0
+	for j := range s {
+		if i == n {
+			return s[:j]
+		}
+		i++
+	}
+	return s
 }

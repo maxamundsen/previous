@@ -3,8 +3,8 @@ package examples
 import (
 	"net/http"
 	. "previous/components"
-	"previous/middleware"
 	. "previous/handlers/app"
+	"previous/middleware"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"

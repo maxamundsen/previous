@@ -39,8 +39,8 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	}
 
 	// between filters
-	priceSearchLeft_string := f.Search[Order.Price.Name() + "_left"]
-	priceSearchRight_string := f.Search[Order.Price.Name() + "_right"]
+	priceSearchLeft_string := f.Search[Order.Price.Name()+"_left"]
+	priceSearchRight_string := f.Search[Order.Price.Name()+"_right"]
 
 	priceSearchLeft := Int32(int32(finance.MoneyToInt64(priceSearchLeft_string)))
 	priceSearchRight := Int32(int32(finance.MoneyToInt64(priceSearchRight_string)))

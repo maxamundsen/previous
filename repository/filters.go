@@ -57,7 +57,7 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 			qValue := strings.Join(v, "")
 
 			if qValue != "" {
-				filter.Search[strings.TrimPrefix(k, SEARCH_URL_KEY_PREFIX)]  = qValue
+				filter.Search[strings.TrimPrefix(k, SEARCH_URL_KEY_PREFIX)] = qValue
 			}
 		}
 	}

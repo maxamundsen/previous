@@ -6,7 +6,6 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-
 type AlpineStore map[string]string
 
 func (as AlpineStore) Init() Node {

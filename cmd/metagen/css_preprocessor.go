@@ -20,7 +20,7 @@ func expandInlineStyles() {
 
 	// these are the directories that get scanned
 	var dirs = [2]string{"handlers", "components"}
-	
+
 	var matches []string
 
 	for _, dir := range dirs {

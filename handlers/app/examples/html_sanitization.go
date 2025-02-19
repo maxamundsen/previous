@@ -4,9 +4,9 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	"net/http"
-	"previous/middleware"
 	. "previous/components"
 	. "previous/handlers/app"
+	"previous/middleware"
 )
 
 func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
@@ -17,10 +17,10 @@ func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 
 <script>window.alert("XSS is protected against! This doesn't work.")</script>
 `
-    if r.Method == http.MethodPost {
-        r.ParseForm()
-        input = r.FormValue("html_content")
-    }
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		input = r.FormValue("html_content")
+	}
 
 	func() Node {
 		return AppLayout("HTML Sanitization", *identity,

@@ -2,18 +2,18 @@ package app
 
 import (
 	"previous/auth"
-	. "previous/components"
 	. "previous/basic"
+	. "previous/components"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
-	navbarDropdown := func (name string, items []StrPair) Node {
+	navbarDropdown := func(name string, items []StrPair) Node {
 		return Div(
 			InlineStyle("me{cursor: pointer; position: relative; margin-left: $(3);}"),
-			Attr("x-data", "{" + name + "DropdownOpen: false}"),
+			Attr("x-data", "{"+name+"DropdownOpen: false}"),
 			Attr("x-on:click.outside", name+"DropdownOpen = false"),
 			Div(
 				InlineStyle(`me{ cursor: pointer; display: flex; position: relative; padding-top: $(2); padding-bottom: $(2); padding-left: $(3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: var(--color-neutral-100); }`),
@@ -21,7 +21,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 				Attr("x-on:click", name+"DropdownOpen = !"+name+"DropdownOpen;"),
 				Button(
 					Div(InlineStyle("me{cursor: pointer; display: flex; align-items: center;}"),
-						Span(Text(name + " ")),
+						Span(Text(name+" ")),
 						Icon(ICON_CHEVRON_DOWN, 16),
 					),
 				),
@@ -29,7 +29,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 			Div(
 				InlineStyle(`me{position: absolute; right: 0; z-index: 10; padding-top: $(1); padding-bottom: $(1); margin-top: $(2); width: $(48); background-color: var(--color-white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
 				Attr("x-cloak"),
-				Attr("x-show", name + "DropdownOpen"),
+				Attr("x-show", name+"DropdownOpen"),
 				TabIndex("-1"),
 				Map(items, func(item StrPair) Node {
 					return A(InlineStyle(`me{display: block; padding-top: $(2); padding-bottom: $(2); padding-left: $(4); padding-right: $(4); font-size: var(--text-sm); line-height: $(5); color: var(--color-neutral-700); } me:hover{background: var(--color-neutral-100);}`), Href(item.Value), TabIndex("-1"), Text(item.Key))
@@ -64,26 +64,25 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 										navbarDropdown(
 											"Examples",
 											[]StrPair{
-												StrPair{Key: "Example Index Page", Value: "/app/examples"},
-												StrPair{Key: "Auto Table", Value: "/app/examples/autotable"},
-												StrPair{Key: "Form Submission", Value: "/app/examples/forms"},
-												StrPair{Key: "HTMX", Value: "/app/examples/htmx"},
-												StrPair{Key: "Surreal.js", Value: "/app/examples/surreal"},
-												StrPair{Key: "UI Elements", Value: "/app/examples/ui-playground"},
-												StrPair{Key: "File Uploading", Value: "/app/examples/upload"},
-												StrPair{Key: "SMTP Client", Value: "/app/examples/smtp"},
-												StrPair{Key: "HTML Sanitization", Value: "/app/examples/html-sanitization"},
-												StrPair{Key: "Markdown Rendering", Value: "/app/examples/markdown"},
-												StrPair{Key: "Server-side API Fetch", Value: "/app/examples/api-fetch"},
-												StrPair{Key: "Inline Styles", Value: "/app/examples/inline-styles"},
+												{Key: "Auto Table", Value: "/app/examples/autotable"},
+												{Key: "Form Submission", Value: "/app/examples/forms"},
+												{Key: "HTMX", Value: "/app/examples/htmx"},
+												{Key: "Surreal.js", Value: "/app/examples/surreal"},
+												{Key: "UI Elements", Value: "/app/examples/ui-playground"},
+												{Key: "File Uploading", Value: "/app/examples/upload"},
+												{Key: "SMTP Client", Value: "/app/examples/smtp"},
+												{Key: "HTML Sanitization", Value: "/app/examples/html-sanitization"},
+												{Key: "Markdown Rendering", Value: "/app/examples/markdown"},
+												{Key: "Server-side API Fetch", Value: "/app/examples/api-fetch"},
+												{Key: "Inline Styles", Value: "/app/examples/inline-styles"},
 											},
 										),
 
 										navbarDropdown(
 											"API",
 											[]StrPair{
-												StrPair{Key: "Test", Value: "/api/test"},
-												StrPair{Key: "Account", Value: "/api/account"},
+												{Key: "Test", Value: "/api/test"},
+												{Key: "Account", Value: "/api/account"},
 											},
 										),
 
@@ -110,8 +109,8 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											Attr("x-cloak"),
 											Attr("x-show", "profileDropdownOpen"),
 											TabIndex("-1"),
-											A(Href("/app/account"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"),Text("Your Profile")),
-											A(Href("/auth/logout"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"),Text("Log out")),
+											A(Href("/app/account"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Your Profile")),
+											A(Href("/auth/logout"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Log out")),
 										),
 									),
 								),

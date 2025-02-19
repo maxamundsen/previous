@@ -2,12 +2,12 @@ package examples
 
 import (
 	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	hx "maragu.dev/gomponents-htmx"
+	. "maragu.dev/gomponents/html"
 	"net/http"
 	. "previous/components"
-	"previous/middleware"
 	. "previous/handlers/app"
+	"previous/middleware"
 )
 
 func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {

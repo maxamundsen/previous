@@ -10,7 +10,7 @@ func EnableCors(h http.HandlerFunc) http.HandlerFunc {
 		if config.DEBUG {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "https://" + config.GetConfig().Domain)
+			w.Header().Set("Access-Control-Allow-Origin", "https://"+config.GetConfig().Domain)
 		}
 
 		h.ServeHTTP(w, r)
