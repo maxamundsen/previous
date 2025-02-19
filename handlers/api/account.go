@@ -5,7 +5,7 @@ import (
 	"previous/middleware"
 )
 
-func AccountApiPage(w http.ResponseWriter, r *http.Request) {
+func AccountApiHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	ApiWriteJSON(w, identity.User)
 }

@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-func HtmxCounterPage(w http.ResponseWriter, r *http.Request) {
+func HtmxCounterHandler(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.PathValue("count"))
 	count += 1
 

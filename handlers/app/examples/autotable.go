@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func AutoTablePage(w http.ResponseWriter, r *http.Request) {
+func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	func() Node {

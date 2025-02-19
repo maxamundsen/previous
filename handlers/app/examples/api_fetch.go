@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func ApiFetchPage(w http.ResponseWriter, r *http.Request) {
+func ApiFetchHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	func() Node {

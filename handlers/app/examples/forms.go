@@ -17,7 +17,7 @@ type FormViewModel struct {
 	field2  string
 }
 
-func FormPage(w http.ResponseWriter, r *http.Request) {
+func FormHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	var viewModel FormViewModel

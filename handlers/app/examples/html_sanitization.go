@@ -9,7 +9,7 @@ import (
 	. "previous/handlers/app"
 )
 
-func HtmlSanitizationPage(w http.ResponseWriter, r *http.Request) {
+func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	input := `<h1>This is user input HTML</h1>

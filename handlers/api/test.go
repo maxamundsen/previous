@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func TestPage(w http.ResponseWriter, r *http.Request) {
+func TestHandler(w http.ResponseWriter, r *http.Request) {
 	type model struct {
 		Field1 int
 		Field2 string

@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-func HtmxPage(w http.ResponseWriter, r *http.Request) {
+func HtmxHxHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	HtmxView(*identity).Render(w)
 }

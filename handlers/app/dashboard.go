@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func DashboardPage(w http.ResponseWriter, r *http.Request) {
+func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
 	func() Node {

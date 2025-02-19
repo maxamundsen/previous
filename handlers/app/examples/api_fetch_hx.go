@@ -24,7 +24,7 @@ type person struct {
 	Craft string `json:"craft"`
 }
 
-func ApiFetchHxPage(w http.ResponseWriter, r *http.Request) {
+func ApiFetchHxHandler(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	errorMsg := ""

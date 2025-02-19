@@ -14,7 +14,7 @@ type LoginInfo struct {
 	Password string
 }
 
-func LoginPage(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var loginInfo LoginInfo
 
 	err := api.ApiReadJSON(w, r, &loginInfo)
