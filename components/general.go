@@ -166,12 +166,34 @@ func FormLabel(children ...Node) Node {
 
 // TEXT
 func PageLink(location string, display Node, newPage bool) Node {
-	return A(Href(location), InlineStyle("me{text-decoration: underline; color: var(--color-blue-600);} me:hover{color: var(--color-blue-800);}"), display, If(newPage, Target("_blank")))
+	return A(
+		Href(location),
+		InlineStyle("me{text-decoration: underline; color: var(--color-blue-600);} me:hover{color: var(--color-blue-800);}"),
+		display,
+		If(newPage, Target("_blank")),
+	)
 }
 
 // BUTTONS
 func ButtonGray(children ...Node) Node {
-	return Button(Class("cursor-pointer group relative shadow inline-flex items-center overflow-hidden bg-neutral-600 px-8 py-1 text-white focus:outline-none focus:ring hover:bg-neutral-800 active:bg-neutral-800 text-sm"),
+	return Button(
+		InlineStyle(`
+			me {
+				cursor: pointer;
+				position: relative;
+				box-shadow: var(--shadow-md);
+				display: inline-flex;
+				align-items: center;
+				overflow: hidden;
+				background-color: var(--color-neutral-600);
+				color: var(--color-white);
+				padding-right: $(8);
+				padding-left: $(8);
+				padding-top: $(1);
+				padding-bottom: $(1);
+				font-size: var(--text-sm);
+			}
+		`),
 		Group(children),
 	)
 }

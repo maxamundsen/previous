@@ -31,18 +31,26 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 				Text("Inline styles can be applied conditionally. Click the buttons to change the color!"),
 			),
 
-			Form(Input(Type("hidden"), Value("true"), Name("value")), Button(Text("Make text green"))),
-			Form(Input(Type("hidden"), Value("false"), Name("value")), Button(Text("Make text red"))),
+			Form(Input(Type("hidden"), Value("true"), Name("value")), ButtonGray(Text("Make text green"))),
+			Br(),
+			Form(Input(Type("hidden"), Value("false"), Name("value")), ButtonGray(Text("Make text red"))),
 
 			Br(),
 			P((Text("* Note that these styles are determined server side."))),
+
+			Br(),
+
+			InlineStyleComponent(),
+
 		)
 	}().Render(w)
 }
 
 func InlineStyleComponent() Node {
 	return P(
-		InlineStyle("me { color: blue; } @media md { me { color: red; padding: $(5); } }"),
-		Text("Example!"),
+		InlineStyle("me { color: var(--color-blue-500); } @media md- { me { color: var(--color-red-500); padding: $(5); } }"),
+		InlineStyle("me { font-size: var(--text-lg); }"),
+		Text("You can call the `InlineStyle` macro as many times as you want on the same element. "),
+		Text("Each macro call will get its own unique HTML attribute, unless it is a duplicate."),
 	)
 }
