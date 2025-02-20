@@ -13,6 +13,23 @@ import (
 // DUMMY TEXT
 const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ultrices iaculis dui sed porttitor. Integer sed est fringilla, condimentum magna ac, sodales dui. Sed tempor pretium scelerisque. Vivamus pulvinar iaculis libero nec blandit. Mauris tempus velit in neque elementum, ac elementum diam feugiat. Aenean malesuada, nunc a interdum volutpat, diam est lacinia magna, nec fermentum massa lectus non urna. Cras vitae turpis finibus, porta est tincidunt, efficitur neque. Suspendisse suscipit a nulla mollis sodales. Nam vitae nulla vulputate, dictum purus eget, malesuada justo. Vestibulum ultricies eget neque ac volutpat. Mauris et molestie elit. Donec et suscipit urna. Duis in mi in ipsum faucibus finibus.`
 
+// By default, HTML element styles are reset by tailwind's preflight css
+// (we use their styles even though we aren't using tailwind).
+// This element reverts all child elements back to the _browser_ defaults,
+// and applies additional styles to make user-input HTML look nicer.
+//
+// Useful for markdown content, blogs, etc.
+func Prose(children ...Node) Node {
+	return Div(
+		InlineStyle(`
+			me * {
+				all: revert;
+			}
+		`),
+		Group(children),
+	)
+}
+
 // BADGES
 func BadgeSuccess(children ...Node) Node {
 	return Span(Class("w-fit inline-flex overflow-hidden rounded-sm border border-green-500 bg-white text-xs font-medium text-green-500 dark:border-green-500 dark:bg-neutral-950 dark:text-green-500"),

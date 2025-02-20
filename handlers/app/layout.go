@@ -13,13 +13,13 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 	navbarDropdown := func(name string, items []StrPair) Node {
 		return Div(
 			InlineStyle("me{cursor: pointer; position: relative; margin-left: $(3);}"),
-			Attr("x-data", "{"+name+"DropdownOpen: false}"),
-			Attr("x-on:click.outside", name+"DropdownOpen = false"),
 			Div(
 				InlineStyle(`me{ cursor: pointer; display: flex; position: relative; padding-top: $(2); padding-bottom: $(2); padding-left: $(3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: var(--color-neutral-100); }`),
 				InlineStyle("me:hover{color: var(--color-white);}"),
-				Attr("x-on:click", name+"DropdownOpen = !"+name+"DropdownOpen;"),
 				Button(
+					InlineScript(`
+
+					`),
 					Div(InlineStyle("me{cursor: pointer; display: flex; align-items: center;}"),
 						Span(Text(name+" ")),
 						Icon(ICON_CHEVRON_DOWN, 16),
@@ -28,8 +28,6 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 			),
 			Div(
 				InlineStyle(`me{position: absolute; right: 0; z-index: 10; padding-top: $(1); padding-bottom: $(1); margin-top: $(2); width: $(48); background-color: var(--color-white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
-				Attr("x-cloak"),
-				Attr("x-show", name+"DropdownOpen"),
 				TabIndex("-1"),
 				Map(items, func(item StrPair) Node {
 					return A(InlineStyle(`me{display: block; padding-top: $(2); padding-bottom: $(2); padding-left: $(4); padding-right: $(4); font-size: var(--text-sm); line-height: $(5); color: var(--color-neutral-700); } me:hover{background: var(--color-neutral-100);}`), Href(item.Value), TabIndex("-1"), Text(item.Key))
@@ -50,7 +48,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 
 	return RootLayout(title+" | Previous",
 		Body(InlineStyle("me{background-color: var(--color-neutral-50); height: 100%;}"),
-			Div(InlineStyle("me{min-height: 100%}"), Attr("x-data", "{ profileDropdownOpen: false, mobileMenuOpen: false }"),
+			Div(InlineStyle("me{min-height: 100%}"),
 				Nav(InlineStyle("me{background-color: var(--color-neutral-800);}"),
 					Div(InlineStyle("me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl);}"),
 						Div(InlineStyle("me{display: flex; height: $(16); align-items: center; justify-content: space-between;}"),
@@ -65,6 +63,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 											"Examples",
 											[]StrPair{
 												{Key: "Auto Table", Value: "/app/examples/autotable"},
+												{Key: "Chart.js", Value: "/app/examples/charts"},
 												{Key: "Form Submission", Value: "/app/examples/forms"},
 												{Key: "HTMX", Value: "/app/examples/htmx"},
 												{Key: "Surreal.js", Value: "/app/examples/surreal"},
@@ -96,8 +95,6 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 										Div(
 											Button(
 												InlineStyle("me{cursor: pointer; position: relative; display: flex; max-width: var(--container-xs); background-color: var(--color-neutral-800); font-size: var(--text-sm);}"),
-												Attr("x-on:click", "profileDropdownOpen = !profileDropdownOpen"),
-												Attr("x-on:click.outside", "profileDropdownOpen = false"),
 												Type("button"),
 												Span(InlineStyle("me{position: absolute;}"),
 													Img(InlineStyle("me{height: $(8); width: $(8); border-radius: var(--radius-full)}"), Src("/images/profile_picture.png"), Alt("profile picture")),
@@ -106,8 +103,6 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 										),
 										Div(
 											InlineStyle("me{position: absolute; right: 0; z-index: 10; margin-top: $(2); width: $(48); transform-origin: top right; box-shadow: var(--shadow-lg); background: var(--color-white); padding: $(1);}"),
-											Attr("x-cloak"),
-											Attr("x-show", "profileDropdownOpen"),
 											TabIndex("-1"),
 											A(Href("/app/account"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Your Profile")),
 											A(Href("/auth/logout"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Log out")),
@@ -119,7 +114,6 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 								Button(
 									InlineStyle("me{position: relative; display: inline-flex; justify-items: center; padding: $(2); color: var(--color-neutral-400)}"),
 									InlineStyle("me:hover{color: var(--color-white); background-color: var(--color-neutral-900);}"),
-									Attr("x-on:click", "mobileMenuOpen = !mobileMenuOpen"),
 									Type("button"),
 									Span(InlineStyle("me{position: absolute;}")),
 									Icon(ICON_MENU, 24),
@@ -127,7 +121,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 							),
 						),
 					),
-					Div(Attr("x-show", "mobileMenuOpen"), Attr("x-on:click.outside", "mobileMenuOpen = false"), Attr("x-cloak"), InlineStyle("@media md { me {display: none; }}"),
+					Div(InlineStyle("@media md { me {display: none; }}"),
 						Div(Class("space-y-1 px-2 pb-3 pt-2 sm:px-3"),
 							A(Href("/app/dashboard"), Class("block hover:bg-neutral-900 px-3 py-2 text-base font-medium text-white"), Text("Dashboard")),
 						),

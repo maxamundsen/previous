@@ -27,6 +27,7 @@ func mapRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/app/examples/autotable", id(sess(examples.AutoTableHandler), true))
 	mux.HandleFunc("/app/examples/autotable-hx", id(sess(examples.AutoTableHxHandler), true))
 	mux.HandleFunc("/app/examples/forms", id(sess(examples.FormHandler), true))
+	mux.HandleFunc("/app/examples/charts", id(sess(examples.ChartHandler), true))
 	mux.HandleFunc("/app/examples/html-sanitization", id(sess(examples.HtmlSanitizationHandler), true))
 	mux.HandleFunc("/app/examples/htmx", id(sess(examples.HtmxHxHandler), true))
 	mux.HandleFunc("/app/examples/htmx-counter/{count}", examples.HtmxCounterHandler)

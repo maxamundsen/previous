@@ -23,6 +23,7 @@ func SurrealHandler(w http.ResponseWriter, r *http.Request) {
 			// Map store values from Go to Javascript
 			data.Init(),
 
+			Div(ID("example_id"), Text("test"), Button(Text("test_button"))),
 			Div(Attr("x-data", "{ count: 0 }"),
 				P(InlineStyle("me { margin-bottom: $(5); }"),
 					Text("Click the button to increase the counter. This interaction relies on client-side scripting."),

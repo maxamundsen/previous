@@ -33,7 +33,7 @@ func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 				Group{
 					Br(),
 					Card("",
-						Div(
+						Prose(InlineStyle("me { background-color: var(--color-white); padding: $(5); box-shadow: var(--shadow-md); border: 1px solid var(--color-neutral-200);}"),
 							SafeRaw(input),
 						),
 					),

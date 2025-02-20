@@ -54,7 +54,7 @@ func Sum(a, b int) int {
 				Group{
 					Br(),
 					Card("",
-						Div(Class("prose prose-pre:rounded-none prose-pre:text-neutral-700 prose-pre:bg-neutral-50 prose-pre:border-1 prose-pre:border-gray-200 prose-pre:shadow max-w-none rose-a:text-neutral-700 prose-headings:text-neutral-950"),
+						Prose(InlineStyle("me { background-color: var(--color-white); padding: $(5); box-shadow: var(--shadow-md); border: 1px solid var(--color-neutral-200);}"),
 							Markdown(input),
 						),
 					),

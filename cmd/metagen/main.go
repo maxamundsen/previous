@@ -116,7 +116,7 @@ func preBuild() {
 	maybeCreateSqliteDb()
 
 	// code generation
-	expandInlineStyles()
+	generateInlineStyles()
 	generateDebugConfig()
 	generateJetModels()
 }

@@ -8,6 +8,10 @@
     "build_systems":
     [
         {
+            "name": "Kill Server Process",
+            "shell_cmd": "kill -9 $(lsof -ti:9090)",
+        },
+        {
             "name": "Go format",
             "cmd": ["go", "fmt", "${project_path}/..."],
         },

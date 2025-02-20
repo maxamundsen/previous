@@ -41,7 +41,6 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 			Br(),
 
 			InlineStyleComponent(),
-
 		)
 	}().Render(w)
 }

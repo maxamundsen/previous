@@ -35,6 +35,9 @@ func RootLayout(title string, children ...Node) Node {
 				TitleEl(Text(title)),
 				Meta(Name("description"), Content("Previous")),
 
+				/////////////////////////////////
+				// STYLES
+				/////////////////////////////////
 				Link(Rel("apple-touch-icon"), Attr("sizes", "180x180"), Href("/apple-touch-icon.png")),
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "32x32"), Href("/favicon-32x32.png")),
 				Link(Rel("icon"), Type("image/png"), Attr("sizes", "16x16"), Href("/favicon-16x16.png")),
@@ -44,7 +47,11 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("stylesheet"), Href("/css/style.metagen.css?v="+metagen_css_hash)),
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
 
-				// Small helpers that allow for very powerful interactivity, while remaining "vanilla"
+				/////////////////////////////////
+				// SCRIPTS
+				/////////////////////////////////
+				Script(Src("/js/index.js?v="+js_hash)),
+
 				// https://github.com/gnat/surreal
 				Script(Src("/lib/surreal/surreal.js")),
 
@@ -54,8 +61,8 @@ func RootLayout(title string, children ...Node) Node {
 					Script(Src("/lib/htmx/htmx.min.js")),
 				),
 
+				Script(Src("/lib/chartjs/chart.js")),
 				Script(Src("/lib/highlight/highlight.min.js")),
-				Script(Src("/js/index.js?v="+js_hash)),
 			),
 			Group(children), // expected to provide body
 		),

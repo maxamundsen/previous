@@ -12,8 +12,10 @@ import (
 
 var dedupMap = make(map[string]bool)
 
-// For each input directory, walk the filesystem tree for *.go files, and expand calls to `InlineStyle(..)`
-func expandInlineStyles() {
+// Walk the FS tree and search for `.go` files containing calls to `InlineStyle()`
+// Collect the inputs to each call (they must be string literals), expand shorthand macros, and
+//
+func generateInlineStyles() {
 	fmt.Printf("Compiling Inline Styles")
 
 	inlineStyleRegex := regexp.MustCompile("InlineStyle\\((((?:'[^']*')|(?:\"[^\"]*\")|(`(?:[^`]|[\r\n])*?`)))\\)")
@@ -63,10 +65,10 @@ func expandInlineStyles() {
 							cssHash, _ := security.HighwayHash58(rawInput)
 							cssHash = basic.GetFirstNChars(cssHash, 8)
 
-							//@TODO handle custom shorthand media queries + alternate syntax here
+							// Expand custom css macros (see comments below for details)
 							submatch[1] = expandMe(submatch[1], cssHash)
 							submatch[1] = expandMedia(submatch[1])
-							submatch[1] = transformSpacing(submatch[1])
+							submatch[1] = expandSpacing(submatch[1])
 
 							matches = append(matches, submatch[1])
 							dedupMap[rawInput] = true
@@ -97,7 +99,7 @@ func expandInlineStyles() {
 //	padding: $(5);
 //
 // => padding: calc(var(--spacing) * 5);
-func transformSpacing(input string) string {
+func expandSpacing(input string) string {
 	re := regexp.MustCompile(`\$\((\d+)\)`)
 
 	transformed := re.ReplaceAllStringFunc(input, func(match string) string {
