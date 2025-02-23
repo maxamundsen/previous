@@ -13,12 +13,6 @@ body {
 
 /* Tailwind Design System (with a few tweaks)*/
 :root {
-	--breakpoint-sm: 640px;
-	--breakpoint-md: 768px;
-	--breakpoint-lg: 1024px;
-	--breakpoint-xl: 1280px;
-	--breakpoint-xx: 1536px;
-
 	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 	--font-serif: "Lora", ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
@@ -384,34 +378,34 @@ body {
 	--default-mono-font-family: var(--font-mono);
 	--default-mono-font-feature-settings: var(--font-mono--font-feature-settings);
 	--default-mono-font-variation-settings: var(--font-mono--font-variation-settings);
-	--color-surface: var(--color-white);
-	--color-surface-alt: var(--color-neutral-50);
-	--color-on-surface: var(--color-neutral-600);
-	--color-on-surface-strong: var(--color-neutral-900);
-	--color-primary: var(--color-black);
-	--color-on-primary: var(--color-neutral-100);
-	--color-secondary: var(--color-neutral-800);
-	--color-on-secondary: var(--color-white);
-	--color-outline: var(--color-neutral-300);
-	--color-outline-strong: var(--color-neutral-800);
-	--color-surface-dark: var(--color-neutral-950);
-	--color-surface-dark-alt: var(--color-neutral-900);
-	--color-on-surface-dark: var(--color-neutral-300);
-	--color-on-surface-dark-strong: var(--color-white);
-	--color-primary-dark: var(--color-white);
-	--color-on-primary-dark: var(--color-black);
-	--color-secondary-dark: var(--color-neutral-300);
-	--color-on-secondary-dark: var(--color-black);
-	--color-outline-dark: var(--color-neutral-700);
-	--color-outline-dark-strong: var(--color-neutral-300);
-	--color-info: var(--color-sky-500);
-	--color-on-info: var(--color-white);
-	--color-success: var(--color-green-500);
-	--color-on-success: var(--color-white);
-	--color-warning: var(--color-amber-500);
-	--color-on-warning: var(--color-white);
-	--color-danger: var(--color-red-500);
-	--color-on-danger: var(--color-white);
+	--color-surface: $color(white);
+	--color-surface-alt: $color(neutral-50);
+	--color-on-surface: $color(neutral-600);
+	--color-on-surface-strong: $color(neutral-900);
+	--color-primary: $color(black);
+	--color-on-primary: $color(neutral-100);
+	--color-secondary: $color(neutral-800);
+	--color-on-secondary: $color(white);
+	--color-outline: $color(neutral-300);
+	--color-outline-strong: $color(neutral-800);
+	--color-surface-dark: $color(neutral-950);
+	--color-surface-dark-alt: $color(neutral-900);
+	--color-on-surface-dark: $color(neutral-300);
+	--color-on-surface-dark-strong: $color(white);
+	--color-primary-dark: $color(white);
+	--color-on-primary-dark: $color(black);
+	--color-secondary-dark: $color(neutral-300);
+	--color-on-secondary-dark: $color(black);
+	--color-outline-dark: $color(neutral-700);
+	--color-outline-dark-strong: $color(neutral-300);
+	--color-info: $color(sky-500);
+	--color-on-info: $color(white);
+	--color-success: $color(green-500);
+	--color-on-success: $color(white);
+	--color-warning: $color(amber-500);
+	--color-on-warning: $color(white);
+	--color-danger: $color(red-500);
+	--color-on-danger: $color(white);
 	--radius-radius: var(--radius-sm);
 }
 

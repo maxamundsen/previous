@@ -22,7 +22,7 @@ const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Al
 func Prose(children ...Node) Node {
 	return Div(
 		InlineStyle(`
-			me * {
+			$me * {
 				all: revert;
 			}
 		`),
@@ -52,18 +52,48 @@ func ModalActuator(id string, contents Node) Node {
 
 func Modal(id string, title string, body Node, closeElements []Node) Node {
 	return Div(
-		Div(Attr("x-cloak", ""), Attr("x-show", "$store."+id), Attr("x-transition.opacity.duration.50ms", ""), Attr("x-trap.inert.noscroll", "$store."+id+""), Attr("x-on:keydown.esc.window", "$store."+id+" = false"), Attr("x-on:click.self", "$store."+id+" = false"), Class("fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 pb-8 sm:items-center lg:p-8"), Role("dialog"), Aria("modal", "true"), Aria("labelledby", "defaultModalTitle"),
-			Div(Attr("x-show", "$store."+id+""), Attr("x-transition:enter", "transition ease-out duration-50 delay-20 motion-reduce:transition-opacity"), Attr("x-transition:enter-start", "opacity-0 scale-50"), Attr("x-transition:enter-end", "opacity-100 scale-100"), Class("flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"),
+		Div(
+			InlineStyle(`
+				$me {
+					display: flex;
+					align-items: center;
+					background-color: $color(black/50);
+					position: fixed;
+					z-index: 30;
+				}
+			`),
+			Class("fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 pb-8 sm:items-center lg:p-8"),
+			Attr("x-cloak", ""),
+			Attr("x-show", "$store."+id),
+			Attr("x-transition.opacity.duration.50ms", ""),
+			Attr("x-trap.inert.noscroll", "$store."+id+""),
+			Attr("x-on:keydown.esc.window", "$store."+id+" = false"),
+			Attr("x-on:click.self", "$store."+id+" = false"),
+			Role("dialog"),
+			Aria("modal", "true"),
+			Aria("labelledby", "defaultModalTitle"),
+			Div(
+				Class("flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"),
+				Attr("x-show", "$store."+id+""),
+				Attr("x-transition:enter", "transition ease-out duration-50 delay-20 motion-reduce:transition-opacity"),
+				Attr("x-transition:enter-start", "opacity-0 scale-50"),
+				Attr("x-transition:enter-end", "opacity-100 scale-100"),
 				Div(Class("flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4"),
 					H3(Class("font-semibold tracking-wide text-on-surface-strong"), Text(title)),
-					Button(Class("cursor-pointer"), Attr("x-on:click", "$store."+id+" = false"), Aria("label", "close modal"),
+					Button(
+						Class("cursor-pointer"),
+						Attr("x-on:click", "$store."+id+" = false"),
+						Aria("label", "close modal"),
 						Icon(ICON_X_DIALOG_CLOSE, 24),
 					),
 				),
-				Div(ID(id), Class("px-4 py-8"),
+				Div(
+					Class("px-4 py-8"),
+					ID(id),
 					body,
 				),
-				Div(Class("flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 sm:flex-row sm:items-center md:justify-end"),
+				Div(
+					Class("flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 sm:flex-row sm:items-center md:justify-end"),
 					Map(closeElements, func(n Node) Node {
 						return Div(Attr("x-on:click", "$store."+id+" = false"), n)
 					}),
@@ -118,18 +148,18 @@ func ToText(i interface{}) Node {
 func FormInput(children ...Node) Node {
 	return Input(
 		InlineStyle(`
-			me {
-				background-color: var(--color-white);
+			$me {
+				background-color: $color(white);
 				padding: $(2);
 				display: block;
 				width: 100%;
 				border: 0;
-				color: var(--color-neutral-900);
+				color: $color(neutral-900);
 				box-shadow: var(--shadow-sm);
 			}
 
-			@media sm {
-				me {
+			@media $sm {
+				$me {
 					font-size: var(--text-sm);
 				}
 			}
@@ -141,17 +171,17 @@ func FormInput(children ...Node) Node {
 func FormSelect(children ...Node) Node {
 	return Select(
 		InlineStyle(`
-			me {
+			$me {
 				padding: $(3);
-				background-color: var(--color-white);
+				background-color: $color(white);
 				display: block;
 				width: 100%;
 				border: 0;
-				color: var(--color-neutral-900);
+				color: $color(neutral-900);
 				box-shadow: var(--shadow-sm);
 			}
-			@media sm {
-				me {
+			@media $sm {
+				$me {
 					font-size: var(--text-sm);
 				}
 			}
@@ -163,13 +193,13 @@ func FormSelect(children ...Node) Node {
 func FormTextarea(children ...Node) Node {
 	return Textarea(
 		InlineStyle(`
-			me {
+			$me {
 				display: block;
 				padding: $(3);
 				width: 100%;
 				font-size: var(--text-sm);
-				color: var(--color-neutral-900);
-				background-color: var(--color-white);
+				color: $color(neutral-900);
+				background-color: $color(white);
 				box-shadow: var(--shadow-sm);
 			}
 		`),
@@ -185,7 +215,7 @@ func FormLabel(children ...Node) Node {
 func PageLink(location string, display Node, newPage bool) Node {
 	return A(
 		Href(location),
-		InlineStyle("me{text-decoration: underline; color: var(--color-blue-600);} me:hover{color: var(--color-blue-800);}"),
+		InlineStyle("$me{text-decoration: underline; color: $color(blue-600);} $me:hover{color: $color(blue-800);}"),
 		display,
 		If(newPage, Target("_blank")),
 	)
@@ -195,15 +225,15 @@ func PageLink(location string, display Node, newPage bool) Node {
 func ButtonGray(children ...Node) Node {
 	return Button(
 		InlineStyle(`
-			me {
+			$me {
 				cursor: pointer;
 				position: relative;
 				box-shadow: var(--shadow-md);
 				display: inline-flex;
 				align-items: center;
 				overflow: hidden;
-				background-color: var(--color-neutral-600);
-				color: var(--color-white);
+				background-color: $color(neutral-600);
+				color: $color(white);
 				padding-right: $(8);
 				padding-left: $(8);
 				padding-top: $(1);
@@ -236,18 +266,17 @@ func TableSearchDropdown(c ...Node) Node {
 
 func TableTW(c ...Node) Node {
 	return Div(Class("flex flex-col"),
-		Div(InlineStyle("me {margin: $(2); overflow: x-auto;}"),
-			Div(InlineStyle("me { padding: $(2); min-width: 100%; display: inline-block; vertical-align: middle; }"),
-				Div(InlineStyle("me { overflow: hidden; }"),
+		Div(InlineStyle("$me {margin: $(2); overflow: x-auto;}"),
+			Div(InlineStyle("$me { padding: $(2); min-width: 100%; display: inline-block; vertical-align: middle; }"),
+				Div(InlineStyle("$me { overflow: hidden; }"),
 					Table(
 						InlineStyle(`
-							me {
+							$me {
 								min-width: 100%;
 								table-layout: fixed;
 							}
 
-							me > :not(:last-child) {
-								/* test */
+							$me > :not(:last-child) {
 								border-top-width: 0px;
 								border-bottom-width: 1px;
 							}
@@ -266,7 +295,7 @@ func TBodyTW(children ...Node) Node {
 			me > :not(:last-child) {
 				border-top-width: 0px;
 				border-bottom-width: 1px;
-				border-color: var(--color-neutral-500);
+				border-color: $color(neutral-500);
 			}
 		`),
 		Group(children),

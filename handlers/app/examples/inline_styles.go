@@ -20,12 +20,12 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 		return AppLayout("Inline Styles", *identity,
 			P(Text("This is another test page")),
 			P(
-				InlineStyle("me{font-size: var(--text-5xl);}"),
+				InlineStyle("$me{font-size: var(--text-5xl);}"),
 
 				// If `b` is true, make text green, else, make it red.
 				IfElse(b,
-					InlineStyle("me{color: var(--color-green-600);}"),
-					InlineStyle("me{color: var(--color-red-600)}"),
+					InlineStyle("$me{color: $color(green-600);}"),
+					InlineStyle("$me{color: $color(red-600)}"),
 				),
 
 				Text("Inline styles can be applied conditionally. Click the buttons to change the color!"),
@@ -47,8 +47,8 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 
 func InlineStyleComponent() Node {
 	return P(
-		InlineStyle("me { color: var(--color-blue-500); } @media md- { me { color: var(--color-red-500); padding: $(5); } }"),
-		InlineStyle("me { font-size: var(--text-lg); }"),
+		InlineStyle("$me { color: $color(blue-500); } @media $md- { me { color: $color(red-500); padding: $(5); } }"),
+		InlineStyle("$me { font-size: var(--text-lg); }"),
 		Text("You can call the `InlineStyle` macro as many times as you want on the same element. "),
 		Text("Each macro call will get its own unique HTML attribute, unless it is a duplicate."),
 	)

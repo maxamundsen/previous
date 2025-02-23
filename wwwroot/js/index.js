@@ -1,28 +1,41 @@
-// Allows you to select elements relative to self.
-// Ex:
-// <div id="test-element">
-//     <button>Hello!</button>
-// </div>
-//
-// <script>
-//     var testEl = document.getElementById("test-element");
-//     var theButton = testEl.querySelectorRelative("button"); // this selects the button contained inside `testEl`
-// </script>
-Element.prototype.querySelectorRelative = function(selector){
-    // Adding a custom attribute to refer for selector
-    this.setAttribute('data-unique-id', '1');
+console.log("Previous - A powerful web codebase.");
 
-    // Replace "this " string with custom attribute's value
-    // You can also add a unique class name instead of adding custom attribute
-    selector = '[data-unique-id="1"] ' + selector
+// Helper functions
 
-    // Get the relative element
-    var relativeElement = document.querySelector(selector);
-
-    // After getting the relative element, the added custom attribute is useless
-    // So, remove it
-    this.removeAttribute('data-unique-id');
-
-    // return the fetched element
-    return relativeElement;
+function toggleShowHide(element) {
+    // Check current display style and toggle between 'none' and 'block'
+    if (element.style.display === 'none' || element.style.display === "" ) {
+        element.style.display = 'block';
+    } else {
+        element.style.display = 'none';
+    }
 }
+
+function show(element) {
+    element.style.display = 'block';
+}
+
+function hide(element) {
+    element.style.display = 'none';
+}
+
+const onClickOutside = (element, callback) => {
+    document.addEventListener('click', e => {
+        if (!element.contains(e.target)) callback();
+    });
+};
+
+const onClickOutsideOrEscape = (element, callback) => {
+    document.addEventListener('click', e => {
+        if (!element.contains(e.target)) callback();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            const isNotCombinedKey = !(event.ctrlKey || event.altKey || event.shiftKey);
+            if (isNotCombinedKey) {
+                callback();
+            }
+        }
+    });
+};

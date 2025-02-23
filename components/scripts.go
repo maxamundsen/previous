@@ -23,7 +23,7 @@ func InlineScript(script string) Node {
 		script = strings.ReplaceAll(script, "\t", "")
 	}
 
-	return Script(Raw("{" + script + "}" ))
+	return Script(Raw(`{` + script + `}`))
 }
 
 // Wrapper function around `InlineScript` that allows for printf style format strings + data

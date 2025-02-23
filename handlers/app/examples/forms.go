@@ -36,8 +36,8 @@ func FormHandler(w http.ResponseWriter, r *http.Request) {
 				Group{
 					P(Text("You input:")),
 					Ul(
-						Li(InlineStyle("me { color: var(--color-red-600);}"), Text(viewModel.field1)),
-						Li(InlineStyle("me { color: var(--color-red-600);}"), Text(viewModel.field2)),
+						Li(InlineStyle("$me { color: $color(red-600);}"), Text(viewModel.field1)),
+						Li(InlineStyle("$me { color: $color(red-600);}"), Text(viewModel.field2)),
 					),
 					Br(),
 				},

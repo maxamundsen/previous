@@ -32,15 +32,15 @@ func BarChart() Node {
 	return Div(
 		Canvas(),
 		InlineStyle(`
-			me {
-				background-color: var(--color-white);
+			$me {
+				background-color: $color(white);
 				padding: $(5);
-				border: 1px solid var(--color-neutral-200);
+				border: 1px solid $color(neutral-200);
 				box-shadow: var(--shadow-md);
 			}
 		`),
 		InlineScriptf(`
-			let ctx = me().querySelectorRelative("canvas");
+			let ctx = me("canvas", me());
 
 			new Chart(ctx, {
 				type: 'bar',

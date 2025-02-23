@@ -88,11 +88,6 @@ func CapitalizeFirstLetter(s string) string {
 	return string(unicode.ToUpper(first)) + s[1:]
 }
 
-type StrPair struct {
-	Key   string
-	Value string
-}
-
 func IntAbs(x int) int {
 	if x < 0 {
 		return -x
@@ -101,14 +96,14 @@ func IntAbs(x int) int {
 	return x
 }
 
-func MakeURLParams(base string, params ...StrPair) string {
+func MakeURLParams(base string, params ...[2]string) string {
 	output := base
 
 	for i, v := range params {
 		if i == 0 {
-			output += "?" + v.Key + "=" + v.Value
+			output += "?" + v[0] + "=" + v[1]
 		} else {
-			output += "&" + v.Key + "=" + v.Value
+			output += "&" + v[0] + "=" + v[1]
 		}
 	}
 

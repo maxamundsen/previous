@@ -57,36 +57,162 @@ func LoginView(errorMsg string) Node {
 	currentYear := time.Time.Year(time.Now())
 
 	return RootLayout("Login",
-		Body(Attr("x-data", "{ clickedLogin: false }"), Class("h-full bg-neutral-50"),
-			Div(Class("flex flex-col justify-normal px-6 py-5 lg:px-8 pt-24"),
-				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm mb-3"),
-					A(Href("/"), Img(Class("mx-auto h-32 w-auto"), Src("/images/logo.svg"), Alt("Previous"))),
+		Body(
+			InlineStyle(`
+				$me {
+					height: 100%;
+					background: $color(neutral-50);
+				}
+			`),
+			Div(
+				InlineStyle(`
+					$me {
+						display: flex;
+						flex-direction: column;
+						justify-content: normal;
+						padding-right: $(6);
+						padding-left: $(6);
+						padding-bottom: $(5);
+						padding-top: $(24);
+					}
+
+					@media $md {
+						$me {
+							padding-right: $(8);
+							padding-left: $(8);
+						}
+					}
+				`),
+				Div(
+					InlineStyle(`
+						$me {
+							margin-bottom: $(3);
+						}
+
+						@media $sm {
+							$me {
+								margin-right: auto;
+								margin-left: auto;
+								width: 100%;
+								max-width: var(--container-sm);
+							}
+						}
+					`),
+					A(Href("/"),
+						Img(
+							InlineStyle("$me { margin-right: auto; margin-left: auto; height: $(32); width: auto; }"),
+							Src("/images/logo.svg"),
+							Alt("Previous"),
+						),
+					),
 				),
-				Div(Class("sm:mx-auto sm:w-full sm:max-w-sm"),
+				Div(
+					InlineStyle(`
+						@media $sm {
+							$me {
+								margin-right: auto;
+								margin-left: auto;
+								width: 100%;
+								max-width: var(--container-sm);
+							}
+						}
+					`),
 					If(errorMsg != "",
-						Div(Class("mt-5 sm:mx-auto sm:w-full sm:max-w-sm"),
-							P(Class("text-sm/6 text-red-500"), Text(errorMsg)),
+						Div(
+							InlineStyle(`
+								$me {
+									margin-top: $(5);
+								}
+
+								@media $sm {
+									$me {
+										margin-right: auto;
+										margin-left: auto;
+										width: 100%;
+										max-width: var(--container-sm);
+									}
+								}
+							`),
+							P(InlineStyle("$me { font-size: var(--text-sm); color: $color(red-500); }"), Text(errorMsg)),
 						),
 					),
-					Form(Attr("x-on:submit", "clickedLogin = true;"), Class("mt-5 space-y-6"), Action(""), Method("POST"), AutoComplete("off"),
-						H2(Class("mt-10 font-bold text-2xl/9 tracking-tight text-neutral-950"), Text("Log In")),
+					Form(InlineStyle("$me { margin-top: $(5); }"), Action(""), Method("POST"), AutoComplete("off"),
+						H2(
+							InlineStyle(`
+								$me {
+									margin-top: $(10);
+									margin-bottom: $(5);
+									font-weight: var(--font-weight-bold);
+									font-size: var(--text-2xl);
+									letter-spacing: var(--tracking-tight);
+									color: $color(neutral-950);
+								}
+							`),
+							Text("Log In"),
+						),
 						Div(
-							Label(For("username"), Class("block text-sm/6 font-medium text-neutral-900"), Text("Username")),
-							Div(Class("mt-2"),
-								Input(Placeholder("admin"), Name("username"), Type("text"), Required(), Class("block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6")),
+							Label(
+								InlineStyle("$me { display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
+								For("username"),
+								Text("Username"),
+							),
+							Div(InlineStyle("$me { margin-top: $(2); }"),
+								FormInput(Placeholder("admin"), Name("username"), Type("text"), Required()),
 							),
 						),
 						Div(
-							Label(For("password"), Class("block text-sm/6 font-medium text-neutral-900"), Text("Password")),
-							Div(Class("mt-2"),
-								Input(Placeholder("admin"), Name("password"), Type("password"), Required(), Class("block w-full border-0 p-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 sm:text-sm/6")),
+							Label(
+								InlineStyle("$me { margin-top: $(5); display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
+								For("password"),
+								Text("Password"),
+							),
+							Div(InlineStyle("$me { margin-top: $(2); }"),
+								FormInput(Placeholder("admin"), Name("password"), Type("password"), Required()),
 							),
 						),
 						Div(
-							Button(Attr("x-text", `clickedLogin ? "Authenticating..." : $el.innerText`), Attr("x-bind:disabled", "clickedLogin"), Type("submit"), Class("flex w-full justify-center bg-neutral-950 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-neutral-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-600"), Text("Log in")),
+							InlineStyle(`
+								$me {
+									margin-top: $(5);
+								}
+							`),
+							Button(
+								InlineStyle(`
+									$me {
+										cursor: pointer;
+										width: 100%;
+										padding-top: $(2);
+										padding-bottom: $(2);
+										padding-left: $(5);
+										padding-right: $(5);
+										color: $color(white);
+										box-shadow: var(--shadow-sm);
+										background-color: $color(neutral-800);
+										text-align: center;
+										font-size: var(--text-sm);
+									}
+
+									$me:hover {
+										background-color: $color(neutral-950);
+									}
+								`),
+								Type("submit"),
+								Text("Log in"),
+							),
 						),
+						InlineScript(`
+							let form = me();
+							let btn = me("button", me());
+
+							form.on("submit", () => { btn.innerHTML = "Authenticating..."; });
+						`),
 					),
-					P(Class("mt-10 text-sm text-neutral-500"), Text("© "), ToText(currentYear), Text(" Max Amundsen")),
+					P(
+						InlineStyle("$me { margin-top: $(10); font-size: var(--text-sm); color: $color(neutral-500);}"),
+						Text("© "),
+						ToText(currentYear),
+						Text(" Max Amundsen"),
+					),
 				),
 			),
 		),

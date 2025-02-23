@@ -54,13 +54,13 @@ func Sum(a, b int) int {
 				Group{
 					Br(),
 					Card("",
-						Prose(InlineStyle("me { background-color: var(--color-white); padding: $(5); box-shadow: var(--shadow-md); border: 1px solid var(--color-neutral-200);}"),
+						Prose(InlineStyle("$me { background-color: $color(white); padding: $(5); box-shadow: var(--shadow-md); border: 1px solid $color(neutral-200);}"),
 							Markdown(input),
 						),
 					),
 				},
 			),
-			Script(Raw("hljs.highlightAll();")),
+			InlineScript("hljs.highlightAll();"),
 		)
 	}().Render(w)
 }

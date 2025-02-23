@@ -14,7 +14,6 @@ var dedupMap = make(map[string]bool)
 
 // Walk the FS tree and search for `.go` files containing calls to `InlineStyle()`
 // Collect the inputs to each call (they must be string literals), expand shorthand macros, and
-//
 func generateInlineStyles() {
 	fmt.Printf("Compiling Inline Styles")
 
@@ -68,6 +67,7 @@ func generateInlineStyles() {
 							// Expand custom css macros (see comments below for details)
 							submatch[1] = expandMe(submatch[1], cssHash)
 							submatch[1] = expandMedia(submatch[1])
+							submatch[1] = expandColor(submatch[1])
 							submatch[1] = expandSpacing(submatch[1])
 
 							matches = append(matches, submatch[1])
@@ -110,6 +110,25 @@ func expandSpacing(input string) string {
 	return transformed
 }
 
+// Expand color macros:
+func expandColor(input string) string {
+	re := regexp.MustCompile(`\$color\((.*?)(?:\/(0*(?:[1-9][0-9]?|100)))?\)`)
+
+	transformed := re.ReplaceAllStringFunc(input, func(match string) string {
+		if len(re.FindStringSubmatch(match)) == 3 {
+			if re.FindStringSubmatch(match)[2] == "" {
+				return fmt.Sprintf("var(--color-%s)", re.FindStringSubmatch(match)[1])
+			} else {
+				return fmt.Sprintf("oklch(from var(--color-%s) l c h / %s%%)", re.FindStringSubmatch(match)[1], re.FindStringSubmatch(match)[2])
+			}
+		}
+
+		return ""
+	})
+
+	return transformed
+}
+
 // Expand shorthand media queries.
 // Ex:
 //
@@ -117,58 +136,28 @@ func expandSpacing(input string) string {
 //
 // => media screen and (min-width: 768px) { ... }
 func expandMedia(input string) string {
-	re := regexp.MustCompile(`(?:@media)\s(xs-|sm-|md-|lg-|xl-|sm|md|lg|xl|xx|dark|light)`)
+	input = strings.ReplaceAll(input, "$dark", "(prefers-color-scheme: dark)")
+	input = strings.ReplaceAll(input, "$light", "(prefers-color-scheme: light)")
+	input = strings.ReplaceAll(input, "$xs-", "screen and (max-width: 639px)")
+	input = strings.ReplaceAll(input, "$sm-", "screen and (max-width: 767px)")
+	input = strings.ReplaceAll(input, "$md-", "screen and (max-width: 1023px)")
+	input = strings.ReplaceAll(input, "$lg-", "screen and (max-width: 1279px)")
+	input = strings.ReplaceAll(input, "$xl-", "screen and (max-width: 1535px)")
+	input = strings.ReplaceAll(input, "$sm", "screen and (min-width: 640px)")
+	input = strings.ReplaceAll(input, "$md", "screen and (min-width: 768px)")
+	input = strings.ReplaceAll(input, "$lg", "screen and (min-width: 1024px)")
+	input = strings.ReplaceAll(input, "$xl", "screen and (min-width: 1280px)")
+	input = strings.ReplaceAll(input, "$xx", "screen and (min-width: 1536px)")
 
-	transformed := re.ReplaceAllStringFunc(input, func(match string) string {
-		mq := ""
-
-		if len(match) >= 2 {
-			switch re.FindStringSubmatch(match)[1] {
-			case "dark":
-				mq = "(prefers-color-scheme: dark)"
-			case "light":
-				mq = "(prefers-color-scheme: light)"
-			case "xs-":
-				mq = "screen and (max-width: 639px)"
-			case "sm-":
-				mq = "screen and (max-width: 767px)"
-			case "md-":
-				mq = "screen and (max-width: 1023px)"
-			case "lg-":
-				mq = "screen and (max-width: 1279px)"
-			case "xl-":
-				mq = "screen and (max-width: 1535px)"
-			case "sm":
-				mq = "screen and (min-width: 640px)"
-			case "md":
-				mq = "screen and (min-width: 768px)"
-			case "lg":
-				mq = "screen and (min-width: 1024px)"
-			case "xl":
-				mq = "screen and (min-width: 1280px)"
-			case "xx":
-				mq = "screen and (min-width: 1536px)"
-			}
-		}
-
-		return fmt.Sprintf("@media %s", mq)
-	})
-
-	return transformed
+	return input
 }
 
-// Replace "me" selector with inline style attribute
+// Expand "$me" macro with inline style attribute
 // Ex:
 //
-//	me { ... }
+//	$me { ... }
 //
 // => [__inlinecss_{REPLACEMENT_ID}] { ... }
 func expandMe(input string, replacementId string) string {
-	re := regexp.MustCompile(`(?:^|\.|\s|[^a-zA-Z0-9\-\_{}()\[\]\<\>])me\b`)
-
-	transformed := re.ReplaceAllStringFunc(input, func(match string) string {
-		return fmt.Sprintf("[__inlinecss_%s]", replacementId)
-	})
-
-	return transformed
+	return strings.ReplaceAll(input, "$me", fmt.Sprintf("[__inlinecss_%s]", replacementId))
 }

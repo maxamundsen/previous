@@ -27,7 +27,7 @@ func RootLayout(title string, children ...Node) Node {
 	}
 
 	return Doctype(
-		HTML(InlineStyle("me { height: 100%; }"),
+		HTML(InlineStyle("$me { height: 100%; }"),
 			Lang("en"),
 			Head(
 				Meta(Charset("utf-8")),

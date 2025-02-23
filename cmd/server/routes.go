@@ -35,7 +35,7 @@ func mapRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/app/examples/lipsum-hx", id(sess(examples.LoremIpsumHxHandler), true))
 	mux.HandleFunc("/app/examples/markdown", id(sess(examples.MarkdownHandler), true))
 	mux.HandleFunc("/app/examples/smtp", id(sess(examples.SmtpHandler), true))
-	mux.HandleFunc("/app/examples/surreal", id(sess(examples.SurrealHandler), true))
+	mux.HandleFunc("/app/examples/inline-scripting", id(sess(examples.InlineScriptingHandler), true))
 	mux.HandleFunc("/app/examples/ui-playground", id(sess(examples.UIPlaygroundHandler), true))
 	mux.HandleFunc("/app/examples/upload", id(sess(examples.UploadHandler), true))
 	mux.HandleFunc("/auth/login", id(sess(auth.LoginHandler), true))

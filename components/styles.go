@@ -17,23 +17,25 @@ import (
 // to `InlineStyle`.
 //
 // Ex:
-// func MyComponent(cond bool) Node {
-//     return IfElse(cond, InlineStyle("color: green;"), InlineStyle("color: red;"))
-// }
+//
+//	func MyComponent(cond bool) Node {
+//	    return IfElse(cond, InlineStyle("color: green;"), InlineStyle("color: red;"))
+//	}
 //
 // THE FOLLOWING DOES NOT WORK:
-// func MyInvalidComponent(cond bool) Node {
-//     var css string
 //
-//     if cond {
-//         css = "color: green;"
-//     } else {
-//         css = "color: red;"
-//     }
+//	func MyInvalidComponent(cond bool) Node {
+//	    var css string
 //
-//     return InlineStyle(css) <--- THIS IS AN ERROR! THE PREPROCESSOR HAS NO IDEA WHAT THE VALUE OF `css` IS,
-//                                  SINCE IT IS NOT KNOWN AT COMPILE TIME!
-// }
+//	    if cond {
+//	        css = "color: green;"
+//	    } else {
+//	        css = "color: red;"
+//	    }
+//
+//	    return InlineStyle(css) <--- THIS IS AN ERROR! THE PREPROCESSOR HAS NO IDEA WHAT THE VALUE OF `css` IS,
+//	                                 SINCE IT IS NOT KNOWN AT COMPILE TIME!
+//	}
 func InlineStyle(input string) Node {
 	input = strings.ReplaceAll(input, "\n", " ")
 	input = strings.ReplaceAll(input, "\t", "")

@@ -2,7 +2,6 @@ package app
 
 import (
 	"previous/auth"
-	. "previous/basic"
 	. "previous/components"
 
 	. "maragu.dev/gomponents"
@@ -10,36 +9,43 @@ import (
 )
 
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
-	navbarDropdown := func(name string, items []StrPair) Node {
+	navbarDropdown := func(dropdownHeader Node, items [][2]string) Node {
 		return Div(
-			InlineStyle("me{cursor: pointer; position: relative; margin-left: $(3);}"),
+			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $(3);}"),
 			Div(
-				InlineStyle(`me{ cursor: pointer; display: flex; position: relative; padding-top: $(2); padding-bottom: $(2); padding-left: $(3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: var(--color-neutral-100); }`),
-				InlineStyle("me:hover{color: var(--color-white);}"),
+				Class("button"),
+				InlineStyle(`$me{ cursor: pointer; display: flex; position: relative; padding-top: $(2); padding-bottom: $(2); padding-left: $(3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: $color(neutral-100); }`),
+				InlineStyle("$me:hover{color: $color(white);}"),
 				Button(
-					InlineScript(`
-
-					`),
-					Div(InlineStyle("me{cursor: pointer; display: flex; align-items: center;}"),
-						Span(Text(name+" ")),
+					Div(InlineStyle("$me{cursor: pointer; display: flex; align-items: center;}"),
+						dropdownHeader, Span(Text(" ")),
 						Icon(ICON_CHEVRON_DOWN, 16),
 					),
 				),
 			),
 			Div(
-				InlineStyle(`me{position: absolute; right: 0; z-index: 10; padding-top: $(1); padding-bottom: $(1); margin-top: $(2); width: $(48); background-color: var(--color-white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
+				Class("dropdown"),
+				InlineStyle(`$me { display: none; }`),
+				InlineStyle(`$me{position: absolute; right: 0; z-index: 10; padding-top: $(1); padding-bottom: $(1); margin-top: $(2); width: $(48); background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
 				TabIndex("-1"),
-				Map(items, func(item StrPair) Node {
-					return A(InlineStyle(`me{display: block; padding-top: $(2); padding-bottom: $(2); padding-left: $(4); padding-right: $(4); font-size: var(--text-sm); line-height: $(5); color: var(--color-neutral-700); } me:hover{background: var(--color-neutral-100);}`), Href(item.Value), TabIndex("-1"), Text(item.Key))
+				Map(items, func(item [2]string) Node {
+					return A(InlineStyle(`$me{display: block; padding-top: $(2); padding-bottom: $(2); padding-left: $(4); padding-right: $(4); font-size: var(--text-sm); line-height: $(5); color: $color(neutral-700); } $me:hover{background: $color(neutral-100);}`), Href(item[1]), TabIndex("-1"), Text(item[0]))
 				}),
 			),
+			InlineScript(`
+				let button = me(".button", me());
+				let dropdown = me(".dropdown", me());
+
+				button.on("click", ev => { toggleShowHide(dropdown) });
+				onClickOutsideOrEscape(me(), () => { hide(dropdown) });
+			`),
 		)
 	}
 
 	navbarLink := func(name string, url string, newPage bool) Node {
 		return A(
-			InlineStyle(`me{ padding-left: $(3); padding-right: $(3); padding-top: $(2); padding-bottom: $(2); font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-100);}`),
-			InlineStyle("me:hover{color: var(--color-white);}"),
+			InlineStyle(`$me{ padding-left: $(3); padding-right: $(3); padding-top: $(2); padding-bottom: $(2); font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-100);}`),
+			InlineStyle("$me:hover{color: $color(white);}"),
 			Href(url),
 			Text(name),
 			If(newPage, Target("_blank")),
@@ -47,41 +53,41 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 	}
 
 	return RootLayout(title+" | Previous",
-		Body(InlineStyle("me{background-color: var(--color-neutral-50); height: 100%;}"),
-			Div(InlineStyle("me{min-height: 100%}"),
-				Nav(InlineStyle("me{background-color: var(--color-neutral-800);}"),
-					Div(InlineStyle("me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl);}"),
-						Div(InlineStyle("me{display: flex; height: $(16); align-items: center; justify-content: space-between;}"),
-							Div(InlineStyle("me{align-items: center; display: flex;}"),
-								Div(InlineStyle("me{flex-shrink: 0;}"),
-									A(Href("/"), Img(InlineStyle("me{height: $(12); width: $(12);}"), Src("/images/logo.svg"), Alt("Previous"))),
+		Body(InlineStyle("$me{background-color: $color(neutral-50); height: 100%;}"),
+			Div(InlineStyle("$me{min-height: 100%}"),
+				Nav(InlineStyle("$me{background-color: $color(neutral-800);}"),
+					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl);}"),
+						Div(InlineStyle("$me{display: flex; height: $(16); align-items: center; justify-content: space-between;}"),
+							Div(InlineStyle("$me{align-items: center; display: flex;}"),
+								Div(InlineStyle("$me{flex-shrink: 0;}"),
+									A(Href("/"), Img(InlineStyle("$me{height: $(12); width: $(12);}"), Src("/images/logo.svg"), Alt("Previous"))),
 								),
-								Div(InlineStyle("@media lg-{ me{display: block;}}"),
-									Div(InlineStyle(`me{margin-left: $(10); display: flex; align-items: baseline;} me:not(:last-child){ margin-left: $(4); }`),
+								Div(InlineStyle("@media $lg-{ $me{display: block;}}"),
+									Div(InlineStyle(`$me{margin-left: $(10); display: flex; align-items: baseline;} $me:not(:last-child){ margin-left: $(4); }`),
 										navbarLink("Dashboard", "/app/dashboard", false),
 										navbarDropdown(
-											"Examples",
-											[]StrPair{
-												{Key: "Auto Table", Value: "/app/examples/autotable"},
-												{Key: "Chart.js", Value: "/app/examples/charts"},
-												{Key: "Form Submission", Value: "/app/examples/forms"},
-												{Key: "HTMX", Value: "/app/examples/htmx"},
-												{Key: "Surreal.js", Value: "/app/examples/surreal"},
-												{Key: "UI Elements", Value: "/app/examples/ui-playground"},
-												{Key: "File Uploading", Value: "/app/examples/upload"},
-												{Key: "SMTP Client", Value: "/app/examples/smtp"},
-												{Key: "HTML Sanitization", Value: "/app/examples/html-sanitization"},
-												{Key: "Markdown Rendering", Value: "/app/examples/markdown"},
-												{Key: "Server-side API Fetch", Value: "/app/examples/api-fetch"},
-												{Key: "Inline Styles", Value: "/app/examples/inline-styles"},
+											Text("Examples"),
+											[][2]string{
+												{"Form Submission", "/app/examples/forms"},
+												{"File Uploading", "/app/examples/upload"},
+												{"Auto Table", "/app/examples/autotable"},
+												{"Inline Styles", "/app/examples/inline-styles"},
+												{"Inline Scripting", "/app/examples/inline-scripting"},
+												{"HTMX", "/app/examples/htmx"},
+												{"UI Elements", "/app/examples/ui-playground"},
+												{"Chart.js", "/app/examples/charts"},
+												{"SMTP Client", "/app/examples/smtp"},
+												{"HTML Sanitization", "/app/examples/html-sanitization"},
+												{"Markdown Rendering", "/app/examples/markdown"},
+												{"Server-side API Fetch", "/app/examples/api-fetch"},
 											},
 										),
 
 										navbarDropdown(
-											"API",
-											[]StrPair{
-												{Key: "Test", Value: "/api/test"},
-												{Key: "Account", Value: "/api/account"},
+											Text("API"),
+											[][2]string{
+												{"Test", "/api/test"},
+												{"Account", "/api/account"},
 											},
 										),
 
@@ -89,39 +95,31 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 									),
 								),
 							),
-							Div(InlineStyle("me{display: none;} @media md { me{ display: block; }}"),
-								Div(InlineStyle("me{ margin-left: $(4); display: flex; align-items: center;} @media md { me{ margin-left: $(6) }}"),
-									Div(InlineStyle("me{position: relative; margin-left: $(3)}"),
-										Div(
-											Button(
-												InlineStyle("me{cursor: pointer; position: relative; display: flex; max-width: var(--container-xs); background-color: var(--color-neutral-800); font-size: var(--text-sm);}"),
-												Type("button"),
-												Span(InlineStyle("me{position: absolute;}"),
-													Img(InlineStyle("me{height: $(8); width: $(8); border-radius: var(--radius-full)}"), Src("/images/profile_picture.png"), Alt("profile picture")),
-												),
-											),
-										),
-										Div(
-											InlineStyle("me{position: absolute; right: 0; z-index: 10; margin-top: $(2); width: $(48); transform-origin: top right; box-shadow: var(--shadow-lg); background: var(--color-white); padding: $(1);}"),
-											TabIndex("-1"),
-											A(Href("/app/account"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Your Profile")),
-											A(Href("/auth/logout"), InlineStyle("me{display: block; padding-left: $(4); padding-right: $(4); padding-top: $(2); padding-bottom: $(2); color: var(--color-neutral-700);} me:hover{background: var(--color-neutral-100);}"), TabIndex("-1"), Text("Log out")),
+							Div(InlineStyle("$me{display: none;} @media $md { $me{ display: block; }}"),
+								Div(InlineStyle("$me{ margin-left: $(4); display: flex; align-items: center;} @media $md { $me{ margin-left: $(6) }}"),
+									Div(InlineStyle("$me{position: relative; margin-left: $(3)}"),
+										navbarDropdown(
+											Icon(ICON_USERS, 24),
+											[][2]string{
+												{"Your Profile", "/app/account"},
+												{"Log Out", "/auth/logout"},
+											},
 										),
 									),
 								),
 							),
-							Div(InlineStyle("me{margin-right: $(2); display: flex;} @media md{ me{display: none;}}"),
+							Div(InlineStyle("$me{margin-right: $(2); display: flex;} @media $md{ $me{display: none;}}"),
 								Button(
-									InlineStyle("me{position: relative; display: inline-flex; justify-items: center; padding: $(2); color: var(--color-neutral-400)}"),
-									InlineStyle("me:hover{color: var(--color-white); background-color: var(--color-neutral-900);}"),
+									InlineStyle("$me{position: relative; display: inline-flex; justify-items: center; padding: $(2); color: $color(neutral-400)}"),
+									InlineStyle("$me:hover{color: $color(white); background-color: $color(neutral-900);}"),
 									Type("button"),
-									Span(InlineStyle("me{position: absolute;}")),
+									Span(InlineStyle("$me{position: absolute;}")),
 									Icon(ICON_MENU, 24),
 								),
 							),
 						),
 					),
-					Div(InlineStyle("@media md { me {display: none; }}"),
+					Div(InlineStyle("@media $md { $me {display: none; }}"),
 						Div(Class("space-y-1 px-2 pb-3 pt-2 sm:px-3"),
 							A(Href("/app/dashboard"), Class("block hover:bg-neutral-900 px-3 py-2 text-base font-medium text-white"), Text("Dashboard")),
 						),
@@ -141,13 +139,13 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 						),
 					),
 				),
-				Header(InlineStyle("me{background-color: var(--color-white); box-shadow: var(--shadow-md);}"),
-					Div(InlineStyle("me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(4);} @media lg { me{ padding-left: $(8); padding-right: $(8);}}"),
-						H1(InlineStyle("me{font-size: var(--text-3xl); font-weight: var(--font-weight-bold); color: var(--color-neutral-950); letter-spacing: var(--tracking-tight);}"), Text(title)),
+				Header(InlineStyle("$me{background-color: $color(white); box-shadow: var(--shadow-md);}"),
+					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(4);} @media $lg { $me{ padding-left: $(8); padding-right: $(8);}}"),
+						H1(InlineStyle("$me{font-size: var(--text-3xl); font-weight: var(--font-weight-bold); color: $color(neutral-950); letter-spacing: var(--tracking-tight);}"), Text(title)),
 					),
 				),
 				Main(
-					Div(InlineStyle("me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(6) $(4);} @media sm { me{padding-left: $(6); padding-right: $(6); }} @media lg { me{padding-left: $(8); padding-right: $(8);}}"),
+					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(6) $(4);} @media $sm { $me{padding-left: $(6); padding-right: $(6); }} @media $lg { $me{padding-left: $(8); padding-right: $(8);}}"),
 						Group(children),
 					),
 				),

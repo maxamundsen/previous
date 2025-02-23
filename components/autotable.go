@@ -30,7 +30,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 	paginationButton := func(icon string, page int) Node {
 		return Button(
 			InlineStyle(`
-				me {
+				$me {
 					padding-left: $(3);
 					padding-right: $(3);
 					padding-top: $(1);
@@ -38,7 +38,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 					min-height: $(9);
 					font-size: var(--text-sm);
 					font-weight: var(--font-weight-normal);
-					color: var(--color-neutral-800);
+					color: $color(neutral-800);
 					cursor: pointer;
 				}
 			`),
@@ -69,20 +69,20 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 			),
 			Div(
 				InlineStyle(`
-					me {
+					$me {
 						position: relative;
 						display: flex;
 						flex-direction: column;
 						width: 100%;
 						height: 100%;
-						color: var(--color-gray-700);
-						background-color: var(--color-white);
+						color: $color(gray-700);
+						background-color: $color(white);
 						box-shadow: var(--shadow-md);
 					}
 				`),
 				Div(
 					InlineStyle(`
-						me {
+						$me {
 							overflow: scroll;
 							display: flex;
 							flex-direction: column;
@@ -91,25 +91,25 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 						}
 					`),
 					Table(
-						InlineStyle("me { table-layout: fixed; width: 100%; }"),
+						InlineStyle("$me { table-layout: fixed; width: 100%; }"),
 						THead(
 							Tr(
 								Map(cols, func(col repository.ColInfo) Node {
 									if col.Sortable {
 										return Th(
 											InlineStyle(`
-												me {
+												$me {
 													padding: $(4);
-													border-bottom: 1px solid var(--color-neutral-200);
+													border-bottom: 1px solid $color(neutral-200);
 													cursor: pointer;
-													background-color: var(--color-neutral-100);
+													background-color: $color(neutral-100);
 													transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
 													transition-timing-function: var(--default-transition-timing-function);
 													transition-duration: var(--default-transition-duration);
 												}
 
-												me:hover {
-													background-color: var(--color-neutral-200);
+												$me:hover {
+													background-color: $color(neutral-200);
 												}
 											`),
 											hx.Get(url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
@@ -119,47 +119,47 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 											hx.Trigger("click"),
 											P(
 												InlineStyle(`
-													me {
+													$me {
 														display: flex;
 														align-items: center;
 														justify-content: space-between;
 														gap: $(2);
 														font-size: var(--text-sm);
-														color: var(--color-neutral-500);
+														color: $color(neutral-500);
 													}
 												`),
 												Text(col.DisplayName),
 												IfElse(f.OrderBy == col.DbName,
 													Group{
-														InlineStyle("me { font-weight: var(--font-weight-bold) ; }"),
+														InlineStyle("$me { font-weight: var(--font-weight-bold) ; }"),
 														IfElse(f.OrderDescending,
 															Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
 															Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
 														),
 													},
-													InlineStyle("me { font-weight: var(--font-weight-normal); }"),
+													InlineStyle("$me { font-weight: var(--font-weight-normal); }"),
 												),
 											),
 										)
 									} else {
 										return Th(
 											InlineStyle(`
-												me {
+												$me {
 													padding: $(4);
-													border-bottom: 1px solid var(--color-neutral-200);
-													background-color: var(--color-neutral-100);
+													border-bottom: 1px solid $color(neutral-200);
+													background-color: $color(neutral-100);
 												}
 											`),
 											P(
 												InlineStyle(`
-													me {
+													$me {
 														display: flex;
 														align-items: center;
 														justify-content: space-between;
 														gap: $(2);
 														font-size: var(--text-sm);
 														font-weight: var(--font-weight-normal);
-														color: var(--color-neutral-500);
+														color: $color(neutral-500);
 													}
 												`),
 												Text(col.DisplayName),
@@ -172,23 +172,23 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 						TBody(
 							IfElse(len(entities) > 0,
 								Map(entities, nf),
-								Td(InlineStyle("me { padding: $(4); }"),
-									P(InlineStyle("me {display: block; font-size: var(--text-sm); color: var(--color-neutral-800);}"), Text("Dataset contains no entries.")),
+								Td(InlineStyle("$me { padding: $(4); }"),
+									P(InlineStyle("$me {display: block; font-size: var(--text-sm); color: $color(neutral-800);}"), Text("Dataset contains no entries.")),
 								),
 							),
 						),
 					),
 				),
 				If(f.Pagination.Enabled,
-					Div(InlineStyle("me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
+					Div(InlineStyle("$me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
 						Div(
-							InlineStyle("me { display: flex; align-items: center; font-size: var(--text-sm); color: var(--color-neutral-500); }"),
+							InlineStyle("$me { display: flex; align-items: center; font-size: var(--text-sm); color: $color(neutral-500); }"),
 							B(Icon(ICON_LIST_ORDERED, 16)),
-							Span(InlineStyle("me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
+							Span(InlineStyle("$me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
 
-						Div(InlineStyle("me { display: flex; }"),
-							Div(InlineStyle("me { margin-right: $(3); align-content: center; font-size: var(--text-sm); color: var(--color-neutral-500);}"),
+						Div(InlineStyle("$me { display: flex; }"),
+							Div(InlineStyle("$me { margin-right: $(3); align-content: center; font-size: var(--text-sm); color: $color(neutral-500);}"),
 								Span(Text("Items per page:")),
 							),
 							Form(
@@ -207,10 +207,10 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 								Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 								Div(
 									InlineStyle(`
-										me > select {
-											background-color: var(--color-gray-50);
+										$me > select {
+											background-color: $color(gray-50);
 											padding: $(3);
-											border: 1px solid var(--color-gray-50);
+											border: 1px solid $color(gray-50);
 											font-size: var(--text-sm);
 											display: block;
 											box-shadow: var(--shadow-sm);
@@ -232,7 +232,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 							paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
 
 							Div(
-								InlineStyle("me { font-size: var(--text-sm); display: flex; justify-content: center; color: var(--color-neutral-500); padding: $(3); min-height: $(9); }"),
+								InlineStyle("$me { font-size: var(--text-sm); display: flex; justify-content: center; color: $color(neutral-500); padding: $(3); min-height: $(9); }"),
 								Text("Page "),
 								ToText(f.Pagination.CurrentPage),
 								Text(" of "),
@@ -251,31 +251,31 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 }
 
 func AutotableRow(children ...Node) Node {
-	return Tr(InlineStyle("me:hover{ background-color: var(--color-neutral-50);} me {border-bottom: 1px solid var(--color-neutral-200); }"),
+	return Tr(InlineStyle("$me:hover{ background-color: $color(neutral-50);} $me {border-bottom: 1px solid $color(neutral-200); }"),
 		Group(children),
 	)
 }
 
 func AutotableItem(children ...Node) Node {
-	return Td(InlineStyle("me { padding: $(4); }"),
-		P(InlineStyle("me { width: 100%; display: block; font-size: var(--text-sm); color: var(--color-neutral-800); }"),
+	return Td(InlineStyle("$me { padding: $(4); }"),
+		P(InlineStyle("$me { width: 100%; display: block; font-size: var(--text-sm); color: $color(neutral-800); }"),
 			Group(children),
 		),
 	)
 }
 
 func AutotableItemBold(children ...Node) Node {
-	return Td(InlineStyle("me { padding: $(4); }"),
-		P(InlineStyle("me { width: 100%; display: block; font-weight: var(--font-weight-semibold); font-size: var(--text-sm); color: var(--color-neutral-800); }"),
+	return Td(InlineStyle("$me { padding: $(4); }"),
+		P(InlineStyle("$me { width: 100%; display: block; font-weight: var(--font-weight-semibold); font-size: var(--text-sm); color: $color(neutral-800); }"),
 			Group(children),
 		),
 	)
 }
 
 func AutotableSearchGroup(children ...Node) Node {
-	return Div(InlineStyle("me { width: 100%; display: flex; justify-content: space-between; margin-bottom: $(3); margin-top: $(1); }"),
-		Div(InlineStyle("me { width: 100%; position: relative; }"),
-			Div(InlineStyle("me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $(1);}"),
+	return Div(InlineStyle("$me { width: 100%; display: flex; justify-content: space-between; margin-bottom: $(3); margin-top: $(1); }"),
+		Div(InlineStyle("$me { width: 100%; position: relative; }"),
+			Div(InlineStyle("$me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $(1);}"),
 				Group(children),
 			),
 		),
@@ -285,13 +285,12 @@ func AutotableSearchGroup(children ...Node) Node {
 func AutotableSearch(c ...Node) Node {
 	return Div(
 		InlineStyle(`
-			me {
+			$me {
 				width: 100%;
 			}
 
-			me > input {
-				/* hello */
-				background-color: var(--color-white);
+			$me > input {
+				background-color: $color(white);
 				width: 100%;
 				padding-right: $(11);
 				padding-left: $(3);
@@ -299,12 +298,12 @@ func AutotableSearch(c ...Node) Node {
 				padding-bottom: $(2);
 				height: $(10);
 				font-size: var(--text-sm);
-				border: 1px solid var(--color-neutral-200);
+				border: 1px solid $color(neutral-200);
 				box-shadow: var(--shadow-sm);
 			}
 
-			me > input:placeholder {
-				color: var(--color-neutral-400);
+			$me > input:placeholder {
+				color: $color(neutral-400);
 			}
 		`),
 		Input(Group(c)),
