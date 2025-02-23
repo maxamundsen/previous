@@ -1,7 +1,8 @@
-package repository
+package orders
 
 import (
 	"previous/.jet/model"
+	"previous/database"
 	"previous/finance"
 
 	. "previous/.jet/table"
@@ -9,18 +10,16 @@ import (
 	. "github.com/go-jet/jet/v2/sqlite"
 )
 
-type OrderRepository struct{}
-
-func (o OrderRepository) Fetch() ([]model.Order, error) {
+func Fetch() ([]model.Order, error) {
 	orders := []model.Order{}
 
 	stmt := SELECT(Order.AllColumns).FROM(Order)
-	err := stmt.Query(db, &orders)
+	err := stmt.Query(database.DB, &orders)
 
 	return orders, err
 }
 
-func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
+func Filter(f database.Filter) ([]model.Order, error) {
 	orders := []model.Order{}
 
 	stmt := SELECT(Order.AllColumns).FROM(Order)
@@ -56,7 +55,7 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 	stmt.WHERE(condition)
 
 	// order by
-	obCol, exists := GetColumnFromStringName(f.OrderBy, Order.AllColumns)
+	obCol, exists := database.GetColumnFromStringName(f.OrderBy, Order.AllColumns)
 
 	if exists {
 		if f.OrderDescending {
@@ -78,6 +77,6 @@ func (o OrderRepository) Filter(f Filter) ([]model.Order, error) {
 
 	// fmt.Println(stmt.DebugSql())
 
-	err := stmt.Query(db, &orders)
+	err := stmt.Query(database.DB, &orders)
 	return orders, err
 }

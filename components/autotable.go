@@ -3,7 +3,7 @@ package components
 import (
 	. "previous/basic"
 
-	"previous/repository"
+	"previous/database"
 
 	. "maragu.dev/gomponents"
 	hx "maragu.dev/gomponents-htmx"
@@ -20,13 +20,13 @@ const FORM_PAGINATION_SUFFIX = "_paginationForm"
 func BindSearch(elId string, identifier string) Node {
 	return Group{
 		FormAttr(elId + FORM_BIND_SUFFIX),
-		Name(repository.SEARCH_URL_KEY_PREFIX + identifier),
+		Name(database.SEARCH_URL_KEY_PREFIX + identifier),
 	}
 }
 
 // THE TABLE
 // Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
-func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f repository.Filter, entities []E, aboveTable Node, nf func(E) Node, belowTable Node) Node {
+func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f database.Filter, entities []E, aboveTable Node, nf func(E) Node, belowTable Node) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(
 			InlineStyle(`
@@ -43,7 +43,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 				}
 			`),
 			Icon(icon, 16),
-			hx.Get(url+repository.QueryParamsFromPagenum(page, f)),
+			hx.Get(url+database.QueryParamsFromPagenum(page, f)),
 			hx.Swap(CSSID(tableId)),
 			hx.Target(CSSID(tableId)),
 			hx.Select(CSSID(tableId)),
@@ -63,9 +63,9 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 				hx.Swap("outerHTML"),
 				hx.Target(CSSID(tableId)),
 				hx.Select(CSSID(tableId)),
-				Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
-				Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
-				Input(Type("hidden"), Name(repository.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
+				Input(Type("hidden"), Name(database.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+				Input(Type("hidden"), Name(database.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
+				Input(Type("hidden"), Name(database.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
 			),
 			Div(
 				InlineStyle(`
@@ -94,7 +94,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 						InlineStyle("$me { table-layout: fixed; width: 100%; }"),
 						THead(
 							Tr(
-								Map(cols, func(col repository.ColInfo) Node {
+								Map(cols, func(col database.ColInfo) Node {
 									if col.Sortable {
 										return Th(
 											InlineStyle(`
@@ -112,7 +112,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 													background-color: $color(neutral-200);
 												}
 											`),
-											hx.Get(url+repository.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
+											hx.Get(url+database.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
 											hx.Swap(CSSID(tableId)),
 											hx.Target(CSSID(tableId)),
 											hx.Select(CSSID(tableId)),
@@ -200,11 +200,11 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 								hx.Swap("outerHTML"),
 
 								MapMapWithKey(f.Search, func(s string, v string) Node {
-									return Input(Type("hidden"), Name(repository.SEARCH_URL_KEY_PREFIX+s), Value(v))
+									return Input(Type("hidden"), Name(database.SEARCH_URL_KEY_PREFIX+s), Value(v))
 								}),
 
-								Input(Type("hidden"), Name(repository.ORDER_BY_URL_KEY), Value(f.OrderBy)),
-								Input(Type("hidden"), Name(repository.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
+								Input(Type("hidden"), Name(database.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+								Input(Type("hidden"), Name(database.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
 								Div(
 									InlineStyle(`
 										$me > select {
@@ -218,7 +218,7 @@ func AutoTable[E any](tableId string, url string, cols []repository.ColInfo, f r
 										}
 									`),
 									Select(
-										Name(repository.ITEMS_PER_PAGE_URL_KEY),
+										Name(database.ITEMS_PER_PAGE_URL_KEY),
 										Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
 										Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
 										Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),

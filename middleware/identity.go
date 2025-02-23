@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"previous/auth"
 	"previous/config"
-	"previous/repository"
 	"previous/security"
+	"previous/users"
 	"strings"
 	"time"
 )
@@ -79,7 +79,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 		// fetch the current user according to the database, and validate that the security stamp hasn't changed.
 		// if it has, invalidate the login session.
-		latestUser, _ := repository.UserRepository{}.FetchById(identity.User.ID)
+		latestUser, _ := users.FetchById(identity.User.ID)
 
 		securityCheckFailed := latestUser.SecurityStamp != identity.User.SecurityStamp
 		notAuthenticated := requireAuth && !identity.Authenticated

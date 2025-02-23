@@ -7,7 +7,7 @@ import (
 	. "previous/components"
 	. "previous/handlers/app"
 
-	// "previous/repository"
+	// "previous/database"
 
 	"previous/middleware"
 

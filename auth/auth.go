@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"previous/.jet/model"
 	"previous/config"
-	"previous/repository"
 	"previous/security"
+	"previous/users"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +20,7 @@ const (
 
 type Identity struct {
 	User          model.User
+	Permissions   users.Permissions
 	Authenticated bool
 	RememberMe    bool
 	Expiration    time.Time
@@ -29,7 +30,7 @@ func NewIdentity(userid int32, rememberMe bool) *Identity {
 	expirationDuration := time.Duration(time.Hour * 24 * time.Duration(config.IDENTITY_COOKIE_EXPIRY_DAYS))
 	expiration := time.Now().Add(expirationDuration)
 
-	user, fetchErr := repository.UserRepository{}.FetchById(userid)
+	user, fetchErr := users.FetchById(userid)
 	if fetchErr != nil {
 		return nil
 	}
@@ -60,7 +61,7 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	time.Sleep(randomDuration)
 
-	user, userErr := repository.UserRepository{}.FetchByUsername(username)
+	user, userErr := users.FetchByUsername(username)
 
 	if userErr != nil || user.FailedAttempts > int32(config.MAX_LOGIN_ATTEMPTS) {
 		// set user password to dummy password to keep timing consistent when validating password
@@ -73,10 +74,10 @@ func Authenticate(username string, password string) (int32, bool) {
 
 	if !result {
 		user.FailedAttempts += 1
-		repository.UserRepository{}.Update(user)
+		users.Update(user)
 	} else {
 		user.FailedAttempts = 0
-		repository.UserRepository{}.Update(user)
+		users.Update(user)
 	}
 
 	return user.ID, result

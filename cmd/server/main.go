@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 	"previous/config"
+	"previous/database"
 	"previous/handlers"
-	"previous/repository"
 	"previous/security"
 	"previous/tasks"
 )
@@ -22,7 +22,7 @@ func main() {
 
 	config.Init()
 	security.Init()
-	repository.Init()
+	database.Init()
 	handlers.Init()
 	tasks.Init()
 

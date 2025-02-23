@@ -1,4 +1,4 @@
-package repository
+package database
 
 import (
 	"previous/config"
@@ -10,12 +10,12 @@ import (
 
 // The database package provides an interface between go code and a relational database.
 
-var db *sql.DB
+var DB *sql.DB
 
 func Init() {
 	var err error
 
-	db, err = sql.Open("sqlite3", config.GetConfig().DbConnectionString)
+	DB, err = sql.Open("sqlite3", config.GetConfig().DbConnectionString)
 
 	if err != nil {
 		panic(err.Error())
