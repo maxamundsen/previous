@@ -55,10 +55,16 @@ However, we can use a few shorthand functions (thanks [surreal.js](https://githu
 			InlineScript(`
 				let input = me("input", me());
 				let par = me("p", me());
+				let words = 0;
 
 				input.on("keyup", () => {
-					console.log("You typed text!");
-					text = input.value;
+					if (input.value.length != 0) {
+						words = input.value.split(" ").length;
+					} else {
+						words = 0;
+					}
+
+					text = "You've typed " + input.value.length + " characters, and " + words + " words.";
 					par.innerHTML = text;
 				})
 			`),
