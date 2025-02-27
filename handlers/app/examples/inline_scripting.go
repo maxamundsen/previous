@@ -23,25 +23,20 @@ func InlineScriptingHandler(w http.ResponseWriter, r *http.Request) {
 			var count = 0;
 			var text = "";
 		`),
-
-		Prose(
-			InlineStyle(`
-				$me {
-					padding: $(5);
-					background: $color(white);
-					border: 1px solid $color(neutral-200);
-					box-shadow: var(--shadow-md);
-					margin-bottom: $(5);
-				}
-			`),
-			Markdown(`
+		Card(
+			Prose(
+				Markdown(`
 Contrary to popular belief, you can achieve extremely powerful "interactivity", using built-in JavaScript facilities.
 Vanilla JS is typically separated from the content, and you need to pass around IDs and class names in order to reference elements on the page.
 
 However, we can use a few shorthand functions (thanks [surreal.js](https://github.com/gnat/surreal)) that wrap around vanilla functionality to localize scripts to our content:
-			`),
+				`),
+			),
 		),
-		ButtonGray(
+
+		Br(),
+
+		ButtonUI(
 			Text("Count: 0"),
 			InlineScript(`
 				let btn = me();
@@ -49,9 +44,9 @@ However, we can use a few shorthand functions (thanks [surreal.js](https://githu
 			`),
 		),
 		Div(
-			InlineStyle("$me { margin-top: $(5);}"),
+			InlineStyle("$me { margin-top: $5;}"),
 			FormInput(Placeholder("Type stuff here...")),
-			P(InlineStyle("$me { color: red; }")),
+			P(InlineStyle("$me { color: $color(red-600); font-size: var(--text-sm); }")),
 			InlineScript(`
 				let input = me("input", me());
 				let par = me("p", me());

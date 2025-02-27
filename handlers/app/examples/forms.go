@@ -51,7 +51,7 @@ func FormHandler(w http.ResponseWriter, r *http.Request) {
 
 				Br(),
 
-				ButtonGray(Type("submit"), Text("Submit")),
+				ButtonUI(Type("submit"), Text("Submit")),
 			),
 		)
 	}().Render(w)

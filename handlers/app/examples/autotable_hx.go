@@ -48,11 +48,11 @@ func AutoTableHxHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Or you can map them manually:
 	cols = []database.ColInfo{
-		{DbName: table.Order.ID.Name(), DisplayName: "ID"},
-		{DbName: table.Order.ProductID.Name(), DisplayName: "Product ID"},
+		{DbName: table.Order.ID.Name(), DisplayName: "ID", DisplayPosition: database.COL_POS_RIGHT},
+		{DbName: table.Order.ProductID.Name(), DisplayName: "Product ID", DisplayPosition: database.COL_POS_RIGHT},
 		{DbName: table.Order.PurchaserName.Name(), DisplayName: "Customer", Sortable: true},
 		{DbName: table.Order.PurchaserEmail.Name(), DisplayName: "Customer Email", Sortable: true},
-		{DbName: table.Order.Price.Name(), DisplayName: "Price (USD)", Sortable: true},
+		{DbName: table.Order.Price.Name(), DisplayName: "Price (USD)", Sortable: true, DisplayPosition: database.COL_POS_RIGHT},
 	}
 
 	// Generate HTML
@@ -85,15 +85,22 @@ func AutoTableHxHandler(w http.ResponseWriter, r *http.Request) {
 				),
 			),
 			func(order model.Order) Node {
-				return AutotableRow(
-					AutotableItemBold(ToText(order.ID)),
-					AutotableItem(ToText(order.ProductID)),
-					AutotableItem(ToText(order.PurchaserName)),
-					AutotableItem(ToText(order.PurchaserEmail)),
-					AutotableItemBold(Text("$"), FormatMoney(int64(order.Price))),
+				return Tr(
+					TdRight(B(ToText(order.ID))),
+					TdRight(ToText(order.ProductID)),
+					TdLeft(ToText(order.PurchaserName)),
+					TdLeft(ToText(order.PurchaserEmail)),
+					TdMoney(int64(order.Price)),
 				)
 			},
 			nil,
+			AutoTableOptions{
+				Compact: true,
+				Hover: true,
+				Alternate: false,
+				BorderX: true,
+				BorderY: true,
+			},
 		)
 	}().Render(w)
 }

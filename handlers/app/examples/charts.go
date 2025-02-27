@@ -29,16 +29,8 @@ func BarChart() Node {
 		[]int{3, 5, 8, 13},
 	)
 
-	return Div(
+	return Card(
 		Canvas(),
-		InlineStyle(`
-			$me {
-				background-color: $color(white);
-				padding: $(5);
-				border: 1px solid $color(neutral-200);
-				box-shadow: var(--shadow-md);
-			}
-		`),
 		InlineScriptf(`
 			let ctx = me("canvas", me());
 

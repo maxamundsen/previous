@@ -14,10 +14,8 @@ import (
 func ApiFetchHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 
-	func() Node {
-		return AppLayout("API Fetch Example", *identity,
-			PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
-			HxLoad("/app/examples/api-fetch-hx"),
-		)
-	}().Render(w)
+	AppLayout("API Fetch Example", *identity,
+		PageLink("http://api.open-notify.org/astros.json", Text("http://api.open-notify.org/astros.json"), true),
+		HxLoad("/app/examples/api-fetch-hx"),
+	).Render(w)
 }

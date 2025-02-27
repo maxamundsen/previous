@@ -24,18 +24,32 @@ func BindSearch(elId string, identifier string) Node {
 	}
 }
 
+const (
+	AUTOTABLE_HEADER_COLOR_DEFAULT = iota
+)
+
+type AutoTableOptions struct {
+	Compact bool
+	Hover bool // highlight rows when hovering over them
+	Alternate bool // highlight alternating rows
+	HeaderBorderY bool
+	BorderX bool
+	BorderY bool
+	Color int // "enum"
+}
+
 // THE TABLE
 // Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
-func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f database.Filter, entities []E, aboveTable Node, nf func(E) Node, belowTable Node) Node {
+func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f database.Filter, entities []E, aboveTable Node, rowComponent func(E) Node, belowTable Node, opts AutoTableOptions) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(
 			InlineStyle(`
 				$me {
-					padding-left: $(3);
-					padding-right: $(3);
-					padding-top: $(1);
-					padding-bottom: $(1);
-					min-height: $(9);
+					padding-left: $3;
+					padding-right: $3;
+					padding-top: $1;
+					padding-bottom: $1;
+					min-height: $9;
 					font-size: var(--text-sm);
 					font-weight: var(--font-weight-normal);
 					color: $color(neutral-800);
@@ -52,20 +66,27 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 	}
 
 	return Group{
-		Div(ID(tableId+TABLE_ABOVE_PREFIX),
-			aboveTable,
+		If((aboveTable != nil) && (tableId != ""),
+			Div(ID(tableId+TABLE_ABOVE_PREFIX),
+				aboveTable,
+			),
 		),
-		Div(ID(tableId),
-			Form(ID(tableId+FORM_BIND_SUFFIX),
-				AutoComplete("off"),
-				hx.Get(url),
-				hx.Trigger("keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
-				hx.Swap("outerHTML"),
-				hx.Target(CSSID(tableId)),
-				hx.Select(CSSID(tableId)),
-				Input(Type("hidden"), Name(database.ORDER_BY_URL_KEY), Value(f.OrderBy)),
-				Input(Type("hidden"), Name(database.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
-				Input(Type("hidden"), Name(database.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
+		Div(
+			If(tableId != "",
+				Group{
+					ID(tableId),
+					Form(ID(tableId+FORM_BIND_SUFFIX),
+						AutoComplete("off"),
+						hx.Get(url),
+						hx.Trigger("keyup delay:100ms from:(#"+tableId+TABLE_ABOVE_PREFIX+" input), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=date]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" input[type=datetime-local]), change from:(#"+tableId+TABLE_ABOVE_PREFIX+" select)"),
+						hx.Swap("outerHTML"),
+						hx.Target(CSSID(tableId)),
+						hx.Select(CSSID(tableId)),
+						Input(Type("hidden"), Name(database.ORDER_BY_URL_KEY), Value(f.OrderBy)),
+						Input(Type("hidden"), Name(database.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
+						Input(Type("hidden"), Name(database.ITEMS_PER_PAGE_URL_KEY), Value(ToString(f.Pagination.MaxItemsPerPage))),
+					),
+				},
 			),
 			Div(
 				InlineStyle(`
@@ -77,13 +98,13 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 						height: 100%;
 						color: $color(gray-700);
 						background-color: $color(white);
-						box-shadow: var(--shadow-md);
+						border: 1px solid $color(neutral-200);
+						border-radius: var(--radius-sm);
 					}
 				`),
 				Div(
 					InlineStyle(`
 						$me {
-							overflow: scroll;
 							display: flex;
 							flex-direction: column;
 							width: 100%;
@@ -92,103 +113,142 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 					`),
 					Table(
 						InlineStyle("$me { table-layout: fixed; width: 100%; }"),
+						// ---- TABLE HEADER ----
 						THead(
 							Tr(
 								Map(cols, func(col database.ColInfo) Node {
-									if col.Sortable {
-										return Th(
-											InlineStyle(`
-												$me {
-													padding: $(4);
-													border-bottom: 1px solid $color(neutral-200);
-													cursor: pointer;
-													background-color: $color(neutral-100);
-													transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
-													transition-timing-function: var(--default-transition-timing-function);
-													transition-duration: var(--default-transition-duration);
-												}
+									return Th(
+										If(col.DisplayPosition == database.COL_POS_RIGHT,
+											InlineStyle("$me { text-align: right; }"),
+										),
+										InlineStyle(`
+											$me {
+												border-bottom: 1px solid $color(neutral-200);
+												background-color: $color(neutral-100);
+											}
 
-												$me:hover {
-													background-color: $color(neutral-200);
+										`),
+										If(opts.HeaderBorderY,
+											InlineStyle(`
+												$me:not(:first-child) {
+													border-left: 1px solid $color(neutral-200);
 												}
 											`),
-											hx.Get(url+database.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
-											hx.Swap(CSSID(tableId)),
-											hx.Target(CSSID(tableId)),
-											hx.Select(CSSID(tableId)),
-											hx.Trigger("click"),
-											P(
+										),
+										IfElse(opts.Compact,
+											InlineStyle("$me { padding: $2 $3; }"),
+											InlineStyle("$me { padding: $2.5 $3; }"),
+										),
+										If(col.Sortable,
+											Group{
+												hx.Get(url+database.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
+												hx.Swap(CSSID(tableId)),
+												hx.Target(CSSID(tableId)),
+												hx.Select(CSSID(tableId)),
+												hx.Trigger("click"),
 												InlineStyle(`
 													$me {
-														display: flex;
-														align-items: center;
-														justify-content: space-between;
-														gap: $(2);
-														font-size: var(--text-sm);
-														color: $color(neutral-500);
+														cursor: pointer;
+													}
+
+													$me:hover {
+														background-color: $color(neutral-200);
 													}
 												`),
-												Text(col.DisplayName),
-												IfElse(f.OrderBy == col.DbName,
-													Group{
-														InlineStyle("$me { font-weight: var(--font-weight-bold) ; }"),
-														IfElse(f.OrderDescending,
-															Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
-															Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
-														),
-													},
-													InlineStyle("$me { font-weight: var(--font-weight-normal); }"),
-												),
-											),
-										)
-									} else {
-										return Th(
+											},
+										),
+										P(
 											InlineStyle(`
 												$me {
-													padding: $(4);
-													border-bottom: 1px solid $color(neutral-200);
-													background-color: $color(neutral-100);
+													display: flex;
+													justify-content: space-between;
+													gap: $2;
+													font-size: var(--text-sm);
+													color: $color(neutral-500);
 												}
 											`),
-											P(
-												InlineStyle(`
-													$me {
-														display: flex;
-														align-items: center;
-														justify-content: space-between;
-														gap: $(2);
-														font-size: var(--text-sm);
-														font-weight: var(--font-weight-normal);
-														color: $color(neutral-500);
-													}
-												`),
-												Text(col.DisplayName),
+											If(col.DisplayPosition == database.COL_POS_LEFT,
+												InlineStyle("$me { flex-direction: row; }"),
 											),
-										)
-									}
+											If(col.DisplayPosition == database.COL_POS_RIGHT,
+												InlineStyle("$me { flex-direction: row-reverse; }"),
+											),
+											Text(col.DisplayName),
+											IfElse((f.OrderBy == col.DbName) && (tableId != ""),
+												Group{
+													InlineStyle("$me { font-weight: var(--font-weight-bold) ; }"),
+													IfElse(f.OrderDescending,
+														Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
+														Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+													),
+												},
+												InlineStyle("$me { font-weight: var(--font-weight-normal); }"),
+											),
+										),
+									)
 								}),
 							),
 						),
+						// ---- TABLE BODY ----
 						TBody(
+							InlineStyle(`
+								$me > tr > td {
+									width: 100%;
+									font-size: var(--text-sm);
+									color: $color(neutral-700);
+								}
+							`),
+							If(opts.Alternate,
+								InlineStyle("$me > tr:nth-child(even) { background: $color(neutral-100) }"),
+							),
+							If(opts.Hover && len(entities) > 0,
+								InlineStyle("$me > tr:hover {background-color: $color(neutral-100);}"),
+							),
+							If(opts.BorderX && f.Pagination.Enabled,
+								InlineStyle("$me > tr {border-bottom: 1px solid $color(neutral-200); }"),
+							),
+							If(opts.BorderX && !f.Pagination.Enabled,
+								InlineStyle("$me > tr:not(:last-child) {border-bottom: 1px solid $color(neutral-200); }"),
+							),
+							If(opts.BorderY,
+								InlineStyle(`
+									$me > tr > td:not(:first-child) {
+										border-left: 1px solid $color(neutral-200);
+									}
+								`),
+							),
+							IfElse(opts.Compact,
+								InlineStyle("$me > tr > td { padding: $1 $3; }"),
+								InlineStyle("$me > tr > td { padding: $4; }"),
+							),
 							IfElse(len(entities) > 0,
-								Map(entities, nf),
-								Td(InlineStyle("$me { padding: $(4); }"),
-									P(InlineStyle("$me {display: block; font-size: var(--text-sm); color: $color(neutral-800);}"), Text("Dataset contains no entries.")),
+								Map(entities, func(e E) Node {
+									return rowComponent(e)
+								}),
+								Tr(
+									Td(
+										Text("Dataset contains no entries."),
+									),
 								),
 							),
 						),
 					),
 				),
+				// ---- PAGINATION ----
 				If(f.Pagination.Enabled,
-					Div(InlineStyle("$me { display: flex; justify-content: space-between; align-items: center; padding: $(3) $(4); }"),
+					Div(InlineStyle("$me { display: flex; justify-content: space-between; align-items: center; }"),
+						IfElse(opts.Compact,
+							InlineStyle("$me { padding: $1 $4; }"),
+							InlineStyle("$me { padding: $3 $4; }"),
+						),
 						Div(
 							InlineStyle("$me { display: flex; align-items: center; font-size: var(--text-sm); color: $color(neutral-500); }"),
 							B(Icon(ICON_LIST_ORDERED, 16)),
-							Span(InlineStyle("$me {margin-right: $(3);}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
+							Span(InlineStyle("$me {margin-right: $3;}")), ToText(f.Pagination.ViewRangeLower), Text("-"), ToText(f.Pagination.ViewRangeUpper), Text(" of "), ToText(f.Pagination.TotalItems),
 						),
 
-						Div(InlineStyle("$me { display: flex; }"),
-							Div(InlineStyle("$me { margin-right: $(3); align-content: center; font-size: var(--text-sm); color: $color(neutral-500);}"),
+						Div(InlineStyle("$me { display: flex; align-items: center; }"),
+							Div(InlineStyle("$me { margin-right: $3; font-size: var(--text-sm); color: $color(neutral-500);}"),
 								Span(Text("Items per page:")),
 							),
 							Form(
@@ -205,26 +265,27 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 
 								Input(Type("hidden"), Name(database.ORDER_BY_URL_KEY), Value(f.OrderBy)),
 								Input(Type("hidden"), Name(database.ORDER_DESC_URL_KEY), Value(ToString(f.OrderDescending))),
-								Div(
+								Select(
+									IfElse(opts.Compact,
+										InlineStyle("$me { padding: $2; }"),
+										InlineStyle("$me { padding: $3; }"),
+									),
 									InlineStyle(`
-										$me > select {
+										$me {
 											background-color: $color(gray-50);
-											padding: $(3);
 											border: 1px solid $color(gray-50);
 											font-size: var(--text-sm);
 											display: block;
+											margin-right: $3;
 											box-shadow: var(--shadow-sm);
-											margin-right: $(3);
 										}
 									`),
-									Select(
-										Name(database.ITEMS_PER_PAGE_URL_KEY),
-										Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
-										Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
-										Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),
-										Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50"), Value("50")),
-										Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100"), Value("100")),
-									),
+									Name(database.ITEMS_PER_PAGE_URL_KEY),
+									Option(If(f.Pagination.MaxItemsPerPage == 5, Selected()), Text("5"), Value("5")),
+									Option(If(f.Pagination.MaxItemsPerPage == 10, Selected()), Text("10"), Value("10")),
+									Option(If(f.Pagination.MaxItemsPerPage == 25, Selected()), Text("25"), Value("25")),
+									Option(If(f.Pagination.MaxItemsPerPage == 50, Selected()), Text("50"), Value("50")),
+									Option(If(f.Pagination.MaxItemsPerPage == 100, Selected()), Text("100"), Value("100")),
 								),
 							),
 
@@ -232,7 +293,7 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 							paginationButton(ICON_CHEVRON_LEFT, f.Pagination.PreviousPage),
 
 							Div(
-								InlineStyle("$me { font-size: var(--text-sm); display: flex; justify-content: center; color: $color(neutral-500); padding: $(3); min-height: $(9); }"),
+								InlineStyle("$me { font-size: var(--text-sm); display: flex; justify-content: center; color: $color(neutral-500); padding: $3; min-height: $9; }"),
 								Text("Page "),
 								ToText(f.Pagination.CurrentPage),
 								Text(" of "),
@@ -250,35 +311,24 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 	}
 }
 
-func AutotableRow(children ...Node) Node {
-	return Tr(InlineStyle("$me:hover{ background-color: $color(neutral-50);} $me {border-bottom: 1px solid $color(neutral-200); }"),
-		Group(children),
-	)
-}
-
-func AutotableItem(children ...Node) Node {
-	return Td(InlineStyle("$me { padding: $(4); }"),
-		P(InlineStyle("$me { width: 100%; display: block; font-size: var(--text-sm); color: $color(neutral-800); }"),
-			Group(children),
-		),
-	)
-}
-
-func AutotableItemBold(children ...Node) Node {
-	return Td(InlineStyle("$me { padding: $(4); }"),
-		P(InlineStyle("$me { width: 100%; display: block; font-weight: var(--font-weight-semibold); font-size: var(--text-sm); color: $color(neutral-800); }"),
-			Group(children),
-		),
-	)
-}
-
 func AutotableSearchGroup(children ...Node) Node {
-	return Div(InlineStyle("$me { width: 100%; display: flex; justify-content: space-between; margin-bottom: $(3); margin-top: $(1); }"),
+	return Div(InlineStyle("$me { width: 100%; display: flex; justify-content: space-between; margin-bottom: $3; margin-top: $1; }"),
 		Div(InlineStyle("$me { width: 100%; position: relative; }"),
-			Div(InlineStyle("$me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $(1);}"),
+			Div(InlineStyle("$me { position: relative; display: flex; flex-direction: row; align-items: center; gap: $1;}"),
 				Group(children),
 			),
 		),
+	)
+}
+
+func AutotableSearchDropdown(c ...Node) Node {
+	return Div(
+		InlineStyle(`
+			$me {
+				width: 100%;
+			}
+		`),
+		FormSelect(Group(c)),
 	)
 }
 
@@ -288,24 +338,31 @@ func AutotableSearch(c ...Node) Node {
 			$me {
 				width: 100%;
 			}
-
-			$me > input {
-				background-color: $color(white);
-				width: 100%;
-				padding-right: $(11);
-				padding-left: $(3);
-				padding-top: $(2);
-				padding-bottom: $(2);
-				height: $(10);
-				font-size: var(--text-sm);
-				border: 1px solid $color(neutral-200);
-				box-shadow: var(--shadow-sm);
-			}
-
-			$me > input:placeholder {
-				color: $color(neutral-400);
-			}
 		`),
-		Input(Group(c)),
+		FormInput(Group(c)),
+	)
+}
+
+// "premade" autotable for simple tables that don't feature dynamic filtering.
+// We can still use the styling and general form of the fancy autotable defined above, but
+// for simple datasets because why not. This also gives you the option to "upgrade"
+// to the "full" table later on, since you are using the same api
+func AutoTableLite[E any](columnNames []string, entities []E, rowComponent func(E) Node, opts AutoTableOptions) Node {
+	cols := []database.ColInfo{}
+
+	for _, v := range columnNames {
+		cols = append(cols, database.ColInfo{DisplayName: v})
+	}
+
+	return AutoTable(
+		"",
+		"",
+		cols,
+		database.Filter{},
+		entities,
+		nil,
+		rowComponent,
+		nil,
+		opts,
 	)
 }

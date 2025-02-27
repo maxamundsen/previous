@@ -47,12 +47,12 @@ func SmtpHandler(w http.ResponseWriter, r *http.Request) {
 
 func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
 	return AppLayout("SMTP Client Example", identity,
-		Div(InlineStyle("me{padding: $(10); background: $color(white); border: 1px solid $color(neutral-200); box-shadow: var(--shadow-md); margin-bottom: $(5);}"),
-			P(InlineStyle("me{font-weight: var(--font-weight-bold); color: $color(neutral-800);}"), Text("Note:")),
+		Card(InlineStyle("$me { margin-bottom: $5; }"),
+			P(InlineStyle("$me{font-weight: var(--font-weight-bold); color: $color(neutral-800);}"), Text("Note:")),
 			P(Text("This demo requires you to connect a valid SMTP server. These options are set in the runtime configuration file.")),
 		),
-		If(errorMsg != "", P(InlineStyle("me{color: $color(red-600);}"), Text(errorMsg))),
-		If(successMsg != "", P(InlineStyle("me{color: $color(green-600);}"), Text(successMsg))),
+		If(errorMsg != "", P(InlineStyle("$me{color: $color(red-600);}"), Text(errorMsg))),
+		If(successMsg != "", P(InlineStyle("$me{color: $color(green-600);}"), Text(successMsg))),
 		Form(Method("post"), AutoComplete("off"),
 			FormLabel(Text("To:")),
 			FormInput(Type("email"), Name("to")),
@@ -63,7 +63,7 @@ func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
 			FormLabel(Text("Body:")),
 			FormTextarea(Name("body")),
 			Br(),
-			ButtonGray(Type("submit"), Text("Send mail")),
+			ButtonUI(Type("submit"), Text("Send mail")),
 		),
 	)
 }

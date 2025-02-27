@@ -68,29 +68,34 @@ func ApiFetchHxHandler(w http.ResponseWriter, r *http.Request) {
 	end := time.Now()
 	elapsed := end.Sub(start)
 
+	cols := []string{"Person", "Spacecraft"}
+
 	func() Node {
 		return Group{
-			If(errorMsg != "", P(Class("text-sm text-red-500"), Text(errorMsg))),
-			P(Class("text-sm text-blue-500"), Text("Fetch took: "), ToText(elapsed)),
-			P(Class("my-5"), Text("Message:")),
-			Code(Class("text-pink-600"), ToText(jsonOutput.Message)),
+			If(errorMsg != "", P(InlineStyle("$me { font-size: var(--text-sm); color: $color(red-500); }"), Text(errorMsg))),
+			P(InlineStyle("$me { font-size: var(--text-sm); }"), Text("Fetch took: "), ToText(elapsed)),
+			P(InlineStyle("$me { margin: $3 $0; }"), Text("Message:")),
+			Code(InlineStyle("$me { color: $color(pink-600);}"), ToText(jsonOutput.Message)),
+
 			Br(),
 			Br(),
-			TableTW(
-				THead(
-					Tr(
-						ThTW(Text("Person")),
-						ThTW(Text("Spacecraft")),
-					),
-				),
-				TBodyTW(
-					Map(jsonOutput.People, func(p person) Node {
-						return Tr(
-							TdTW(Text(p.Name)),
-							TdTW(Text(p.Craft)),
-						)
-					}),
-				),
+
+			AutoTableLite(
+				cols,
+				jsonOutput.People,
+				func(p person) Node {
+					return Tr(
+						Td(Text(p.Name)),
+						Td(Text(p.Craft)),
+					)
+				},
+				AutoTableOptions{
+					Compact: true,
+					BorderX: true,
+					BorderY: true,
+					Hover: true,
+					Alternate: true,
+				},
 			),
 		}
 	}().Render(w)

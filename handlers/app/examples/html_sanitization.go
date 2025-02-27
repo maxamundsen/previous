@@ -27,13 +27,13 @@ func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 			Form(Action(""), Method("POST"),
 				FormTextarea(Name("html_content"), Placeholder("Type HTML input here:"), Text(input), StyleAttr("height: 400px;")),
 				Br(),
-				ButtonGray(Type("submit"), Text("Render")),
+				ButtonUI(Type("submit"), Text("Render")),
 			),
 			If(input != "",
 				Group{
 					Br(),
-					Card("",
-						Prose(InlineStyle("$me { background-color: $color(white); padding: $(5); box-shadow: var(--shadow-md); border: 1px solid $color(neutral-200);}"),
+					Card(
+						Prose(
 							SafeRaw(input),
 						),
 					),

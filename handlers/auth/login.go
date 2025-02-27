@@ -70,23 +70,23 @@ func LoginView(errorMsg string) Node {
 						display: flex;
 						flex-direction: column;
 						justify-content: normal;
-						padding-right: $(6);
-						padding-left: $(6);
-						padding-bottom: $(5);
-						padding-top: $(24);
+						padding-right: $6;
+						padding-left: $6;
+						padding-bottom: $5;
+						padding-top: $24;
 					}
 
 					@media $md {
 						$me {
-							padding-right: $(8);
-							padding-left: $(8);
+							padding-right: $8;
+							padding-left: $8;
 						}
 					}
 				`),
 				Div(
 					InlineStyle(`
 						$me {
-							margin-bottom: $(3);
+							margin-bottom: $3;
 						}
 
 						@media $sm {
@@ -100,7 +100,7 @@ func LoginView(errorMsg string) Node {
 					`),
 					A(Href("/"),
 						Img(
-							InlineStyle("$me { margin-right: auto; margin-left: auto; height: $(32); width: auto; }"),
+							InlineStyle("$me { margin-right: auto; margin-left: auto; height: $32; width: auto; }"),
 							Src("/images/logo.svg"),
 							Alt("Previous"),
 						),
@@ -121,7 +121,7 @@ func LoginView(errorMsg string) Node {
 						Div(
 							InlineStyle(`
 								$me {
-									margin-top: $(5);
+									margin-top: $5;
 								}
 
 								@media $sm {
@@ -136,12 +136,12 @@ func LoginView(errorMsg string) Node {
 							P(InlineStyle("$me { font-size: var(--text-sm); color: $color(red-500); }"), Text(errorMsg)),
 						),
 					),
-					Form(InlineStyle("$me { margin-top: $(5); }"), Action(""), Method("POST"), AutoComplete("off"),
+					Form(InlineStyle("$me { margin-top: $5; }"), Action(""), Method("POST"), AutoComplete("off"),
 						H2(
 							InlineStyle(`
 								$me {
-									margin-top: $(10);
-									margin-bottom: $(5);
+									margin-top: $10;
+									margin-bottom: $5;
 									font-weight: var(--font-weight-bold);
 									font-size: var(--text-2xl);
 									letter-spacing: var(--tracking-tight);
@@ -156,24 +156,24 @@ func LoginView(errorMsg string) Node {
 								For("username"),
 								Text("Username"),
 							),
-							Div(InlineStyle("$me { margin-top: $(2); }"),
+							Div(InlineStyle("$me { margin-top: $2; }"),
 								FormInput(Placeholder("admin"), Name("username"), Type("text"), Required()),
 							),
 						),
 						Div(
 							Label(
-								InlineStyle("$me { margin-top: $(5); display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
+								InlineStyle("$me { margin-top: $5; display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
 								For("password"),
 								Text("Password"),
 							),
-							Div(InlineStyle("$me { margin-top: $(2); }"),
+							Div(InlineStyle("$me { margin-top: $2; }"),
 								FormInput(Placeholder("admin"), Name("password"), Type("password"), Required()),
 							),
 						),
 						Div(
 							InlineStyle(`
 								$me {
-									margin-top: $(5);
+									margin-top: $5;
 								}
 							`),
 							Button(
@@ -181,10 +181,10 @@ func LoginView(errorMsg string) Node {
 									$me {
 										cursor: pointer;
 										width: 100%;
-										padding-top: $(2);
-										padding-bottom: $(2);
-										padding-left: $(5);
-										padding-right: $(5);
+										padding-top: $2;
+										padding-bottom: $2;
+										padding-left: $5;
+										padding-right: $5;
 										color: $color(white);
 										box-shadow: var(--shadow-sm);
 										background-color: $color(neutral-800);
@@ -208,7 +208,7 @@ func LoginView(errorMsg string) Node {
 						`),
 					),
 					P(
-						InlineStyle("$me { margin-top: $(10); font-size: var(--text-sm); color: $color(neutral-500);}"),
+						InlineStyle("$me { margin-top: $10; font-size: var(--text-sm); color: $color(neutral-500);}"),
 						Text("© "),
 						ToText(currentYear),
 						Text(" Max Amundsen"),

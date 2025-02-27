@@ -1,4 +1,4 @@
-[13]  # Version number. Do not delete.
+[16]  # Version number. Do not delete.
 
 [[workspace]]
 # These directories and files will be scanned when a workspace is opened so that search etc. works.
@@ -32,13 +32,13 @@ run_working_dir: ./
 error_regex:                            ^(?P<file>.*):(?P<line>\d+):(?P<col>\d+): (?P<msg>.*)$
 clear_build_output_before_running:      true
 open_panel_on_build:                    true
-close_panel_on_success:                 true
+close_panel_on_success:                 false
 
-# [Metagen Build]
-# build_command: go run ./cmd/metagen build
-# key_binding: Cmd-Shift-B
+[Metagen Build]
+build_command: go run ./cmd/metagen build-all
+key_binding: Cmd-Shift-B
 
-# [Run]
-# build_command: go build ./cmd/server
-# run_command: ./server
-# key_binding: F5
+[Run]
+build_command: go run ./cmd/metagen build-all
+run_command: ./server
+key_binding: F5

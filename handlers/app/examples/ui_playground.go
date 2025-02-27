@@ -18,38 +18,38 @@ func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {
 		MODAL2 = "modal2"
 	)
 
-	func() Node {
-		return AppLayout("User Interface Elements", *identity,
-			H1(Class("text-4xl font-bold"), Text("Modals")),
+ 	AppLayout("User Interface Elements", *identity,
+		H1(Class("text-4xl font-bold"), Text("Modals")),
 
-			ModalActuator(MODAL1, ButtonBlue(Text("Open Modal 1"))),
-			ModalActuator(MODAL2, ButtonRed(Text("Open Modal 2"))),
+		Modal(
+			MODAL1,
+			Text("Our site uses cookies!"),
+			Text("I hate cookie popups!!!"),
+			[]Node{
+				ButtonUISuccess(Text("OK")),
+				ButtonUI(Text("Close")),
+			},
+		),
 
-			Modal(
-				MODAL1,
-				"Test Modal",
-				Text("Hello!"),
-				[]Node{
-					ButtonGray(Text("Close")),
-				},
-			),
+		Modal(
+			MODAL2,
+			Text("Modal"),
+			Text("This is the inside"),
+			nil,
+		),
 
-			Modal(
-				MODAL2,
-				"Another Modal",
-				Text("This is the second modal!"),
-				[]Node{
-					ButtonGray(Text("Close")),
-					ButtonRed(Text("Click this!")),
-					ButtonBlue(Text("You can as many bottom buttons as you want!")),
-				},
-			),
+		Div(InlineStyle("$me { display: flex; flex-direction: row; gap: $2;}"),
+			ModalActuator(MODAL1, ButtonUI(Text("Open Modal 1"))),
+			ModalActuator(MODAL1, ButtonUI(Text("Open Modal 1 (secondary actuator)"))),
+			ModalActuator(MODAL2, ButtonUI(Text("Open Modal 2"))),
+		),
 
-			ButtonGray(
-				Text("Swap contents of Modal 1 via HTMX"),
-				hx.Get("/app/examples/lipsum-hx"),
-				hx.Target(CSSID(MODAL1)),
-			),
-		)
-	}().Render(w)
+		Br(),
+
+		ButtonUI(
+			Text("Swap contents of Modal 1 via HTMX"),
+			hx.Get("/app/examples/autotable-hx"),
+			hx.Target(CSSID(MODAL1)),
+		),
+	).Render(w)
 }

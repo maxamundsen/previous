@@ -16,10 +16,10 @@ func ErrorPage(status int) Node {
 			Div(
 				InlineStyle(`
 					$me {
-						padding-top: $(8);
-						padding-bottom: $(8);
-						padding-left: $(4);
-						padding-right: $(4);
+						padding-top: $8;
+						padding-bottom: $8;
+						padding-left: $4;
+						padding-right: $4;
 						margin-right: auto;
 						margin-left: auto;
 						max-width: var(--container-xl);
@@ -27,10 +27,10 @@ func ErrorPage(status int) Node {
 
 					@media $lg {
 						$me {
-							padding-top: $(16);
-							padding-bottom: $(16);
-							padding-right: $(6);
-							padding-left: $(6);
+							padding-top: $16;
+							padding-bottom: $16;
+							padding-right: $6;
+							padding-left: $6;
 						}
 					}
 				`),
@@ -46,7 +46,7 @@ func ErrorPage(status int) Node {
 					H1(
 						InlineStyle(`
 							$me {
-								margin-bottom: $(4);
+								margin-bottom: $4;
 								font-size: var(--text-7xl);
 								color: $color(neutral-950);
 								letter-spacing: var(--tracking-tight);
@@ -64,7 +64,7 @@ func ErrorPage(status int) Node {
 					P(
 						InlineStyle(`
 							$me {
-								margin-bottom: $(4);
+								margin-bottom: $4;
 								font-size: var(--text-lg);
 								color: $color(neutral-500);
 							}
@@ -80,13 +80,13 @@ func ErrorPage(status int) Node {
 						        background: $color(neutral-900);
 						        font-weight: var(--font-weight-medium);
 						        font-size: var(--text-sm);
-						        padding-left: $(5);
-						        padding-right: $(5);
-						        padding-top: $(3);
-						        padding-bottom: $(3);
+						        padding-left: $5;
+						        padding-right: $5;
+						        padding-top: $3;
+						        padding-bottom: $3;
 						        text-align: center;
-						        margin-top: $(4);
-						        margin-bottom: $(4);
+						        margin-top: $4;
+						        margin-bottom: $4;
 						    }
 
 						    $me:hover {

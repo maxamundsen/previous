@@ -96,15 +96,19 @@ func generateInlineStyles() {
 // Expand spacing macro
 // Ex:
 //
-//	padding: $(5);
+//	padding: $5;
 //
 // => padding: calc(var(--spacing) * 5);
 func expandSpacing(input string) string {
-	re := regexp.MustCompile(`\$\((\d+)\)`)
+	re := regexp.MustCompile(`\$([0-9]+(?:\.[0-9]+)?)`)
 
 	transformed := re.ReplaceAllStringFunc(input, func(match string) string {
-		number := re.FindStringSubmatch(match)[1]
-		return fmt.Sprintf("calc(var(--spacing) * %s)", number)
+		if len(re.FindStringSubmatch(match)) >= 2 {
+			number := re.FindStringSubmatch(match)[1]
+			return fmt.Sprintf("calc(var(--spacing) * %s)", number)
+		}
+
+		return ""
 	})
 
 	return transformed

@@ -22,10 +22,16 @@ const (
 	FILTER_DEFAULT_MAX_ITEMS     = 10
 )
 
+const (
+	COL_POS_LEFT = iota
+	COL_POS_RIGHT = iota
+)
+
 type ColInfo struct {
 	DisplayName string
 	DbName      string
 	Sortable    bool
+	DisplayPosition int
 }
 
 type Filter struct {

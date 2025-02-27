@@ -45,61 +45,86 @@ func BadgeWarning(children ...Node) Node {
 
 // DIALOG / MODAL
 func ModalActuator(id string, contents Node) Node {
-	return Span(Attr("x-on:click", "$store."+id+" = true"),
+	return Span(
+		InlineScriptf(`
+			let act = me();
+			let dialog = me("#%s_dialog");
+			act.on("click", () => { dialog.showModal(); });
+		`, id),
 		contents,
 	)
 }
 
-func Modal(id string, title string, body Node, closeElements []Node) Node {
-	return Div(
+func Modal(id string, header Node, body Node, closeElements []Node) Node {
+	return Dialog(
+		ID(id+"_dialog"),
+		InlineStyle(`
+			$me {
+				top: 50%;
+				left: 50%;
+				translate: -50% -50%;
+				z-index: 10;
+				background: $color(white);
+				border-radius: var(--radius-lg);
+				box-shadow: var(--shadow-md);
+				font-size: var(--text-sm);
+			}
+
+			$me::backdrop {
+				background: $color(black/30);
+			}
+		`),
+
+		// Header
+		Div(InlineStyle("$me { padding: $6 $8 $1 $8; font-size: var(--text-xl); font-weight: var(--font-weight-bold);}"),
+			header,
+		),
+
+		//Modal contents
 		Div(
+			ID(id), // we use the passed id here so that swapping the content is easier
 			InlineStyle(`
 				$me {
-					display: flex;
-					align-items: center;
-					background-color: $color(black/50);
-					position: fixed;
-					z-index: 30;
+					padding: $3 $8 $8 $8;
+					color: $color(neutral-700);
 				}
 			`),
-			Class("fixed inset-0 z-30 flex items-end justify-center bg-black/30 p-4 pb-8 sm:items-center lg:p-8"),
-			Attr("x-cloak", ""),
-			Attr("x-show", "$store."+id),
-			Attr("x-transition.opacity.duration.50ms", ""),
-			Attr("x-trap.inert.noscroll", "$store."+id+""),
-			Attr("x-on:keydown.esc.window", "$store."+id+" = false"),
-			Attr("x-on:click.self", "$store."+id+" = false"),
-			Role("dialog"),
-			Aria("modal", "true"),
-			Aria("labelledby", "defaultModalTitle"),
+			body,
+		),
+
+		// footer
+		If(len(closeElements) > 0,
 			Div(
-				Class("flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"),
-				Attr("x-show", "$store."+id+""),
-				Attr("x-transition:enter", "transition ease-out duration-50 delay-20 motion-reduce:transition-opacity"),
-				Attr("x-transition:enter-start", "opacity-0 scale-50"),
-				Attr("x-transition:enter-end", "opacity-100 scale-100"),
-				Div(Class("flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4"),
-					H3(Class("font-semibold tracking-wide text-on-surface-strong"), Text(title)),
-					Button(
-						Class("cursor-pointer"),
-						Attr("x-on:click", "$store."+id+" = false"),
-						Aria("label", "close modal"),
-						Icon(ICON_X_DIALOG_CLOSE, 24),
-					),
-				),
-				Div(
-					Class("px-4 py-8"),
-					ID(id),
-					body,
-				),
-				Div(
-					Class("flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 sm:flex-row sm:items-center md:justify-end"),
-					Map(closeElements, func(n Node) Node {
-						return Div(Attr("x-on:click", "$store."+id+" = false"), n)
-					}),
-				),
+				InlineStyle(`
+					$me {
+						background: $color(gray-50);
+						padding: $3 $8 $3 $8;
+						display: flex;
+						flex-direction: row-reverse;
+						gap: $2;
+					}
+				`),
+
+				Map(closeElements, func(el Node) Node {
+					return Div(Class("modal-close-btn"),
+						el,
+					)
+				}),
 			),
 		),
+
+		InlineScript(`
+			let dialog = me();
+			let close_buttons = any(".modal-close-btn", me())
+
+			dialog.on("click", (ev) => {
+				if (ev.target === dialog) {
+					dialog.close();
+				}
+			});
+
+			close_buttons.on("click", () => { dialog.close(); });
+		`),
 	)
 }
 
@@ -108,9 +133,16 @@ func Container(n ...Node) Node {
 	return Div(Class("w-full px-3 mx-auto bs-sm:max-w-bs-sm bs-md:max-w-bs-md bs-lg:max-w-bs-lg bs-xl:max-w-bs-xl bs-xxl:max-w-bs-xxl"), Group(n))
 }
 
-func Card(header string, body ...Node) Node {
-	return Div(Class("mt-5 p-10 bg-white border border-neutral-200 shadow-sm"),
-		H5(Class("mb-2 text-2xl font-bold text-neutral-900"), Text(header)),
+func Card(body ...Node) Node {
+	return Div(
+		InlineStyle(`
+			$me {
+				background-color: $color(white);
+				padding: $5;
+				border: 1px solid $color(neutral-200);
+				border-radius: var(--radius-sm);
+			}
+		`),
 		Group(body),
 	)
 }
@@ -150,12 +182,13 @@ func FormInput(children ...Node) Node {
 		InlineStyle(`
 			$me {
 				background-color: $color(white);
-				padding: $(2);
+				padding: $2;
 				display: block;
 				width: 100%;
 				border: 0;
 				color: $color(neutral-900);
-				box-shadow: var(--shadow-sm);
+				border: 1px solid $color(neutral-200);
+				border-radius: var(--radius-sm);
 			}
 
 			@media $sm {
@@ -172,13 +205,14 @@ func FormSelect(children ...Node) Node {
 	return Select(
 		InlineStyle(`
 			$me {
-				padding: $(3);
+				padding: $3;
 				background-color: $color(white);
 				display: block;
 				width: 100%;
 				border: 0;
 				color: $color(neutral-900);
-				box-shadow: var(--shadow-sm);
+				border: 1px solid $color(neutral-200);
+				border-radius: var(--radius-sm);
 			}
 			@media $sm {
 				$me {
@@ -195,12 +229,13 @@ func FormTextarea(children ...Node) Node {
 		InlineStyle(`
 			$me {
 				display: block;
-				padding: $(3);
+				padding: $3;
 				width: 100%;
 				font-size: var(--text-sm);
 				color: $color(neutral-900);
 				background-color: $color(white);
-				box-shadow: var(--shadow-sm);
+				border: 1px solid $color(neutral-200);
+				border-radius: var(--radius-sm);
 			}
 		`),
 		Group(children),
@@ -222,92 +257,67 @@ func PageLink(location string, display Node, newPage bool) Node {
 }
 
 // BUTTONS
-func ButtonGray(children ...Node) Node {
+func ButtonUI(children ...Node) Node {
 	return Button(
 		InlineStyle(`
 			$me {
 				cursor: pointer;
 				position: relative;
-				box-shadow: var(--shadow-md);
 				display: inline-flex;
 				align-items: center;
 				overflow: hidden;
-				background-color: $color(neutral-600);
-				color: $color(white);
-				padding-right: $(8);
-				padding-left: $(8);
-				padding-top: $(1);
-				padding-bottom: $(1);
+				background-color: $color(white);
+				border: 1px solid $color(neutral-300);
+				color: $color(neutral-700);
+				padding-right: $8;
+				padding-left: $8;
+				padding-top: $1;
+				padding-bottom: $1;
 				font-size: var(--text-sm);
+				border-radius: var(--radius-sm);
+			}
+
+			$me:hover {
+				background: $color(neutral-50);
 			}
 		`),
 		Group(children),
 	)
 }
 
-func ButtonRed(children ...Node) Node {
-	return Button(Class("cursor-pointer group relative shadow inline-flex items-center overflow-hidden bg-red-600 px-8 py-1 text-white focus:outline-none focus:ring hover:bg-red-800 active:bg-red-800 text-sm"),
-		Group(children),
-	)
-}
+func ButtonUISuccess(children ...Node) Node {
+	return ButtonUI(
+		InlineStyle(`
+			$me {
+				border: 1px solid $color(green-700);
+				background: $color(green-600);
+				color: $color(white);
+			}
 
-func ButtonBlue(children ...Node) Node {
-	return Button(Class("cursor-pointer group relative shadow inline-flex items-center overflow-hidden bg-blue-600 px-8 py-1 text-white focus:outline-none focus:ring hover:bg-blue-800 active:bg-neutral-800 text-sm"),
+			$me:hover {
+				background: $color(green-700);
+			}
+		`),
 		Group(children),
 	)
 }
 
 // TABLES
-func TableSearchDropdown(c ...Node) Node {
-	return Select(Class("bg-white w-full px-3 h-10 py-2 bg-transparent placeholder:text-neutral-400 text-neutral-700 text-sm border border-neutral-200 transition duration-200 ease focus:outline-none focus:border-neutral-400 hover:border-neutral-400 shadow-sm focus:shadow-md"),
-		Group(c),
+func TdMoney(amt int64) Node {
+	return TdRight(
+		InlineStyle("$me { display: flex; justify-content: space-between;}"),
+		Div(Text("$")),
+		B(FormatMoney(int64(amt))),
 	)
 }
 
-func TableTW(c ...Node) Node {
-	return Div(Class("flex flex-col"),
-		Div(InlineStyle("$me {margin: $(2); overflow: x-auto;}"),
-			Div(InlineStyle("$me { padding: $(2); min-width: 100%; display: inline-block; vertical-align: middle; }"),
-				Div(InlineStyle("$me { overflow: hidden; }"),
-					Table(
-						InlineStyle(`
-							$me {
-								min-width: 100%;
-								table-layout: fixed;
-							}
-
-							$me > :not(:last-child) {
-								border-top-width: 0px;
-								border-bottom-width: 1px;
-							}
-						`),
-						Group(c),
-					),
-				),
-			),
-		),
-	)
+// Row Item Helpers
+func TdLeft(c ...Node) Node {
+	return Td(InlineStyle("$me { text-align: left; }"), Group(c))
 }
 
-func TBodyTW(children ...Node) Node {
-	return TBody(
-		InlineStyle(`
-			me > :not(:last-child) {
-				border-top-width: 0px;
-				border-bottom-width: 1px;
-				border-color: $color(neutral-500);
-			}
-		`),
-		Group(children),
-	)
-}
-
-func ThTW(children ...Node) Node {
-	return Th(Class("px-6 py-3 text-start text-xs font-medium text-muted-foreground uppercase"), Group(children))
-}
-
-func TdTW(children ...Node) Node {
-	return Td(Class("px-6 py-4 whitespace-nowrap text-sm font-medium text-muted-foreground"), Group(children))
+func TdRight(c ...Node) Node {
+	return Td(InlineStyle("$me { text-align: right; }"), Group(c))
 }
 
 // HTMX Helpers
@@ -320,36 +330,25 @@ func HxLoad(url string) Node {
 func Loader() Node {
 	return Span(
 		InlineStyle(`
-		me {
-			width: 48px;
-			height: 48px;
-			border-radius: 50%;
-			display: inline-block;
-			border-top: 4px solid #FFF;
-			border-right: 4px solid transparent;
-			box-sizing: border-box;
-			animation: rotation 1s linear infinite;
-		}
-		me::after {
-			content: '';
-			box-sizing: border-box;
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 48px;
-			height: 48px;
-			border-radius: 50%;
-			border-bottom: 4px solid #FF3D00;
-			border-left: 4px solid transparent;
-		}
-		@keyframes rotation {
-			0% {
-				transform: rotate(0deg);
-			}
-			100% {
-				transform: rotate(360deg);
-			}
-		}
+		$me {
+		    width: 48px;
+		    height: 48px;
+		    border: 5px solid #FFF;
+		    border-bottom-color: $color(neutral-800);
+		    border-radius: 50%;
+		    display: inline-block;
+		    box-sizing: border-box;
+		    animation: rotation 1s linear infinite;
+	    }
+
+	    @keyframes rotation {
+		    0% {
+		        transform: rotate(0deg);
+		    }
+		    100% {
+		        transform: rotate(360deg);
+		    }
+	    }
 		`),
 	)
 }

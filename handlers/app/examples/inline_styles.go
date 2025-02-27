@@ -30,17 +30,17 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 			Text("Inline styles can be applied conditionally. Click the buttons to change the color!"),
 		),
 
-		Form(Input(Type("hidden"), Value("true"), Name("value")), ButtonGray(Text("Make text green"))),
+		Form(Input(Type("hidden"), Value("true"), Name("value")), ButtonUI(Text("Make text green"))),
 		Br(),
-		Form(Input(Type("hidden"), Value("false"), Name("value")), ButtonGray(Text("Make text red"))),
+		Form(Input(Type("hidden"), Value("false"), Name("value")), ButtonUI(Text("Make text red"))),
 
 		Br(),
 		P((Text("* Note that these styles are determined server side."))),
 		Br(),
 
-		MacroDescription("$me", "CSS selector for the current element you are styling."),
-		MacroDescription("$color(:color/:opacity)", "Expands to a color from the tailwind CSS color palette. Opacity can be any value between 0-100. Ex: $color(red-500/80)."),
-		MacroDescription("$(:spacing)", "Expands to `calc(var(--spacing) * :spacing)`. Ex: `padding: $(5);`"),
+		MacroDescription("$me", "CSS selector for the current element you are inside."),
+		MacroDescription("$color(<color>/<opacity>)", "Expands to a color from the tailwind CSS color palette. Opacity can be any value between 0-100. Ex: $color(red-500/80)."),
+		MacroDescription("$<spacing>", "Expands to `calc(var(--spacing) * <spacing>`. Ex: `padding: $5;` or `padding: $3.5;`"),
 		MacroDescription("$dark", "Expands to: `(prefers-color-scheme: dark)`"),
 		MacroDescription("$light", "Expands to: `(prefers-color-scheme: light)`"),
 		MacroDescription("$xs-", "Expands to: `screen and (max-width: 639px)`"),
@@ -60,7 +60,7 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 
 func InlineStyleComponent() Node {
 	return P(
-		InlineStyle("$me { margin-top: $(5); color: $color(blue-500); } @media $md- { me { color: $color(red-500); padding: $(5); } }"),
+		InlineStyle("$me { margin-top: $5; color: $color(blue-500); } @media $md- { $me { color: $color(red-500); padding: $5; } }"),
 		InlineStyle("$me { font-size: var(--text-lg); }"),
 		Text("You can call the `InlineStyle` macro as many times as you want on the same element. "),
 		Text("Each macro call will get its own unique HTML attribute, unless it is a duplicate."),
@@ -69,7 +69,7 @@ func InlineStyleComponent() Node {
 
 func MacroDescription(macro string, description string) Node {
 	return P(
-		InlineStyle("$me { margin-bottom: $(3); display: flex; flex-direction: column;}"),
+		InlineStyle("$me { margin-bottom: $3; display: flex; flex-direction: column;}"),
 		Pre(InlineStyle("$me { color: $color(pink-600);}"), Code(Text(macro))),
 		Text(" " + description),
 	)

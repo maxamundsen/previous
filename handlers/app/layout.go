@@ -11,10 +11,10 @@ import (
 func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 	navbarDropdown := func(dropdownHeader Node, items [][2]string) Node {
 		return Div(
-			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $(3);}"),
+			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $3;}"),
 			Div(
 				Class("button"),
-				InlineStyle(`$me{ cursor: pointer; display: flex; position: relative; padding-top: $(2); padding-bottom: $(2); padding-left: $(3); font-size: var(--text-sm); line-height: var(--text-sm--line-height); cursor: pointer; font-weight: var(--font-weight-medium); color: $color(neutral-100); }`),
+				InlineStyle(`$me{ cursor: pointer; display: flex; position: relative; padding-top: $2; padding-bottom: $2; padding-left: $3; font-size: var(--text-sm); line-height: var(--text-sm--line-height); font-weight: var(--font-weight-medium); color: $color(neutral-100); }`),
 				InlineStyle("$me:hover{color: $color(white);}"),
 				Button(
 					Div(InlineStyle("$me{cursor: pointer; display: flex; align-items: center;}"),
@@ -25,11 +25,10 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 			),
 			Div(
 				Class("dropdown"),
-				InlineStyle(`$me { display: none; }`),
-				InlineStyle(`$me{position: absolute; right: 0; z-index: 10; padding-top: $(1); padding-bottom: $(1); margin-top: $(2); width: $(48); background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
+				InlineStyle(`$me{display: none; border-radius: var(--radius-sm); position: absolute; right: 0; z-index: 10; padding-top: $1; padding-bottom: $1; margin-top: $2; width: $48; background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
 				TabIndex("-1"),
 				Map(items, func(item [2]string) Node {
-					return A(InlineStyle(`$me{display: block; padding-top: $(2); padding-bottom: $(2); padding-left: $(4); padding-right: $(4); font-size: var(--text-sm); line-height: $(5); color: $color(neutral-700); } $me:hover{background: $color(neutral-100);}`), Href(item[1]), TabIndex("-1"), Text(item[0]))
+					return A(InlineStyle(`$me{display: block; padding-top: $2; padding-bottom: $2; padding-left: $4; padding-right: $4; font-size: var(--text-sm); line-height: $5; color: $color(neutral-700); } $me:hover{background: $color(neutral-100);}`), Href(item[1]), TabIndex("-1"), Text(item[0]))
 				}),
 			),
 			InlineScript(`
@@ -44,7 +43,7 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 
 	navbarLink := func(name string, url string, newPage bool) Node {
 		return A(
-			InlineStyle(`$me{ padding-left: $(3); padding-right: $(3); padding-top: $(2); padding-bottom: $(2); font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-100);}`),
+			InlineStyle(`$me{ padding-left: $3; padding-right: $3; padding-top: $2; padding-bottom: $2; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-100);}`),
 			InlineStyle("$me:hover{color: $color(white);}"),
 			Href(url),
 			Text(name),
@@ -57,13 +56,13 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 			Div(InlineStyle("$me{min-height: 100%}"),
 				Nav(InlineStyle("$me{background-color: $color(neutral-800);}"),
 					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl);}"),
-						Div(InlineStyle("$me{display: flex; height: $(16); align-items: center; justify-content: space-between;}"),
+						Div(InlineStyle("$me{display: flex; height: $16; align-items: center; justify-content: space-between;}"),
 							Div(InlineStyle("$me{align-items: center; display: flex;}"),
 								Div(InlineStyle("$me{flex-shrink: 0;}"),
-									A(Href("/"), Img(InlineStyle("$me{height: $(12); width: $(12);}"), Src("/images/logo.svg"), Alt("Previous"))),
+									A(Href("/"), Img(InlineStyle("$me{height: $8; width: $8;}"), Src("/images/logo.svg"), Alt("Previous"))),
 								),
 								Div(InlineStyle("@media $lg-{ $me{display: block;}}"),
-									Div(InlineStyle(`$me{margin-left: $(10); display: flex; align-items: baseline;} $me:not(:last-child){ margin-left: $(4); }`),
+									Div(InlineStyle(`$me{margin-left: $1; display: flex; align-items: baseline;} $me:not(:last-child){ margin-left: $4; }`),
 										navbarLink("Dashboard", "/app/dashboard", false),
 										navbarDropdown(
 											Text("Examples"),
@@ -96,8 +95,8 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 								),
 							),
 							Div(InlineStyle("$me{display: none;} @media $md { $me{ display: block; }}"),
-								Div(InlineStyle("$me{ margin-left: $(4); display: flex; align-items: center;} @media $md { $me{ margin-left: $(6) }}"),
-									Div(InlineStyle("$me{position: relative; margin-left: $(3)}"),
+								Div(InlineStyle("$me{ margin-left: $4; display: flex; align-items: center;} @media $md { $me{ margin-left: $6;}}"),
+									Div(InlineStyle("$me{position: relative; margin-left: $3;}"),
 										navbarDropdown(
 											Icon(ICON_USERS, 24),
 											[][2]string{
@@ -108,9 +107,9 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 									),
 								),
 							),
-							Div(InlineStyle("$me{margin-right: $(2); display: flex;} @media $md{ $me{display: none;}}"),
+							Div(InlineStyle("$me{margin-right: $2; display: flex;} @media $md{ $me{display: none;}}"),
 								Button(
-									InlineStyle("$me{position: relative; display: inline-flex; justify-items: center; padding: $(2); color: $color(neutral-400)}"),
+									InlineStyle("$me{position: relative; display: inline-flex; justify-items: center; padding: $2; color: $color(neutral-400)}"),
 									InlineStyle("$me:hover{color: $color(white); background-color: $color(neutral-900);}"),
 									Type("button"),
 									Span(InlineStyle("$me{position: absolute;}")),
@@ -139,13 +138,13 @@ func AppLayout(title string, identity auth.Identity, children ...Node) Node {
 						),
 					),
 				),
-				Header(InlineStyle("$me{background-color: $color(white); box-shadow: var(--shadow-md);}"),
-					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(4);} @media $lg { $me{ padding-left: $(8); padding-right: $(8);}}"),
+				Header(InlineStyle("$me{background-color: $color(white); box-shadow: var(--shadow-sm);}"),
+					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $4;} @media $lg { $me{ padding-left: $8; padding-right: $8;}}"),
 						H1(InlineStyle("$me{font-size: var(--text-3xl); font-weight: var(--font-weight-bold); color: $color(neutral-950); letter-spacing: var(--tracking-tight);}"), Text(title)),
 					),
 				),
 				Main(
-					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $(6) $(4);} @media $sm { $me{padding-left: $(6); padding-right: $(6); }} @media $lg { $me{padding-left: $(8); padding-right: $(8);}}"),
+					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl); padding: $6 $4;} @media $sm { $me{padding-left: $6; padding-right: $6; }} @media $lg { $me{padding-left: $8; padding-right: $8;}}"),
 						Group(children),
 					),
 				),

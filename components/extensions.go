@@ -70,3 +70,7 @@ func CSSID(input string) string {
 func Template(children ...Node) Node {
 	return El("template", children...)
 }
+
+func Open() Node {
+	return Attr("open")
+}
