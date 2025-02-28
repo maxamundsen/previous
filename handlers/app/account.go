@@ -11,14 +11,15 @@ import (
 	"net/http"
 )
 
-type accountTableItem struct {
-	Property string
-	Value interface{}
-}
-
 func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	session := middleware.GetSession(r)
+
+
+	type accountTableItem struct {
+		Property string
+		Value interface{}
+	}
 
 	cols := []string {
 		"Property",
@@ -28,7 +29,7 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	entries := []accountTableItem {
 		{ "UserId", identity.User.ID },
 		{ "Username", identity.User.Username },
-		{ "Name", identity.User.Username + " " +  identity.User.Lastname },
+		{ "Name", identity.User.Firstname + " " +  identity.User.Lastname },
 		{ "Email", identity.User.Email },
 		{ "Last Login", identity.User.LastLogin },
 	}

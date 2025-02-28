@@ -14,6 +14,45 @@ const (
 	LAYOUT_SECTION_API = iota
 )
 
+type NavGroup struct {
+	SectionId int
+	Title string
+	URL string
+	SubGroup []NavGroup
+	NewTab bool
+}
+
+var NavGroups = []NavGroup {
+	{SectionId: LAYOUT_SECTION_DASHBOARD, Title: "Dashboard", URL: "/app/dashboard", SubGroup: nil},
+	{
+		Title: "Examples",
+		SubGroup: []NavGroup {
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Form Submission", URL: "/app/examples/forms"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "File Uploading", URL: "/app/examples/upload"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Cookie Sessions", URL: "/app/examples/session"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Auto Table", URL: "/app/examples/autotable"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Inline Styles", URL: "/app/examples/inline-styles"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Inline Scripting", URL: "/app/examples/inline-scripting"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "HTMX", URL: "/app/examples/htmx"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "UI Elements", URL: "/app/examples/ui-playground"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Chart.js", URL: "/app/examples/charts"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "SMTP Client", URL: "/app/examples/smtp"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "HTML Sanitization", URL: "/app/examples/html-sanitization"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Markdown Rendering", URL: "/app/examples/markdown"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "WYSIWYG Editor", URL: "/app/examples/quilljs"},
+			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Server-side API Fetch", URL: "/app/examples/api-fetch"},
+		},
+	},
+	{
+		Title: "API",
+		SubGroup: []NavGroup {
+			{SectionId: LAYOUT_SECTION_API,Title: "Test",URL: "/api/test",NewTab: true},
+			{SectionId: LAYOUT_SECTION_API,Title: "Account",URL: "/api/account",NewTab: true},
+		},
+	},
+	{Title: "Documentation", URL: "https://github.com/maxamundsen/Previous/wiki", NewTab: true},
+}
+
 func AppLayout(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
 	if session["APP_LAYOUT_VERTICAL"] == true {
 		return AppLayoutVertical(title, section, identity, session, children...)
@@ -23,6 +62,34 @@ func AppLayout(title string, section int, identity auth.Identity, session map[st
 }
 
 func AppLayoutVertical(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
+	navLink := func (url string, navTitle string, newPage bool) Node {
+		return Li(
+			InlineStyle("$me { margin-bottom: $2; }"),
+			A(
+				Href(url),
+				If(newPage, Target("_blank")),
+				InlineStyle("$me { display: block; padding: $2 $4; font-size: var(--text-sm); color: $color(neutral-700); }"),
+				IfElse(title != navTitle,
+					InlineStyle(`
+						$me:hover {
+							color: $color(neutral-950);
+							background: $color(neutral-100);
+							border-radius: var(--radius-sm);
+						}
+					`),
+					InlineStyle(`
+						$me {
+							color: $color(neutral-950);
+							background: $color(neutral-100);
+							border-radius: var(--radius-sm);
+						}
+					`),
+				),
+				Text(navTitle),
+			),
+		)
+	}
+
 	return RootLayout(title+" | Previous",
 		Body(InlineStyle("$me{background-color: $color(neutral-50); height: 100%;}"),
 			Nav(
@@ -35,6 +102,7 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 						height: $16;
 						width: 100%;
 						z-index: 50;
+						box-shadow: var(--shadow-md);
 					}
 				`),
 				Text("test"),
@@ -89,65 +157,56 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 				Div(
 					InlineStyle(`$me { padding: $6 $4; overflow-y: auto; }`),
 					Ul(
-						InlineStyle("$me:not(:last-child) { padding-top: $1; padding-bottom: $1; }"),
-						A(
-							InlineStyle(`
-								$me {
-									display: block;
-									padding: $2 $4;
-									font-size: var(--text-sm);
-									color: $color(neutral-700);
-								}
+						InlineStyle("$me:not(:last-child) { padding-top: $1; padding-bottom: $1;}"),
+						Map(NavGroups, func(nav NavGroup) Node {
+							if len(nav.SubGroup) > 0 {
+								return Li(
+									InlineStyle("$me { margin-bottom: $2; }"),
+									Details(
+										If(nav.SectionId == section, Attr("open")),
+										Summary(
+											InlineStyle(`
+												$me {
+													display: flex;
+													cursor: pointer;
+													align-items: center;
+													justify-content: space-between;
+													padding: $2 $4;
+													color: $color(neutral-700);
+													border-radius: var(--radius-sm);
+												}
 
-								$me:hover {
-									color: $color(neutral-950);
-									text-decoration: underline;
-								}
-							`),
-							If(section == LAYOUT_SECTION_DASHBOARD,
-								InlineStyle(`
-									$me {
-										color: $color(neutral-950);
-										font-weight: var(--font-weight-medium);
-									}
-								`),
-							),
-							Href("/app/dashboard"),
-							Text("Dashboard"),
-						),
-						// Map(DocList, func(doc Document) Node {
-						// 	if len(doc.SubList) > 0 {
-						// 		return Li(
-						// 			Details(Class("group [&_summary::-webkit-details-marker]:hidden"), If(doc.DisplayId == displayId, Attr("open")),
-						// 				Summary(Class("flex cursor-pointer items-center justify-between px-4 py-2 text-neutral-700 hover:text-neutral-950 hover:underline"),
-						// 					Span(Class("text-sm" ), Text(doc.Title)),
-						// 					Span(Class("shrink-0 transition duration-300 group-open:-rotate-180"),
-						// 						Icon(ICON_CHEVRON_UP, 16),
-						// 					),
-						// 				),
-						// 				Ul(Class("mt-2 space-y-1 px-4"),
-						// 					Map(doc.SubList, func(subdoc Document) Node {
-						// 						return Li(
-						// 							A(Href("/docs/"+subdoc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700": true, "hover:text-neutral-950 hover:underline": title != subdoc.Title, "text-neutral-950 font-medium": title == subdoc.Title}, Text(subdoc.Title)),
-						// 						)
-						// 					}),
-						// 				),
-						// 			),
-						// 		)
-						// 	} else {
-						// 		return Li(
-						// 			A(Href("/docs/"+doc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700 hover:text-neutral-950 hover:underline": true, "text-neutral-950 font-medium": displayId == doc.DisplayId}, Text(doc.Title)),
-						// 		)
-						// 	}
-						// }),
+												$me:hover {
+													color: $color(neutral-950);
+													background: $color(neutral-100);
+												}
+											`),
+											Span(InlineStyle("$me { font-size: var(--text-sm); }"), Text(nav.Title)),
+											Span(
+												// @TODO make this rotate
+												Icon(ICON_CHEVRON_UP, 16),
+											),
+										),
+										Ul(InlineStyle("$me { padding-left: $4; padding-right: $4; } $me:not(:last-child) { margin-top: $1; margin-botton: $1; }"),
+											Map(nav.SubGroup, func(subnav NavGroup) Node {
+												return navLink(subnav.URL, subnav.Title, subnav.NewTab)
+											}),
+										),
+									),
+								)
+							} else {
+								return navLink(nav.URL, nav.Title, nav.NewTab)
+							}
+						}),
 					),
 				),
 			),
+
 			Main(
 				InlineStyle(`
 					$me {
 						margin: $16 0 $5 $5;
-						padding: $10;
+						padding: $4 $8;
 					}
 
 					@media $sm {
@@ -156,6 +215,11 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 						}
 					}
 				`),
+				H1(
+					InlineStyle("$me { letter-spacing: var(--tracking-tight); font-size: var(--text-3xl); color: $color(black); font-weight: var(--font-weight-bold); margin-bottom: $2; }"),
+					Text(title),
+				),
+				Divider(),
 				Group(children),
 			),
 		),
@@ -163,7 +227,7 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 }
 
 func AppLayoutHorizontal(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
-	navbarDropdown := func(dropdownHeader Node, items [][2]string) Node {
+	navbarDropdown := func(dropdownHeader Node, dropdownItems Node) Node {
 		return Div(
 			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $3;}"),
 			Div(
@@ -181,9 +245,7 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 				Class("dropdown"),
 				InlineStyle(`$me{display: none; border-radius: var(--radius-sm); position: absolute; right: 0; z-index: 10; padding-top: $1; padding-bottom: $1; margin-top: $2; width: $48; background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
 				TabIndex("-1"),
-				Map(items, func(item [2]string) Node {
-					return A(InlineStyle(`$me{display: block; padding-top: $2; padding-bottom: $2; padding-left: $4; padding-right: $4; font-size: var(--text-sm); line-height: $5; color: $color(neutral-700); } $me:hover{background: $color(neutral-100);}`), Href(item[1]), TabIndex("-1"), Text(item[0]))
-				}),
+				dropdownItems,
 			),
 			InlineScript(`
 				let button = me(".button", me());
@@ -193,6 +255,10 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 				onClickOutsideOrEscape(me(), () => { hide(dropdown) });
 			`),
 		)
+	}
+
+	navbarDropdownItem := func(name string, url string, newPage bool) Node {
+		return A(InlineStyle(`$me{display: block; padding-top: $2; padding-bottom: $2; padding-left: $4; padding-right: $4; font-size: var(--text-sm); line-height: $5; color: $color(neutral-700); } $me:hover{background: $color(neutral-100);}`), Href(url), TabIndex("-1"), Text(name), If(newPage, Target("_blank")))
 	}
 
 	navbarLink := func(name string, url string, newPage bool) Node {
@@ -217,34 +283,18 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 								),
 								Div(InlineStyle("@media $lg-{ $me{display: block;}}"),
 									Div(InlineStyle(`$me{margin-left: $1; display: flex; align-items: baseline;} $me:not(:last-child){ margin-left: $4; }`),
-										navbarLink("Dashboard", "/app/dashboard", false),
-										navbarDropdown(
-											Text("Examples"),
-											[][2]string{
-												{"Form Submission", "/app/examples/forms"},
-												{"File Uploading", "/app/examples/upload"},
-												{"Auto Table", "/app/examples/autotable"},
-												{"Inline Styles", "/app/examples/inline-styles"},
-												{"Inline Scripting", "/app/examples/inline-scripting"},
-												{"HTMX", "/app/examples/htmx"},
-												{"UI Elements", "/app/examples/ui-playground"},
-												{"Chart.js", "/app/examples/charts"},
-												{"SMTP Client", "/app/examples/smtp"},
-												{"HTML Sanitization", "/app/examples/html-sanitization"},
-												{"Markdown Rendering", "/app/examples/markdown"},
-												{"Server-side API Fetch", "/app/examples/api-fetch"},
-											},
-										),
-
-										navbarDropdown(
-											Text("API"),
-											[][2]string{
-												{"Test", "/api/test"},
-												{"Account", "/api/account"},
-											},
-										),
-
-										navbarLink("Documentation", "https://github.com/maxamundsen/Previous/wiki", true),
+										Map(NavGroups, func(nav NavGroup) Node {
+											if len(nav.SubGroup) > 0 {
+												return navbarDropdown(
+													Text(nav.Title),
+													Map(nav.SubGroup, func(sub NavGroup) Node {
+														return navbarDropdownItem(sub.Title, sub.URL, sub.NewTab)
+													}),
+												)
+											} else {
+												return navbarLink(nav.Title, nav.URL, nav.NewTab)
+											}
+										}),
 									),
 								),
 							),
@@ -253,9 +303,9 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 									Div(InlineStyle("$me{position: relative; margin-left: $3;}"),
 										navbarDropdown(
 											Icon(ICON_USERS, 24),
-											[][2]string{
-												{"Your Profile", "/app/account"},
-												{"Log Out", "/auth/logout"},
+											Group{
+												navbarLink("Your Profile", "/app/account", false),
+												navbarLink("Logout", "/auth/logout", false),
 											},
 										),
 									),

@@ -162,6 +162,7 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 												$me {
 													display: flex;
 													justify-content: space-between;
+													align-items: center;
 													gap: $2;
 													font-size: var(--text-sm);
 													color: $color(neutral-500);
@@ -178,8 +179,8 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 												Group{
 													InlineStyle("$me { font-weight: var(--font-weight-bold) ; }"),
 													IfElse(f.OrderDescending,
-														Icon(ICON_ARROW_DOWN_WIDE_NARROW, 16),
-														Icon(ICON_ARROW_UP_WIDE_NARROW, 16),
+														Icon(ICON_ARROW_DOWN, 16),
+														Icon(ICON_ARROW_UP, 16),
 													),
 												},
 												InlineStyle("$me { font-weight: var(--font-weight-normal); }"),

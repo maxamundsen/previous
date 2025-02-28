@@ -17,9 +17,15 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 	b, _ := strconv.ParseBool(r.URL.Query().Get("value"))
 
 	AppLayout("Inline Styles", LAYOUT_SECTION_EXAMPLES, *identity, session,
-		P(Text("This is another test page")),
-		P(
-			InlineStyle("$me{font-size: var(--text-5xl);}"),
+		Card(
+			Text("This codebase supports `inlining` CSS styles."),
+			Text("By recognizing that elements are already grouped together using the `component` paradigm, it is redundant to group elements using CSS classes located in external stylesheets. "),
+			Text("Inline styles keeps the design of your UI aligned with `locality of behavior` principles, since you can understand the appearance of a UI component by simply jumping to its definition. "),
+			Text("If at any point you feel that your use of inlined styles is becoming repetitive, consider factoring out that style (and related content) into a designated component."),
+		),
+		
+		Card(
+			InlineStyle("$me{font-size: var(--text-xl); margin: $5 0; }"),
 
 			// If `b` is true, make text green, else, make it red.
 			IfElse(b,
@@ -30,12 +36,13 @@ func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 			Text("Inline styles can be applied conditionally. Click the buttons to change the color!"),
 		),
 
-		Form(Input(Type("hidden"), Value("true"), Name("value")), ButtonUI(Text("Make text green"))),
-		Br(),
-		Form(Input(Type("hidden"), Value("false"), Name("value")), ButtonUI(Text("Make text red"))),
+		Flex(
+			A(Href("?value=true"), ButtonUI(Text("Make text green"))),
+			A(Href("?value=false"), ButtonUI(Text("Make text red"))),
+		),
 
 		Br(),
-		P((Text("* Note that these styles are determined server side."))),
+		Em(Text("* Note that these styles are determined entirely server side. Check the network tab to see what's happening under the hood.")),
 		Br(),
 
 		MacroDescription("$me", "CSS selector for the current element you are inside."),

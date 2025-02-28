@@ -46,6 +46,7 @@ func RootLayout(title string, children ...Node) Node {
 				Link(Rel("stylesheet"), Href("/css/style.css?v="+css_hash)),
 				Link(Rel("stylesheet"), Href("/css/style.metagen.css?v="+metagen_css_hash)),
 				Link(Rel("stylesheet"), Href("/lib/highlight/default.min.css")),
+				Link(Rel("stylesheet"), Href("/lib/quill/quill.snow.css")),
 
 				/////////////////////////////////
 				// SCRIPTS
@@ -63,6 +64,7 @@ func RootLayout(title string, children ...Node) Node {
 
 				Script(Src("/lib/chartjs/chart.js")),
 				Script(Src("/lib/highlight/highlight.min.js")),
+				Script(Src("/lib/quill/quill.js")),
 			),
 			Group(children), // expected to provide body
 		),

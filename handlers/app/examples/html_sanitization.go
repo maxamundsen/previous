@@ -22,24 +22,22 @@ func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 		input = r.FormValue("html_content")
 	}
 
-	func() Node {
-		return AppLayout("HTML Sanitization", LAYOUT_SECTION_EXAMPLES, *identity, session,
-			Form(Action(""), Method("POST"),
-				FormTextarea(Name("html_content"), Placeholder("Type HTML input here:"), Text(input), StyleAttr("height: 400px;")),
+	AppLayout("HTML Sanitization", LAYOUT_SECTION_EXAMPLES, *identity, session,
+		Form(Action(""), Method("POST"),
+			FormTextarea(Name("html_content"), Placeholder("Type HTML input here:"), Text(input), StyleAttr("height: 400px;")),
+			Br(),
+			ButtonUI(Type("submit"), Text("Render")),
+		),
+		If(input != "",
+			Group{
 				Br(),
-				ButtonUI(Type("submit"), Text("Render")),
-			),
-			If(input != "",
-				Group{
-					Br(),
-					Card(
-						Prose(
-							SafeRaw(input),
-						),
+				Card(
+					Prose(
+						SafeRaw(input),
 					),
-				},
-			),
-			InlineScript("hljs.highlightAll();"),
-		)
-	}().Render(w)
+				),
+			},
+		),
+		InlineScript("hljs.highlightAll();"),
+	).Render(w)
 }

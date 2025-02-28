@@ -187,8 +187,9 @@ func LoginView(errorMsg string) Node {
 										padding-left: $5;
 										padding-right: $5;
 										color: $color(white);
-										box-shadow: var(--shadow-sm);
 										background-color: $color(neutral-800);
+										border: 1px solid $color(neutral-950);
+										border-radius: var(--radius-sm);
 										text-align: center;
 										font-size: var(--text-sm);
 									}

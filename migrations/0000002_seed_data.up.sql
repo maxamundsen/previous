@@ -14,8 +14,8 @@ VALUES
     (
         "admin",
         "admin@adminland.org",
-        "System",
-        "Administrator",
+        "Example",
+        "User",
         "$2a$10$bgBsgWhmTS85fV9nok4a..XcN.Xy4zabvjlUY5dwwLZwdcZ8SSRv.",
         0,
         "",

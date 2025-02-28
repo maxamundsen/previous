@@ -26,14 +26,28 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	func() Node {
+		iconContainer := func (c ...Node) Node {
+			return Span(InlineStyle("$me{padding: $2; background: $color(white); border: 1px solid $color(neutral-200); border-radius: var(--radius-sm); color: $color(orange-400);}"),
+				Group(c),
+			)
+		}
+
 		return AppLayout("Dashboard", LAYOUT_SECTION_DASHBOARD, *identity, session,
-			H5(Class("font-bold"), Text("Welcome back, "), Text(identity.User.Firstname+" "+identity.User.Lastname), Text(".")),
+			H5(
+				InlineStyle("$me { font-size: var(--text-lg); }"),
+				Text("Welcome back, "), B(Text(identity.User.Firstname+" "+identity.User.Lastname)),
+				Text("."),
+			),
+
+			Br(),
+
 			P(
 				Text("This page requires a login!"),
 			),
+
 			Br(),
+
 			P(
-				Text("Switch layout!"),
 				Form(
 					Action(""),
 					Method("GET"),
@@ -44,37 +58,44 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 						),
 					),
 
-					ButtonUI(Type("submit"), Text("Toggle Layout")),
+					ButtonUI(Type("submit"), Text("Click to toggle layout")),
 				),
 			),
+
 			Br(),
+
 			P(
 				Text("Here are some icons:"),
 			),
 
-			Div(InlineStyle("$me { display: flex; gap: $4; align-items: center; }"),
-				Span(InlineStyle("$me{color: $color(cyan-400);}"),
+			Br(),
+
+			Div(InlineStyle("$me { display: flex; gap: $4; align-items: center; margin-bottom: $10; }"),
+				iconContainer(InlineStyle("$me{ color: $color(cyan-400);}"),
 					Icon(ICON_GO, 24),
 				),
-				Span(InlineStyle("$me{color: $color(orange-400);}"),
+				iconContainer(InlineStyle("$me{ color: $color(orange-500);}"),
 					Icon(ICON_RSS, 24),
 				),
-				Span(InlineStyle("$me{color: $color(blue-400); }"),
+				iconContainer(InlineStyle("$me{ color: $color(blue-600); }"),
 					Icon(ICON_HTMX, 24),
 				),
-				Span(InlineStyle("$me{color: $color(neutral-900);}"),
+				iconContainer(InlineStyle("$me{ color: $color(neutral-900);}"),
 					Icon(ICON_GITHUB, 24),
 				),
-				Span(InlineStyle("$me{color: $color(black); }"),
+				iconContainer(InlineStyle("$me{ color: $color(black); }"),
 					Icon(ICON_X_DOT_COM, 24),
 				),
-				Span(InlineStyle("$me{color: #006600 }"),
+				iconContainer(InlineStyle("$me{ color: $color(black); }"),
+					Icon(ICON_XAI_GROK, 24),
+				),
+				iconContainer(InlineStyle("$me{ color: #006600 }"),
 					Icon(ICON_4CH, 24),
 				),
 			),
 
 			If(identity.User.PermissionAdmin != 0,
-				Div(InlineStyle("$me{ margin-top: $10; padding: $10; background-color: $color(white); border: 1px solid $color(neutral-200); box-shadow: var(--shadow-md); }"),
+				Card(
 					P(InlineStyle("$me { font-weight: var(--font-weight-bold); color: $color(red-600); }"), Text("Admin only")),
 					P(Text("You can only see this if you have the admin permission")),
 				),

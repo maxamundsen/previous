@@ -13,6 +13,13 @@ import (
 // DUMMY TEXT
 const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ultrices iaculis dui sed porttitor. Integer sed est fringilla, condimentum magna ac, sodales dui. Sed tempor pretium scelerisque. Vivamus pulvinar iaculis libero nec blandit. Mauris tempus velit in neque elementum, ac elementum diam feugiat. Aenean malesuada, nunc a interdum volutpat, diam est lacinia magna, nec fermentum massa lectus non urna. Cras vitae turpis finibus, porta est tincidunt, efficitur neque. Suspendisse suscipit a nulla mollis sodales. Nam vitae nulla vulputate, dictum purus eget, malesuada justo. Vestibulum ultricies eget neque ac volutpat. Mauris et molestie elit. Donec et suscipit urna. Duis in mi in ipsum faucibus finibus.`
 
+// Splitters / dividers / section splits
+func Divider() Node {
+	return Hr(
+		InlineStyle("$me { color: $color(neutral-200); margin-bottom: $3; margin-top: $1; }"),
+	)
+}
+
 // By default, HTML element styles are reset by tailwind's preflight css
 // (we use their styles even though we aren't using tailwind).
 // This element reverts all child elements back to the _browser_ defaults,
@@ -24,6 +31,7 @@ func Prose(children ...Node) Node {
 		InlineStyle(`
 			$me * {
 				all: revert;
+				font-family: var(--font-sans);
 			}
 		`),
 		Group(children),
@@ -129,8 +137,11 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 }
 
 // CONTAINERS
-func Container(n ...Node) Node {
-	return Div(Class("w-full px-3 mx-auto bs-sm:max-w-bs-sm bs-md:max-w-bs-md bs-lg:max-w-bs-lg bs-xl:max-w-bs-xl bs-xxl:max-w-bs-xxl"), Group(n))
+func Flex(n ...Node) Node {
+	return Div(
+		InlineStyle("$me { display: flex; align-items: center; flex-direction: row; gap: $3; }"),
+		Group(n),
+	)
 }
 
 func Card(body ...Node) Node {
@@ -267,7 +278,7 @@ func ButtonUI(children ...Node) Node {
 				align-items: center;
 				overflow: hidden;
 				background-color: $color(white);
-				border: 1px solid $color(neutral-300);
+				border: 1px solid $color(neutral-200);
 				color: $color(neutral-700);
 				padding-right: $8;
 				padding-left: $8;

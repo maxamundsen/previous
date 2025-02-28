@@ -51,5 +51,7 @@ func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {
 			hx.Get("/app/examples/autotable-hx"),
 			hx.Target(CSSID(MODAL1)),
 		),
+
+		Divider(),
 	).Render(w)
 }

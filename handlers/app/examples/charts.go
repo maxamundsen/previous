@@ -16,7 +16,13 @@ func ChartHandler(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	AppLayout("Chart.js Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
-		BarChart(),
+		Grid2x2(
+			BarChart(),
+			BarChart(),
+			BarChart(),
+			BarChart(),
+		),
+
 	).Render(w)
 }
 
