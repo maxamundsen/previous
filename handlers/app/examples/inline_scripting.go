@@ -2,7 +2,6 @@ package examples
 
 import (
 	. "previous/components"
-	. "previous/handlers/app"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -14,8 +13,9 @@ import (
 
 func InlineScriptingHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
-	AppLayout("Inline Scripting Example", *identity,
+	AppLayout("Inline Scripting Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
 		InlineScript(`
 			// initialize a script global variable (this is usually discouraged since components are supposed to be
 			// "reusable", however this component is a page, so it will only ever render once per request

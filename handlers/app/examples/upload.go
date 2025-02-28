@@ -3,7 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/handlers/app"
+	. "previous/components"
 
 	"fmt"
 	"io"
@@ -17,6 +17,7 @@ import (
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	if r.Method == http.MethodPost {
 		r.ParseMultipartForm(10 << 20)
@@ -24,7 +25,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		file, fileHeader, err := r.FormFile("file")
 
 		if err != nil {
-			UploadView(err.Error(), "", *identity).Render(w)
+			UploadView(err.Error(), "", *identity, session).Render(w)
 			return
 		}
 
@@ -32,13 +33,13 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = os.MkdirAll("./uploads", os.ModePerm)
 		if err != nil {
-			UploadView(err.Error(), "", *identity).Render(w)
+			UploadView(err.Error(), "", *identity, session).Render(w)
 			return
 		}
 
 		dst, err := os.Create(fmt.Sprintf("./uploads/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
 		if err != nil {
-			UploadView(err.Error(), "", *identity).Render(w)
+			UploadView(err.Error(), "", *identity, session).Render(w)
 			return
 		}
 
@@ -46,20 +47,20 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		fileBytes, err := io.ReadAll(file)
 		if err != nil {
-			UploadView(err.Error(), "", *identity).Render(w)
+			UploadView(err.Error(), "", *identity, session).Render(w)
 			return
 		}
 
 		dst.Write(fileBytes)
 
-		UploadView("", "Successfully uploaded file", *identity).Render(w)
+		UploadView("", "Successfully uploaded file", *identity, session).Render(w)
 	} else {
-		UploadView("", "", *identity).Render(w)
+		UploadView("", "", *identity, session).Render(w)
 	}
 }
 
-func UploadView(errorMsg string, successMsg string, identity auth.Identity) Node {
-	return AppLayout("Upload Example", identity,
+func UploadView(errorMsg string, successMsg string, identity auth.Identity, session map[string]interface{}) Node {
+	return AppLayout("Upload Example", LAYOUT_SECTION_EXAMPLES, identity, session,
 		If(errorMsg != "", Div(Class("alert alert-danger"), Text(errorMsg))),
 		If(successMsg != "", Div(Class("alert alert-success"), Text(successMsg))),
 		Form(Action("/app/examples/upload"), Method("post"), EncType("multipart/form-data"),

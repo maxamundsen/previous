@@ -1,14 +1,168 @@
-package app
+package components
 
 import (
 	"previous/auth"
-	. "previous/components"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-func AppLayout(title string, identity auth.Identity, children ...Node) Node {
+const (
+	LAYOUT_SECTION_DASHBOARD = iota
+	LAYOUT_SECTION_EXAMPLES = iota
+	LAYOUT_SECTION_ACCOUNT = iota
+	LAYOUT_SECTION_API = iota
+)
+
+func AppLayout(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
+	if session["APP_LAYOUT_VERTICAL"] == true {
+		return AppLayoutVertical(title, section, identity, session, children...)
+	} else {
+		return AppLayoutHorizontal(title, section, identity, session, children...)
+	}
+}
+
+func AppLayoutVertical(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
+	return RootLayout(title+" | Previous",
+		Body(InlineStyle("$me{background-color: $color(neutral-50); height: 100%;}"),
+			Nav(
+				InlineStyle(`
+					$me {
+						position: fixed;
+						top: 0;
+						left: 0;
+						background: $color(neutral-800);
+						height: $16;
+						width: 100%;
+						z-index: 50;
+					}
+				`),
+				Text("test"),
+			),
+
+			Button(
+				InlineStyle(`
+					$me {
+						display: inline-flex;
+						align-items: center;
+						padding: $2;
+						margin-top: $2;
+						margin-left: $2;
+						color: $color(neutral-700);
+					}
+
+					$me:hover {
+						background: $color(neutral-100);
+					}
+
+					@media $sm {
+						$me {
+							display: none;
+						}
+					}
+				`),
+				Type("button"),
+				Span(Text("Open sidebar")),
+				Icon(ICON_MENU, 24),
+			),
+			Aside(
+				InlineStyle(`
+					$me {
+						position: fixed;
+						border-right: 1px solid $color(neutral-200);
+						box-shadow: var(--shadow-sm);
+						background: $color(white);
+						top: $16;
+						left: 0;
+						z-index: 40;
+						width: $64;
+						height: 100vh;
+						translate: -100% $2;
+					}
+
+					@media $sm {
+						$me {
+							translate: 1 $2;
+						}
+					}
+				`),
+				Div(
+					InlineStyle(`$me { padding: $6 $4; overflow-y: auto; }`),
+					Ul(
+						InlineStyle("$me:not(:last-child) { padding-top: $1; padding-bottom: $1; }"),
+						A(
+							InlineStyle(`
+								$me {
+									display: block;
+									padding: $2 $4;
+									font-size: var(--text-sm);
+									color: $color(neutral-700);
+								}
+
+								$me:hover {
+									color: $color(neutral-950);
+									text-decoration: underline;
+								}
+							`),
+							If(section == LAYOUT_SECTION_DASHBOARD,
+								InlineStyle(`
+									$me {
+										color: $color(neutral-950);
+										font-weight: var(--font-weight-medium);
+									}
+								`),
+							),
+							Href("/app/dashboard"),
+							Text("Dashboard"),
+						),
+						// Map(DocList, func(doc Document) Node {
+						// 	if len(doc.SubList) > 0 {
+						// 		return Li(
+						// 			Details(Class("group [&_summary::-webkit-details-marker]:hidden"), If(doc.DisplayId == displayId, Attr("open")),
+						// 				Summary(Class("flex cursor-pointer items-center justify-between px-4 py-2 text-neutral-700 hover:text-neutral-950 hover:underline"),
+						// 					Span(Class("text-sm" ), Text(doc.Title)),
+						// 					Span(Class("shrink-0 transition duration-300 group-open:-rotate-180"),
+						// 						Icon(ICON_CHEVRON_UP, 16),
+						// 					),
+						// 				),
+						// 				Ul(Class("mt-2 space-y-1 px-4"),
+						// 					Map(doc.SubList, func(subdoc Document) Node {
+						// 						return Li(
+						// 							A(Href("/docs/"+subdoc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700": true, "hover:text-neutral-950 hover:underline": title != subdoc.Title, "text-neutral-950 font-medium": title == subdoc.Title}, Text(subdoc.Title)),
+						// 						)
+						// 					}),
+						// 				),
+						// 			),
+						// 		)
+						// 	} else {
+						// 		return Li(
+						// 			A(Href("/docs/"+doc.Slug), Classes{"block px-4 py-2 text-sm text-neutral-700 hover:text-neutral-950 hover:underline": true, "text-neutral-950 font-medium": displayId == doc.DisplayId}, Text(doc.Title)),
+						// 		)
+						// 	}
+						// }),
+					),
+				),
+			),
+			Main(
+				InlineStyle(`
+					$me {
+						margin: $16 0 $5 $5;
+						padding: $10;
+					}
+
+					@media $sm {
+						$me {
+							margin-left: $64;
+						}
+					}
+				`),
+				Group(children),
+			),
+		),
+	)
+}
+
+func AppLayoutHorizontal(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
 	navbarDropdown := func(dropdownHeader Node, items [][2]string) Node {
 		return Div(
 			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $3;}"),

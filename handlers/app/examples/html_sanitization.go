@@ -5,12 +5,12 @@ import (
 	. "maragu.dev/gomponents/html"
 	"net/http"
 	. "previous/components"
-	. "previous/handlers/app"
 	"previous/middleware"
 )
 
 func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	input := `<h1>This is user input HTML</h1>
 <a href="/app/dashboard">Go to dashboard page!</a>
@@ -23,7 +23,7 @@ func HtmlSanitizationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	func() Node {
-		return AppLayout("HTML Sanitization", *identity,
+		return AppLayout("HTML Sanitization", LAYOUT_SECTION_EXAMPLES, *identity, session,
 			Form(Action(""), Method("POST"),
 				FormTextarea(Name("html_content"), Placeholder("Type HTML input here:"), Text(input), StyleAttr("height: 400px;")),
 				Br(),

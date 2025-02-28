@@ -2,7 +2,6 @@ package examples
 
 import (
 	. "previous/components"
-	. "previous/handlers/app"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -17,6 +16,10 @@ import (
 
 func SmtpHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
+
+	var errMsg string
+	var successMsg string
 
 	if r.Method == http.MethodPost {
 		recipients := r.FormValue("to")
@@ -36,17 +39,18 @@ func SmtpHandler(w http.ResponseWriter, r *http.Request) {
 		err := snailmail.SendMail(message, snailmail.TYPE_HTML)
 
 		if err != nil {
-			SmtpView(err.Error(), "", *identity).Render(w)
+			errMsg = err.Error()
 		} else {
-			SmtpView("", "Successfully sent mail!", *identity).Render(w)
+			successMsg = "Successfully sent mail!"
 		}
-	} else {
-		SmtpView("", "", *identity).Render(w)
 	}
+
+	SmtpView(errMsg, successMsg, *identity, session).Render(w)
+
 }
 
-func SmtpView(errorMsg string, successMsg string, identity auth.Identity) Node {
-	return AppLayout("SMTP Client Example", identity,
+func SmtpView(errorMsg string, successMsg string, identity auth.Identity, session map[string]interface{}) Node {
+	return AppLayout("SMTP Client Example", LAYOUT_SECTION_EXAMPLES, identity, session,
 		Card(InlineStyle("$me { margin-bottom: $5; }"),
 			P(InlineStyle("$me{font-weight: var(--font-weight-bold); color: $color(neutral-800);}"), Text("Note:")),
 			P(Text("This demo requires you to connect a valid SMTP server. These options are set in the runtime configuration file.")),

@@ -6,25 +6,25 @@ import (
 	. "maragu.dev/gomponents/html"
 	"net/http"
 	. "previous/components"
-	. "previous/handlers/app"
 	"previous/middleware"
 )
 
 func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	const (
 		MODAL1 = "modal1"
 		MODAL2 = "modal2"
 	)
 
- 	AppLayout("User Interface Elements", *identity,
+ 	AppLayout("User Interface Elements", LAYOUT_SECTION_EXAMPLES, *identity, session,
 		H1(Class("text-4xl font-bold"), Text("Modals")),
 
 		Modal(
 			MODAL1,
-			Text("Our site uses cookies!"),
-			Text("I hate cookie popups!!!"),
+			Text("This is a modal!"),
+			Text(LOREM_IPSUM),
 			[]Node{
 				ButtonUISuccess(Text("OK")),
 				ButtonUI(Text("Close")),

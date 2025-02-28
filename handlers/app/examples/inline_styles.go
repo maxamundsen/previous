@@ -3,7 +3,6 @@ package examples
 import (
 	"net/http"
 	. "previous/components"
-	. "previous/handlers/app"
 	"previous/middleware"
 	"strconv"
 
@@ -13,10 +12,11 @@ import (
 
 func InlineStylesHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	b, _ := strconv.ParseBool(r.URL.Query().Get("value"))
 
-	AppLayout("Inline Styles", *identity,
+	AppLayout("Inline Styles", LAYOUT_SECTION_EXAMPLES, *identity, session,
 		P(Text("This is another test page")),
 		P(
 			InlineStyle("$me{font-size: var(--text-5xl);}"),

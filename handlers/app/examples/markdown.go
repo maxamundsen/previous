@@ -3,7 +3,6 @@ package examples
 import (
 	"net/http"
 	. "previous/components"
-	. "previous/handlers/app"
 	"previous/middleware"
 
 	. "maragu.dev/gomponents"
@@ -12,6 +11,7 @@ import (
 
 func MarkdownHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	input := `# Markdown Test
 
@@ -44,7 +44,7 @@ func Sum(a, b int) int {
 	}
 
 	func() Node {
-		return AppLayout("Markdown Rendering", *identity,
+		return AppLayout("Markdown Rendering", LAYOUT_SECTION_EXAMPLES, *identity, session,
 			Form(Action(""), Method("POST"),
 				FormTextarea(Name("md_content"), Placeholder("Type markdown input here:"), Text(input), StyleAttr("height: 400px;")),
 				Br(),

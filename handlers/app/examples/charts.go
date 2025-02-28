@@ -2,7 +2,6 @@ package examples
 
 import (
 	. "previous/components"
-	. "previous/handlers/app"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -14,8 +13,9 @@ import (
 
 func ChartHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
-	AppLayout("Chart.js Example", *identity,
+	AppLayout("Chart.js Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
 		BarChart(),
 	).Render(w)
 }

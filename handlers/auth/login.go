@@ -22,6 +22,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
+
 		rememberMe, _ := strconv.ParseBool(r.FormValue("rememberMe"))
 
 		userid, authResult := auth.Authenticate(username, password)

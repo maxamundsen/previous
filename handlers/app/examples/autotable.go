@@ -5,7 +5,6 @@ import (
 	. "maragu.dev/gomponents/html"
 
 	. "previous/components"
-	. "previous/handlers/app"
 
 	// "previous/database"
 
@@ -23,6 +22,7 @@ type exampleData struct {
 
 func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	exampleCols := []string{"Col1", "Col2", "Col3", "Col4"}
 
@@ -34,7 +34,7 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	func() Node {
-		return AppLayout("Auto Table", *identity,
+		return AppLayout("Auto Table", LAYOUT_SECTION_EXAMPLES, *identity, session,
 			P(Text("This codebase provides an API for generating filterable, sortable, and paginated datagrids such as the one shown below. You do not need to write a single line of JavaScript in order for this to work, as the \"interactivity\" is provided by HTMX.")),
 			P(Text("Each interaction with an element of this table generates a dynamic SQL query.")),
 			Br(),

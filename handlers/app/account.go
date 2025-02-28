@@ -18,6 +18,7 @@ type accountTableItem struct {
 
 func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	cols := []string {
 		"Property",
@@ -33,7 +34,7 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	func() Node {
-		return AppLayout("Account", *identity,
+		return AppLayout("Account", LAYOUT_SECTION_ACCOUNT, *identity, session,
 			AutoTableLite(
 				cols,
 				entries,

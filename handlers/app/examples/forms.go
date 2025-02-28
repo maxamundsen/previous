@@ -4,7 +4,6 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	. "previous/components"
-	. "previous/handlers/app"
 
 	"previous/middleware"
 
@@ -19,6 +18,7 @@ type FormViewModel struct {
 
 func FormHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
+	session := middleware.GetSession(r)
 
 	var viewModel FormViewModel
 
@@ -31,7 +31,7 @@ func FormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	func() Node {
-		return AppLayout("Form Submit Example", *identity,
+		return AppLayout("Form Submit Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
 			If(viewModel.display,
 				Group{
 					P(Text("You input:")),
