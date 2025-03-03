@@ -2,7 +2,7 @@ package examples
 
 import (
 	. "previous/basic"
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 	hx "maragu.dev/gomponents-htmx"

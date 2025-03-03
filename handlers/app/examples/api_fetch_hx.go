@@ -8,7 +8,7 @@ import (
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/components"
+	. "previous/ui"
 )
 
 // Struct for deserializing json from 3rd party API

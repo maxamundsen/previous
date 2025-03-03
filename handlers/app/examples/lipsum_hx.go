@@ -2,7 +2,7 @@ package examples
 
 import (
 	"net/http"
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 )

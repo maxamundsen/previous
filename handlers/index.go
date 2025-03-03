@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	. "previous/components"
+	. "previous/ui"
 
 	"net/http"
 	"net/http/httptest"

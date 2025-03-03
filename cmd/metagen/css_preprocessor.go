@@ -20,7 +20,7 @@ func generateInlineStyles() {
 	inlineStyleRegex := regexp.MustCompile("InlineStyle\\((((?:'[^']*')|(?:\"[^\"]*\")|(`(?:[^`]|[\r\n])*?`)))\\)")
 
 	// these are the directories that get scanned
-	var dirs = [2]string{"handlers", "components"}
+	var dirs = [2]string{"handlers", "ui"}
 
 	var matches []string
 

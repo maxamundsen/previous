@@ -3,7 +3,7 @@ package examples
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
-	. "previous/components"
+	. "previous/ui"
 
 	"fmt"
 	"io"

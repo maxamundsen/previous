@@ -1,7 +1,7 @@
 package examples
 
 import (
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
@@ -16,6 +16,12 @@ func ChartHandler(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	AppLayout("Chart.js Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
+		Card(
+			P(Text("Since we have the ability to \"inline\" Javascript inside our UI components, we can build reusable JS-dependent charts. This example uses the Chart.js library.")),
+		),
+
+		Br(),
+
 		Grid2x2(
 			BarChart(),
 			BarChart(),

@@ -4,7 +4,7 @@ import (
 	"previous/.jet/model"
 	"previous/.jet/table"
 
-	. "previous/components"
+	. "previous/ui"
 
 	"github.com/go-jet/jet/v2/sqlite"
 

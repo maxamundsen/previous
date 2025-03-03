@@ -1,7 +1,7 @@
 package examples
 
 import (
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 

@@ -3,7 +3,7 @@ package app
 import (
 	"previous/middleware"
 
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"

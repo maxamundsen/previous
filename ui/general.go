@@ -1,4 +1,4 @@
-package components
+package ui
 
 import (
 	. "previous/basic"
@@ -339,7 +339,7 @@ func HxLoad(url string) Node {
 }
 
 func Loader() Node {
-	return Span(
+	return Div(
 		InlineStyle(`
 		$me {
 		    width: 48px;
@@ -350,6 +350,7 @@ func Loader() Node {
 		    display: inline-block;
 		    box-sizing: border-box;
 		    animation: rotation 1s linear infinite;
+		    margin: 0 auto;
 	    }
 
 	    @keyframes rotation {

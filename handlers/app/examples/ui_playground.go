@@ -5,7 +5,7 @@ import (
 	hx "maragu.dev/gomponents-htmx"
 	. "maragu.dev/gomponents/html"
 	"net/http"
-	. "previous/components"
+	. "previous/ui"
 	"previous/middleware"
 )
 

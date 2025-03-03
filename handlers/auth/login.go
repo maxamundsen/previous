@@ -1,7 +1,7 @@
 package auth
 
 import (
-	. "previous/components"
+	. "previous/ui"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"

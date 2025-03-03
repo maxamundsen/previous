@@ -4,7 +4,7 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 
-	. "previous/components"
+	. "previous/ui"
 
 	// "previous/database"
 
@@ -36,8 +36,10 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 
 	func() Node {
 		return AppLayout("Auto Table", LAYOUT_SECTION_EXAMPLES, *identity, session,
-			P(Text("This codebase provides an API for generating filterable, sortable, and paginated datagrids such as the one shown below. You do not need to write a single line of JavaScript in order for this to work, as the \"interactivity\" is provided by HTMX.")),
-			P(Text("Each interaction with an element of this table generates a dynamic SQL query, retrieves the result, and generates HTML to swap out the table contents.")),
+			Card(
+				P(Text("This codebase provides an API for generating filterable, sortable, and paginated datagrids such as the one shown below. You do not need to write a single line of JavaScript in order for this to work, as the \"interactivity\" is provided by HTMX.")),
+				P(Text("Each interaction with an element of this table generates a dynamic SQL query, retrieves the result, and generates new HTML to swap out the table contents.")),
+			),
 			Br(),
 
 			// Load the table from the designated handler.
@@ -47,7 +49,11 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 
 			Br(),
 			Br(),
-			P(Text("This is the 'lite' version of the above table. It uses the same API, however it does not require implementing data filtration or pagination. It is intended to be used with fixed-volume data.")),
+
+			Card(
+				P(Text("This is the 'lite' version of the above table. It uses the same API, however it does not require implementing data filtration or pagination. It is intended to be used with fixed-volume data.")),
+			),
+			
 			Br(),
 
 			// This table can just be injected straight into the HTML since it does not require interactivity

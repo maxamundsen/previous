@@ -4,7 +4,7 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	"net/http"
-	. "previous/components"
+	. "previous/ui"
 	"previous/middleware"
 )
 

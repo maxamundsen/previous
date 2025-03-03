@@ -1,5 +1,5 @@
 // This file contains a few extensions to the "gomponents" library.
-package components
+package ui
 
 import (
 	"previous/security"
