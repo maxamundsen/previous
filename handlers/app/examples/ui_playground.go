@@ -27,7 +27,7 @@ func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {
 			Text(LOREM_IPSUM),
 			[]Node{
 				ButtonUISuccess(Text("OK")),
-				ButtonUI(Text("Close")),
+				ButtonUIOutline(Text("Close")),
 			},
 		),
 

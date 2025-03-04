@@ -29,13 +29,14 @@ const (
 )
 
 type AutoTableOptions struct {
-	Compact bool
-	Hover bool // highlight rows when hovering over them
-	Alternate bool // highlight alternating rows
+	Compact       bool
+	Shadow        bool
+	Hover         bool // highlight rows when hovering over them
+	Alternate     bool // highlight alternating rows
 	HeaderBorderY bool
-	BorderX bool
-	BorderY bool
-	Color int // "enum"
+	BorderX       bool
+	BorderY       bool
+	Color         int // "enum"
 }
 
 // THE TABLE
@@ -89,6 +90,14 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 				},
 			),
 			Div(
+				If(opts.Shadow,
+					InlineStyle(`
+						$me {
+							background-color: $color(white);
+							box-shadow: var(--shadow-md);
+						}
+					`),
+				),
 				InlineStyle(`
 					$me {
 						position: relative;
@@ -98,8 +107,6 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 						height: 100%;
 						color: $color(gray-700);
 						background-color: $color(white);
-						border: 1px solid $color(neutral-200);
-						border-radius: var(--radius-sm);
 					}
 				`),
 				Div(
@@ -124,7 +131,6 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 										InlineStyle(`
 											$me {
 												border-bottom: 1px solid $color(neutral-200);
-												background-color: $color(neutral-100);
 											}
 
 										`),
@@ -137,11 +143,11 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 										),
 										IfElse(opts.Compact,
 											InlineStyle("$me { padding: $2 $3; }"),
-											InlineStyle("$me { padding: $2.5 $3; }"),
+											InlineStyle("$me { padding: $4 $4; }"),
 										),
 										If(col.Sortable,
 											Group{
-												hx.Get(url+database.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
+												hx.Get(url + database.QueryParamsFromOrderBy(col.DbName, !f.OrderDescending && (col.DbName == f.OrderBy), f)),
 												hx.Swap(CSSID(tableId)),
 												hx.Target(CSSID(tableId)),
 												hx.Select(CSSID(tableId)),
@@ -165,7 +171,8 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 													align-items: center;
 													gap: $2;
 													font-size: var(--text-sm);
-													color: $color(neutral-500);
+													color: $color(neutral-800);
+													font-weight: var(--font-weight-bold);
 												}
 											`),
 											If(col.DisplayPosition == database.COL_POS_LEFT,
@@ -175,15 +182,14 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 												InlineStyle("$me { flex-direction: row-reverse; }"),
 											),
 											Text(col.DisplayName),
-											IfElse((f.OrderBy == col.DbName) && (tableId != ""),
+											If((f.OrderBy == col.DbName) && (tableId != ""),
 												Group{
-													InlineStyle("$me { font-weight: var(--font-weight-bold) ; }"),
+													InlineStyle("$me { color: $color(sky-700); }"),
 													IfElse(f.OrderDescending,
 														Icon(ICON_ARROW_DOWN, 16),
 														Icon(ICON_ARROW_UP, 16),
 													),
 												},
-												InlineStyle("$me { font-weight: var(--font-weight-normal); }"),
 											),
 										),
 									)

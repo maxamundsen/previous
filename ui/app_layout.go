@@ -9,24 +9,24 @@ import (
 
 const (
 	LAYOUT_SECTION_DASHBOARD = iota
-	LAYOUT_SECTION_EXAMPLES = iota
-	LAYOUT_SECTION_ACCOUNT = iota
-	LAYOUT_SECTION_API = iota
+	LAYOUT_SECTION_EXAMPLES  = iota
+	LAYOUT_SECTION_ACCOUNT   = iota
+	LAYOUT_SECTION_API       = iota
 )
 
 type NavGroup struct {
 	SectionId int
-	Title string
-	URL string
-	SubGroup []NavGroup
-	NewTab bool
+	Title     string
+	URL       string
+	SubGroup  []NavGroup
+	NewTab    bool
 }
 
-var NavGroups = []NavGroup {
+var NavGroups = []NavGroup{
 	{SectionId: LAYOUT_SECTION_DASHBOARD, Title: "Dashboard", URL: "/app/dashboard", SubGroup: nil},
 	{
 		Title: "Examples",
-		SubGroup: []NavGroup {
+		SubGroup: []NavGroup{
 			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Form Submission", URL: "/app/examples/forms"},
 			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "File Uploading", URL: "/app/examples/upload"},
 			{SectionId: LAYOUT_SECTION_EXAMPLES, Title: "Cookie Sessions", URL: "/app/examples/session"},
@@ -45,9 +45,9 @@ var NavGroups = []NavGroup {
 	},
 	{
 		Title: "API",
-		SubGroup: []NavGroup {
-			{SectionId: LAYOUT_SECTION_API,Title: "Test",URL: "/api/test",NewTab: true},
-			{SectionId: LAYOUT_SECTION_API,Title: "Account",URL: "/api/account",NewTab: true},
+		SubGroup: []NavGroup{
+			{SectionId: LAYOUT_SECTION_API, Title: "Test", URL: "/api/test", NewTab: true},
+			{SectionId: LAYOUT_SECTION_API, Title: "Account", URL: "/api/account", NewTab: true},
 		},
 	},
 	{Title: "Documentation", URL: "https://github.com/maxamundsen/Previous/wiki", NewTab: true},
@@ -62,26 +62,27 @@ func AppLayout(title string, section int, identity auth.Identity, session map[st
 }
 
 func AppLayoutVertical(title string, section int, identity auth.Identity, session map[string]interface{}, children ...Node) Node {
-	navLink := func (url string, navTitle string, newPage bool) Node {
+	// navbarDivider := Hr(
+	// 	InlineStyle("$me { color: $color(neutral-600); }"),
+	// )
+
+	navLink := func(url string, navTitle string, newPage bool) Node {
 		return Li(
 			InlineStyle("$me { margin-bottom: $2; }"),
 			A(
 				Href(url),
 				If(newPage, Target("_blank")),
-				InlineStyle("$me { display: block; padding: $2 $4; font-size: var(--text-sm); color: $color(neutral-700); }"),
+				InlineStyle("$me { display: block; padding: $2 $4; font-size: var(--text-sm); color: $color(neutral-200); }"),
 				IfElse(title != navTitle,
 					InlineStyle(`
 						$me:hover {
-							color: $color(neutral-950);
-							background: $color(neutral-100);
-							border-radius: var(--radius-sm);
+							background: $color(neutral-600);
 						}
 					`),
 					InlineStyle(`
 						$me {
-							color: $color(neutral-950);
-							background: $color(neutral-100);
-							border-radius: var(--radius-sm);
+							background: $color(neutral-600);
+							border-left: 3px solid $color(red-700);
 						}
 					`),
 				),
@@ -95,14 +96,14 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 			Nav(
 				InlineStyle(`
 					$me {
+						border-top: 3px solid $color(red-700);
 						position: fixed;
 						top: 0;
 						left: 0;
-						background: $color(neutral-800);
+						background: $color(neutral-900);
 						height: $16;
 						width: 100%;
-						z-index: 50;
-						box-shadow: var(--shadow-md);
+						z-index: 30;
 					}
 				`),
 				Text("test"),
@@ -137,9 +138,10 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 				InlineStyle(`
 					$me {
 						position: fixed;
+						overflow-y: auto;
 						border-right: 1px solid $color(neutral-200);
 						box-shadow: var(--shadow-sm);
-						background: $color(white);
+						background: $color(neutral-800);
 						top: $16;
 						left: 0;
 						z-index: 40;
@@ -155,58 +157,47 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 					}
 				`),
 				Div(
-					InlineStyle(`$me { padding: $6 $4; overflow-y: auto; }`),
 					Ul(
-						InlineStyle("$me:not(:last-child) { padding-top: $1; padding-bottom: $1;}"),
+						InlineStyle("$me:not(:last-child) { padding-top: $1; padding-bottom: $1;} $me { padding-top: $3; }"),
 						Map(NavGroups, func(nav NavGroup) Node {
 							if len(nav.SubGroup) > 0 {
-								return Li(
-									InlineStyle("$me { margin-bottom: $2; }"),
-									Details(
-										If(nav.SectionId == section, Attr("open")),
-										Summary(
-											InlineStyle(`
+								return Group{
+									Li(
+										InlineStyle(`
 												$me {
 													display: flex;
-													cursor: pointer;
 													align-items: center;
 													justify-content: space-between;
 													padding: $2 $4;
-													color: $color(neutral-700);
-													border-radius: var(--radius-sm);
-												}
-
-												$me:hover {
-													color: $color(neutral-950);
-													background: $color(neutral-100);
+													color: $color(neutral-400);
+													border-bottom: 1px solid $color(neutral-600);
 												}
 											`),
-											Span(InlineStyle("$me { font-size: var(--text-sm); }"), Text(nav.Title)),
-											Span(
-												// @TODO make this rotate
-												Icon(ICON_CHEVRON_UP, 16),
-											),
-										),
-										Ul(InlineStyle("$me { padding-left: $4; padding-right: $4; } $me:not(:last-child) { margin-top: $1; margin-botton: $1; }"),
-											Map(nav.SubGroup, func(subnav NavGroup) Node {
-												return navLink(subnav.URL, subnav.Title, subnav.NewTab)
-											}),
-										),
+										Span(InlineStyle("$me { font-size: var(--text-xs); text-transform: uppercase;}"), Text(nav.Title)),
 									),
-								)
+									Ul(InlineStyle("$me:not(:last-child) { margin-top: $1; margin-botton: $2; }"),
+										Map(nav.SubGroup, func(subnav NavGroup) Node {
+											return navLink(subnav.URL, subnav.Title, subnav.NewTab)
+										}),
+									),
+								}
 							} else {
-								return navLink(nav.URL, nav.Title, nav.NewTab)
+								return Group{
+									navLink(nav.URL, nav.Title, nav.NewTab),
+								}
 							}
 						}),
 					),
 				),
 			),
 
-			Main(
+			Div(
 				InlineStyle(`
 					$me {
-						margin: $16 0 $5 $5;
+						margin: $16 0 0 $5;
 						padding: $4 $8;
+						background: $color(white);
+						box-shadow: var(--shadow-sm);
 					}
 
 					@media $sm {
@@ -216,10 +207,24 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 					}
 				`),
 				H1(
-					InlineStyle("$me { letter-spacing: var(--tracking-tight); font-size: var(--text-3xl); color: $color(black); font-weight: var(--font-weight-bold); margin-bottom: $2; }"),
+					InlineStyle("$me { letter-spacing: var(--tracking-tight); font-size: var(--text-2xl); color: $color(black); font-weight: var(--font-weight-bold); }"),
 					Text(title),
 				),
-				Divider(),
+			),
+
+			Main(
+				InlineStyle(`
+					$me {
+						margin: 0 0 $5 $5;
+						padding: $4 $8;
+					}
+
+					@media $sm {
+						$me {
+							margin-left: $64;
+						}
+					}
+				`),
 				Group(children),
 			),
 		),
@@ -232,8 +237,22 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 			InlineStyle("$me{cursor: pointer; position: relative; margin-left: $3;}"),
 			Div(
 				Class("button"),
-				InlineStyle(`$me{ cursor: pointer; display: flex; position: relative; padding-top: $2; padding-bottom: $2; padding-left: $3; font-size: var(--text-sm); line-height: var(--text-sm--line-height); font-weight: var(--font-weight-medium); color: $color(neutral-100); }`),
-				InlineStyle("$me:hover{color: $color(white);}"),
+				InlineStyle(`
+					$me {
+						cursor: pointer;
+						display: flex;
+						position: relative;
+						padding-top: $2;
+						padding-bottom: $2;
+						padding-left: $3;
+						font-size: var(--text-sm);
+						line-height: var(--text-sm--line-height);
+						font-weight: var(--font-weight-medium);
+						color: $color(neutral-300);
+					}
+
+					$me:hover{color: $color(white);}
+				`),
 				Button(
 					Div(InlineStyle("$me{cursor: pointer; display: flex; align-items: center;}"),
 						dropdownHeader, Span(Text(" ")),
@@ -243,7 +262,7 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 			),
 			Div(
 				Class("dropdown"),
-				InlineStyle(`$me{display: none; border-radius: var(--radius-sm); position: absolute; right: 0; z-index: 10; padding-top: $1; padding-bottom: $1; margin-top: $2; width: $48; background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
+				InlineStyle(`$me{display: none; position: absolute; right: 0; z-index: 10; padding-top: $1; padding-bottom: $1; margin-top: $2; width: $48; background-color: $color(white); transform-origin: top right; box-shadow: var(--shadow-lg);}`),
 				TabIndex("-1"),
 				dropdownItems,
 			),
@@ -263,7 +282,7 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 
 	navbarLink := func(name string, url string, newPage bool) Node {
 		return A(
-			InlineStyle(`$me{ padding-left: $3; padding-right: $3; padding-top: $2; padding-bottom: $2; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-100);}`),
+			InlineStyle(`$me{ padding-left: $3; padding-right: $3; padding-top: $2; padding-bottom: $2; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-300);}`),
 			InlineStyle("$me:hover{color: $color(white);}"),
 			Href(url),
 			Text(name),
@@ -274,7 +293,7 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 	return RootLayout(title+" | Previous",
 		Body(InlineStyle("$me{background-color: $color(neutral-50); height: 100%;}"),
 			Div(InlineStyle("$me{min-height: 100%}"),
-				Nav(InlineStyle("$me{background-color: $color(neutral-800);}"),
+				Nav(InlineStyle("$me{background-color: $color(neutral-900); border-top: 3px solid $color(red-700);}"),
 					Div(InlineStyle("$me{margin-left: auto; margin-right: auto; max-width: var(--container-7xl);}"),
 						Div(InlineStyle("$me{display: flex; height: $16; align-items: center; justify-content: space-between;}"),
 							Div(InlineStyle("$me{align-items: center; display: flex;}"),

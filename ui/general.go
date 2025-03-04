@@ -73,8 +73,8 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 				translate: -50% -50%;
 				z-index: 10;
 				background: $color(white);
-				border-radius: var(--radius-lg);
 				box-shadow: var(--shadow-md);
+				border-bottom: 3px solid $color(neutral-600);
 				font-size: var(--text-sm);
 			}
 
@@ -105,7 +105,6 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 			Div(
 				InlineStyle(`
 					$me {
-						background: $color(gray-50);
 						padding: $3 $8 $3 $8;
 						display: flex;
 						flex-direction: row-reverse;
@@ -144,14 +143,24 @@ func Flex(n ...Node) Node {
 	)
 }
 
+func CardNoPadding(body ...Node) Node {
+	return Div(
+		InlineStyle(`
+			$me {
+				background-color: $color(white);
+				box-shadow: var(--shadow-xs);
+			}
+		`),
+		Group(body),
+	)
+}
 func Card(body ...Node) Node {
 	return Div(
 		InlineStyle(`
 			$me {
 				background-color: $color(white);
 				padding: $5;
-				border: 1px solid $color(neutral-200);
-				border-radius: var(--radius-sm);
+				box-shadow: var(--shadow-xs);
 			}
 		`),
 		Group(body),
@@ -187,76 +196,6 @@ func ToText(i interface{}) Node {
 	return Text(ToString(i))
 }
 
-// FORMS
-func FormInput(children ...Node) Node {
-	return Input(
-		InlineStyle(`
-			$me {
-				background-color: $color(white);
-				padding: $2;
-				display: block;
-				width: 100%;
-				border: 0;
-				color: $color(neutral-900);
-				border: 1px solid $color(neutral-200);
-				border-radius: var(--radius-sm);
-			}
-
-			@media $sm {
-				$me {
-					font-size: var(--text-sm);
-				}
-			}
-		`),
-		Group(children),
-	)
-}
-
-func FormSelect(children ...Node) Node {
-	return Select(
-		InlineStyle(`
-			$me {
-				padding: $3;
-				background-color: $color(white);
-				display: block;
-				width: 100%;
-				border: 0;
-				color: $color(neutral-900);
-				border: 1px solid $color(neutral-200);
-				border-radius: var(--radius-sm);
-			}
-			@media $sm {
-				$me {
-					font-size: var(--text-sm);
-				}
-			}
-		`),
-		Group(children),
-	)
-}
-
-func FormTextarea(children ...Node) Node {
-	return Textarea(
-		InlineStyle(`
-			$me {
-				display: block;
-				padding: $3;
-				width: 100%;
-				font-size: var(--text-sm);
-				color: $color(neutral-900);
-				background-color: $color(white);
-				border: 1px solid $color(neutral-200);
-				border-radius: var(--radius-sm);
-			}
-		`),
-		Group(children),
-	)
-}
-
-func FormLabel(children ...Node) Node {
-	return Label(Class("text-neutral-900 text-sm"), Group(children))
-}
-
 // TEXT
 func PageLink(location string, display Node, newPage bool) Node {
 	return A(
@@ -264,52 +203,6 @@ func PageLink(location string, display Node, newPage bool) Node {
 		InlineStyle("$me{text-decoration: underline; color: $color(blue-600);} $me:hover{color: $color(blue-800);}"),
 		display,
 		If(newPage, Target("_blank")),
-	)
-}
-
-// BUTTONS
-func ButtonUI(children ...Node) Node {
-	return Button(
-		InlineStyle(`
-			$me {
-				cursor: pointer;
-				position: relative;
-				display: inline-flex;
-				align-items: center;
-				overflow: hidden;
-				background-color: $color(white);
-				border: 1px solid $color(neutral-200);
-				color: $color(neutral-700);
-				padding-right: $8;
-				padding-left: $8;
-				padding-top: $1;
-				padding-bottom: $1;
-				font-size: var(--text-sm);
-				border-radius: var(--radius-sm);
-			}
-
-			$me:hover {
-				background: $color(neutral-50);
-			}
-		`),
-		Group(children),
-	)
-}
-
-func ButtonUISuccess(children ...Node) Node {
-	return ButtonUI(
-		InlineStyle(`
-			$me {
-				border: 1px solid $color(green-700);
-				background: $color(green-600);
-				color: $color(white);
-			}
-
-			$me:hover {
-				background: $color(green-700);
-			}
-		`),
-		Group(children),
 	)
 }
 

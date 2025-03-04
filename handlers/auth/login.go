@@ -153,7 +153,7 @@ func LoginView(errorMsg string) Node {
 						),
 						Div(
 							Label(
-								InlineStyle("$me { display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
+								InlineStyle("$me { display: block; font-size: var(--text-xs); font-weight: var(--font-weight-normal); color: $color(neutral-700);}"),
 								For("username"),
 								Text("Username"),
 							),
@@ -163,7 +163,7 @@ func LoginView(errorMsg string) Node {
 						),
 						Div(
 							Label(
-								InlineStyle("$me { margin-top: $5; display: block; font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: $color(neutral-900); }"),
+								InlineStyle("$me { margin-top: $5; display: block; font-size: var(--text-xs); font-weight: var(--font-weight-normal); color: $color(neutral-700);}"),
 								For("password"),
 								Text("Password"),
 							),
@@ -188,8 +188,7 @@ func LoginView(errorMsg string) Node {
 										padding-right: $5;
 										color: $color(white);
 										background-color: $color(neutral-800);
-										border: 1px solid $color(neutral-950);
-										border-radius: var(--radius-sm);
+										border-radius: var(--radius-xs);
 										text-align: center;
 										font-size: var(--text-sm);
 									}

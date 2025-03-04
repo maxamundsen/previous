@@ -13,7 +13,6 @@ import (
 	"net/http"
 )
 
-
 func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 	identity := middleware.GetIdentity(r)
 	session := middleware.GetSession(r)
@@ -53,14 +52,14 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 			Card(
 				P(Text("This is the 'lite' version of the above table. It uses the same API, however it does not require implementing data filtration or pagination. It is intended to be used with fixed-volume data.")),
 			),
-			
+
 			Br(),
 
 			// This table can just be injected straight into the HTML since it does not require interactivity
 			AutoTableLite(
 				exampleCols,
 				data,
-				func (d exampleData) Node {
+				func(d exampleData) Node {
 					return Tr(
 						Td(Text(d.Field1)),
 						Td(Text(d.Field2)),
@@ -69,7 +68,8 @@ func AutoTableHandler(w http.ResponseWriter, r *http.Request) {
 					)
 				},
 				AutoTableOptions{
-					Hover: true,
+					Hover:   true,
+					Shadow:  true,
 					BorderY: true,
 					BorderX: true,
 				},
