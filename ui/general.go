@@ -75,6 +75,7 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 				background: $color(white);
 				box-shadow: var(--shadow-md);
 				border-bottom: 3px solid $color(neutral-600);
+				border-radius: var(--radius-xs);
 				font-size: var(--text-sm);
 			}
 
@@ -84,8 +85,24 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 		`),
 
 		// Header
-		Div(InlineStyle("$me { padding: $6 $8 $1 $8; font-size: var(--text-xl); font-weight: var(--font-weight-bold);}"),
+		Div(
+			InlineStyle(`
+				$me {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					padding: $6 $8 $1 $8;
+					font-size: var(--text-xl);
+					font-weight: var(--font-weight-bold);
+				}
+			`),
 			header,
+
+			Div(
+				Class("modal-close-btn"),
+				InlineStyle("$me { cursor: pointer; color: $color(gray-500); }"),
+				Icon(ICON_X_DIALOG_CLOSE, 24),
+			),
 		),
 
 		//Modal contents
