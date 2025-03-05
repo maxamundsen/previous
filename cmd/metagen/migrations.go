@@ -39,7 +39,7 @@ func maybeCreateSqliteDb() {
 		mErr := m.Up()
 		if mErr != nil {
 			printStatus(false)
-			fmt.Println(err.Error())
+			fmt.Println(mErr.Error())
 			os.Exit(1)
 		}
 
