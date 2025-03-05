@@ -72,7 +72,7 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 			A(
 				Href(url),
 				If(newPage, Target("_blank")),
-				InlineStyle("$me { display: block; padding: $2 $4; font-size: var(--text-sm); color: $color(neutral-200); }"),
+				InlineStyle("$me { display: block; padding: $2 $4; font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: $color(neutral-200); letter-spacing: var(--tracking-tight); }"),
 				IfElse(title != navTitle,
 					InlineStyle(`
 						$me:hover {
@@ -162,6 +162,7 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 						Map(NavGroups, func(nav NavGroup) Node {
 							if len(nav.SubGroup) > 0 {
 								return Group{
+									// Subsection Title
 									Li(
 										InlineStyle(`
 												$me {
@@ -169,12 +170,13 @@ func AppLayoutVertical(title string, section int, identity auth.Identity, sessio
 													align-items: center;
 													justify-content: space-between;
 													padding: $2 $4;
-													color: $color(neutral-400);
+													color: $color(neutral-200);
 													border-bottom: 1px solid $color(neutral-600);
 												}
 											`),
 										Span(InlineStyle("$me { font-size: var(--text-xs); text-transform: uppercase;}"), Text(nav.Title)),
 									),
+									// Each subsection item
 									Ul(InlineStyle("$me:not(:last-child) { margin-top: $1; margin-botton: $2; }"),
 										Map(nav.SubGroup, func(subnav NavGroup) Node {
 											return navLink(subnav.URL, subnav.Title, subnav.NewTab)

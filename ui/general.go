@@ -74,8 +74,6 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 				z-index: 10;
 				background: $color(white);
 				box-shadow: var(--shadow-md);
-				border-bottom: 3px solid $color(neutral-600);
-				border-radius: var(--radius-xs);
 				font-size: var(--text-sm);
 			}
 
@@ -100,7 +98,7 @@ func Modal(id string, header Node, body Node, closeElements []Node) Node {
 
 			Div(
 				Class("modal-close-btn"),
-				InlineStyle("$me { cursor: pointer; color: $color(gray-500); }"),
+				InlineStyle("$me { cursor: pointer; }"),
 				Icon(ICON_X_DIALOG_CLOSE, 24),
 			),
 		),

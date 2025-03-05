@@ -33,14 +33,13 @@ func ButtonUIOutline(children ...Node) Node {
 			$me {
 				background: none;
 				box-sizing: border-box;
-                box-shadow: 0 0 0 0, inset 0 0 0 1px $color(gray-400);
-				color: $color(gray-400);
+                box-shadow: 0 0 0 0, inset 0 0 0 1px $color(gray-600);
+				color: $color(gray-600);
 			}
 
 			$me:hover {
-				color: $color(white);
-				box-shadow: none;
-				background: $color(gray-400);
+				background: none;
+                box-shadow: 0 0 0 0, inset 0 0 0 2px $color(gray-600);
 			}
 		`),
 		Group(children),
