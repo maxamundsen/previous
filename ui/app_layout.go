@@ -325,8 +325,8 @@ func AppLayoutHorizontal(title string, section int, identity auth.Identity, sess
 										navbarDropdown(
 											Icon(ICON_USERS, 24),
 											Group{
-												navbarLink("Your Profile", "/app/account", false),
-												navbarLink("Logout", "/auth/logout", false),
+												navbarDropdownItem("My Profile", "/app/account", false),
+												navbarDropdownItem("Logout", "/auth/logout", false),
 											},
 										),
 									),

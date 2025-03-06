@@ -39,12 +39,12 @@ func AccountHandler(w http.ResponseWriter, r *http.Request) {
 			AutoTableLite(
 				cols,
 				entries,
-				func(item accountTableItem) Node {
+				Map(entries, func(entry accountTableItem) Node {
 					return Tr(
-						Td(B(Text(item.Property))),
-						Td(ToText(item.Value)),
+						Td(B(Text(entry.Property))),
+						Td(ToText(entry.Value)),
 					)
-				},
+				}),
 				AutoTableOptions{
 					BorderX: true,
 				},

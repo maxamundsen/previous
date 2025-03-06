@@ -83,12 +83,12 @@ func ApiFetchHxHandler(w http.ResponseWriter, r *http.Request) {
 			AutoTableLite(
 				cols,
 				jsonOutput.People,
-				func(p person) Node {
+				Map(jsonOutput.People, func(p person) Node {
 					return Tr(
 						Td(Text(p.Name)),
 						Td(Text(p.Craft)),
 					)
-				},
+				}),
 				AutoTableOptions{
 					Compact: true,
 					BorderX: true,

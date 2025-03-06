@@ -54,6 +54,18 @@ type Pagination struct {
 	ViewRangeUpper  int
 }
 
+func NewFilterFromSearch(s map[string]string) Filter {
+	f := Filter {
+		Search: s,
+	}
+
+	if f.Pagination.CurrentPage <= 0 {
+		f.Pagination.CurrentPage = 1
+	}
+
+	return f
+}
+
 func ParseFilterFromRequest(r *http.Request) Filter {
 	filter := Filter{}
 	filter.Search = make(map[string]string)
@@ -75,6 +87,10 @@ func ParseFilterFromRequest(r *http.Request) Filter {
 
 	if filter.Pagination.MaxItemsPerPage == 0 {
 		filter.Pagination.MaxItemsPerPage = FILTER_DEFAULT_MAX_ITEMS
+	}
+
+	if filter.Pagination.CurrentPage <= 0 {
+		filter.Pagination.CurrentPage = 1
 	}
 
 	return filter
@@ -177,4 +193,33 @@ func (p *Pagination) GeneratePagination(totalItemsInSet int, itemsDisplayedThisP
 	} else {
 		p.NextPage = p.CurrentPage + 1
 	}
+}
+
+///////////////////////////
+// IN-MEMORY OPERATIONS
+///////////////////////////
+
+// If you are doing filtering against in-memory structures, you can use the following helpers:
+func PaginateSlice[T any](arr []T, f Filter) []T {
+	if f.Pagination.Enabled {
+		if f.Pagination.CurrentPage <= 0 {
+			f.Pagination.CurrentPage = 1
+		}
+
+		if f.Pagination.MaxItemsPerPage > 0 {
+			offset := (f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage
+			limit := f.Pagination.MaxItemsPerPage
+
+			// bounds check
+			if offset > len(arr) {
+				arr = []T{}
+			} else if offset+limit > len(arr) {
+				arr = arr[offset:]
+			} else {
+				arr = arr[offset : offset+limit]
+			}
+		}
+	}
+
+	return arr
 }

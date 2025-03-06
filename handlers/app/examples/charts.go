@@ -17,7 +17,7 @@ func ChartHandler(w http.ResponseWriter, r *http.Request) {
 
 	AppLayout("Chart.js Example", LAYOUT_SECTION_EXAMPLES, *identity, session,
 		Card(
-			P(Text("Since we have the ability to \"inline\" Javascript inside our UI components, we can build reusable JS-dependent charts. This example uses the Chart.js library.")),
+			P(Text("Since we have the ability to \"inline\" Javascript inside our UI components, we can build reusable JS charts. This example uses the Chart.js library.")),
 		),
 
 		Br(),

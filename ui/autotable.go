@@ -2,6 +2,7 @@ package ui
 
 import (
 	. "previous/basic"
+	"reflect"
 
 	"previous/database"
 
@@ -41,7 +42,7 @@ type AutoTableOptions struct {
 
 // THE TABLE
 // Note that "aboveTable" node is not swapped with HTMX, but "belowTable" is.
-func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f database.Filter, entities []E, aboveTable Node, rowComponent func(E) Node, belowTable Node, opts AutoTableOptions) Node {
+func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f database.Filter, entities []E, aboveTable Node, rowComponent Node, belowTable Node, opts AutoTableOptions) Node {
 	paginationButton := func(icon string, page int) Node {
 		return Button(
 			InlineStyle(`
@@ -94,7 +95,7 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 					InlineStyle(`
 						$me {
 							background-color: $color(white);
-							box-shadow: var(--shadow-md);
+							box-shadow: var(--shadow-xs);
 						}
 					`),
 				),
@@ -182,7 +183,7 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 												InlineStyle("$me { flex-direction: row-reverse; }"),
 											),
 											Text(col.DisplayName),
-											If((f.OrderBy == col.DbName) && (tableId != ""),
+											If((f.OrderBy == col.DbName) && (col.DbName != ""),
 												Group{
 													InlineStyle("$me { color: $color(sky-700); }"),
 													IfElse(f.OrderDescending,
@@ -229,9 +230,7 @@ func AutoTable[E any](tableId string, url string, cols []database.ColInfo, f dat
 								InlineStyle("$me > tr > td { padding: $4; }"),
 							),
 							IfElse(len(entities) > 0,
-								Map(entities, func(e E) Node {
-									return rowComponent(e)
-								}),
+								rowComponent,
 								Tr(
 									Td(
 										Text("Dataset contains no entries."),
@@ -350,11 +349,44 @@ func AutotableSearch(c ...Node) Node {
 	)
 }
 
+// Automatically generate each table row for the given type T
+// Note that this function does not allow for row customization.
+// (Which is the whole point, if you want customization, implement the rowFunc yourself)
+func AutoTableAutoRowFunc[T comparable](arr []T) Node {
+	var rowItems []Node
+
+	for _, v := range arr {
+		var colItems []Node
+
+		value := reflect.ValueOf(v)
+
+		if value.Kind() != reflect.Struct {
+			return nil
+		}
+
+		for i := range value.NumField() {
+			field := value.Field(i)
+
+			switch field.Kind() {
+			case reflect.String:
+				colItems = append(colItems, Td(Text(field.String())))
+			default:
+				colItems = append(colItems, Td(ToText(field.Interface())))
+			}
+		}
+
+		rowItems = append(rowItems, Tr(Group(colItems)))
+	}
+
+
+	return Group(rowItems)
+}
+
 // "premade" autotable for simple tables that don't feature dynamic filtering.
 // We can still use the styling and general form of the fancy autotable defined above, but
 // for simple datasets because why not. This also gives you the option to "upgrade"
 // to the "full" table later on, since you are using the same api
-func AutoTableLite[E any](columnNames []string, entities []E, rowComponent func(E) Node, opts AutoTableOptions) Node {
+func AutoTableLite[E any](columnNames []string, entities []E, rowComponent Node, opts AutoTableOptions) Node {
 	cols := []database.ColInfo{}
 
 	for _, v := range columnNames {
@@ -370,6 +402,34 @@ func AutoTableLite[E any](columnNames []string, entities []E, rowComponent func(
 		nil,
 		rowComponent,
 		nil,
+		opts,
+	)
+}
+
+// Even SIMPLER version of autotable that literally only requires you to pass an array of structs.
+// Gives you zero control besides basic table options.
+func AutoTableEasy[E comparable](entities []E, opts AutoTableOptions) Node {
+	var cols []string
+
+	var item E
+
+	value := reflect.ValueOf(item)
+
+	if value.Kind() != reflect.Struct {
+		return nil
+	}
+
+	typ := value.Type()
+
+	for i := range value.NumField() {
+		colName := CapitalizeFirstLetter(typ.Field(i).Name)
+		cols = append(cols, colName)
+	}
+
+	return AutoTableLite(
+		cols,
+		entities,
+		AutoTableAutoRowFunc(entities),
 		opts,
 	)
 }

@@ -16,7 +16,6 @@ func FormInput(children ...Node) Node {
 				width: 100%;
 				border: 0;
 				color: $color(neutral-900);
-				border-bottom: 1px solid $color(neutral-300);
 				box-shadow: var(--shadow-xs);
 			}
 
@@ -40,7 +39,6 @@ func FormSelect(children ...Node) Node {
 				width: 100%;
 				border: 0;
 				color: $color(neutral-900);
-				border-bottom: 1px solid $color(neutral-300);
 				box-shadow: var(--shadow-xs);
 			}
 			@media $sm {
@@ -63,7 +61,6 @@ func FormTextarea(children ...Node) Node {
 				font-size: var(--text-sm);
 				color: $color(neutral-900);
 				background-color: $color(white);
-				border-bottom: 1px solid $color(neutral-300);
 				box-shadow: var(--shadow-xs);
 			}
 		`),

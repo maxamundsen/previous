@@ -23,7 +23,7 @@ func AutoTableHxHandler(w http.ResponseWriter, r *http.Request) {
 
 	// fetch entities from filter function
 	// this first counts the possible items before pagination
-	searchItems, _ := orders.Filter(database.Filter{Search: filter.Search})
+	searchItems, _ := orders.Filter(database.NewFilterFromSearch(filter.Search))
 
 	// this query gets the data AFTER pagination
 	orders, _ := orders.Filter(filter)
@@ -56,52 +56,49 @@ func AutoTableHxHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate HTML
-	func() Node {
-		elId := "order_table"
-		return AutoTable(
-			elId,
-			r.URL.Path,
-			cols,
-			filter,
-			orders,
-			AutotableSearchGroup(
-				AutotableSearch(
-					Placeholder("Search Customer Name..."),
-					BindSearch(elId, table.Order.PurchaserName.Name()),
-					AutoFocus(),
-				),
-				AutotableSearch(
-					Placeholder("Search Customer Email..."),
-					BindSearch(elId, table.Order.PurchaserEmail.Name()),
-					AutoFocus(),
-				),
-				AutotableSearch(
-					Placeholder("Price Min"),
-					BindSearch(elId, table.Order.Price.Name()+"_left"),
-				),
-				AutotableSearch(
-					Placeholder("Price Max"),
-					BindSearch(elId, table.Order.Price.Name()+"_right"),
-				),
+	elId := "order_table"
+	AutoTable(
+		elId,
+		r.URL.Path,
+		cols,
+		filter,
+		orders,
+		AutotableSearchGroup(
+			AutotableSearch(
+				Placeholder("Search Customer Name..."),
+				BindSearch(elId, table.Order.PurchaserName.Name()),
+				AutoFocus(),
 			),
-			func(order model.Order) Node {
-				return Tr(
-					TdLeft(B(ToText(order.ID))),
-					TdLeft(ToText(order.ProductID)),
-					TdLeft(ToText(order.PurchaserName)),
-					TdLeft(ToText(order.PurchaserEmail)),
-					TdMoney(int64(order.Price)),
-				)
-			},
-			nil,
-			AutoTableOptions{
-				Compact:   false,
-				Shadow:    true,
-				Hover:     false,
-				Alternate: false,
-				BorderX:   true,
-				BorderY:   false,
-			},
-		)
-	}().Render(w)
+			AutotableSearch(
+				Placeholder("Search Customer Email..."),
+				BindSearch(elId, table.Order.PurchaserEmail.Name()),
+			),
+			AutotableSearch(
+				Placeholder("Price Min"),
+				BindSearch(elId, table.Order.Price.Name()+"_left"),
+			),
+			AutotableSearch(
+				Placeholder("Price Max"),
+				BindSearch(elId, table.Order.Price.Name()+"_right"),
+			),
+		),
+		Map(orders, func(order model.Order) Node {
+			return Tr(
+				TdLeft(B(ToText(order.ID))),
+				TdLeft(ToText(order.ProductID)),
+				TdLeft(ToText(order.PurchaserName)),
+				TdLeft(ToText(order.PurchaserEmail)),
+				TdMoney(int64(order.Price)),
+			)
+		}),
+		nil,
+		AutoTableOptions{
+			Compact:   false,
+			Shadow:    true,
+			Hover:     false,
+			Alternate: false,
+			BorderX:   true,
+			BorderY:   false,
+		},
+	).Render(w)
 }
