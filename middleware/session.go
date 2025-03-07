@@ -17,7 +17,7 @@ func LoadSession(h http.HandlerFunc) http.HandlerFunc {
 
 		sessionCookie, err := r.Cookie(config.SESSION_COOKIE_NAME)
 		if err == nil {
-			decryptMap, _ := security.DecryptData[map[string]interface{}](sessionCookie.Value)
+			decryptMap, _ := security.DecryptData[map[string]interface{}](security.DecodeBase58(sessionCookie.Value))
 			sessionMap = *decryptMap
 		}
 
@@ -48,12 +48,12 @@ func PutSessionCookie(w http.ResponseWriter, r *http.Request, session map[string
 		}
 	}
 
-	sessionString, err := security.EncryptData(&session)
+	sessionData, err := security.EncryptData(&session)
 	if err != nil {
 		return
 	}
 
-	length := len(sessionString) + 8
+	length := len(sessionData) + 8
 
 	if length+totalBytes > 4096 {
 		log.Println("Attempt to generate cookie exceeding size limit for this domain")
@@ -62,7 +62,7 @@ func PutSessionCookie(w http.ResponseWriter, r *http.Request, session map[string
 
 	httpCookie := &http.Cookie{
 		Name:     config.SESSION_COOKIE_NAME,
-		Value:    sessionString,
+		Value:    security.EncodeBase58(sessionData),
 		HttpOnly: true,
 		Secure:   r.URL.Scheme == "https",
 		Path:     "/",

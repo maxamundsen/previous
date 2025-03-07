@@ -35,7 +35,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 
 			if len(splitToken) >= 2 {
 				token = splitToken[1]
-				identity, _ = security.DecryptData[auth.Identity](token)
+				identity, _ = security.DecryptData[auth.Identity](security.DecodeBase58(token))
 			}
 
 			if identity == nil {
@@ -53,7 +53,7 @@ func LoadIdentity(h http.HandlerFunc, requireAuth bool) http.HandlerFunc {
 		} else {
 			identityCookie, err := r.Cookie(config.IDENTITY_COOKIE_NAME)
 			if err == nil {
-				identity, _ = security.DecryptData[auth.Identity](identityCookie.Value)
+				identity, _ = security.DecryptData[auth.Identity](security.DecodeBase58(identityCookie.Value))
 			}
 
 			if identity == nil {
@@ -139,12 +139,12 @@ func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *auth.Id
 	// The key should not be checked into VCS, and be regenerated if theft is
 	// suspected. Resetting the key will log *everyone* out, since no sessions
 	// or identities will validate.
-	cookieString, err := security.EncryptData(identity)
+	cookieData, err := security.EncryptData(identity)
 	if err != nil {
 		return
 	}
 
-	length := len(cookieString) + 8 // 8 additional bytes coming from somewhere ¯\_(ツ)_/¯
+	length := len(cookieData) + 8 // 8 additional bytes coming from somewhere ¯\_(ツ)_/¯
 
 	if length+totalBytes > 4096 {
 		log.Println("Attempt to generate cookie exceeding 4096 bytes")
@@ -153,7 +153,7 @@ func PutIdentityCookie(w http.ResponseWriter, r *http.Request, identity *auth.Id
 
 	httpCookie := &http.Cookie{
 		Name:     config.IDENTITY_COOKIE_NAME,
-		Value:    cookieString,
+		Value:    security.EncodeBase58(cookieData),
 		HttpOnly: true,
 		Secure:   r.URL.Scheme == "https",
 		Path:     "/",

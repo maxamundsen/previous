@@ -5,13 +5,14 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha512"
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"previous/config"
+	"os"
 
 	"github.com/btcsuite/btcutil/base58"
 
@@ -19,43 +20,42 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func EncryptData[T any](data *T) (string, error) {
-	// serialize
-	b := bytes.Buffer{}
-	e := gob.NewEncoder(&b)
-	err := e.Encode(data)
-	if err != nil {
-		return "", err
-	}
+////////////////////////////////
+// Encoding Wrappers
+////////////////////////////////
 
-	// encrypt
-	outString, err := EncryptSecret(b.Bytes(), config.GetConfig().IdentityPrivateKey)
-	if err != nil {
-		return "", err
-	}
-
-	return outString, nil
+func EncodeBase64(in []byte) string {
+	return base64.StdEncoding.EncodeToString(in)
 }
 
-func DecryptData[T any](dataString string) (*T, error) {
-	dest := new(T)
+func DecodeBase64(in string) []byte {
+	out, _ := base64.RawStdEncoding.DecodeString(in)
+	return out
+}
 
-	secret, err := DecryptSecret(dataString, config.GetConfig().IdentityPrivateKey)
-	if err != nil {
-		return nil, err
-	}
+func EncodeBase58(in []byte) string {
+	return base58.Encode(in)
+}
 
-	// de-serialized
-	b := bytes.Buffer{}
-	b.Write(secret)
+func DecodeBase58(in string) []byte {
+	return base58.Decode(in)
+}
 
-	d := gob.NewDecoder(&b)
-	gobErr := d.Decode(dest)
-	if gobErr != nil {
-		return nil, gobErr
-	}
+////////////////////////////////
+// HASH FUNCTIONS
+////////////////////////////////
 
-	return dest, nil
+// Hash with SHA512 and output a Base58 string
+func SHA512_58(in string) string {
+	hasher := sha512.New()
+
+	hasher.Write([]byte(in))
+
+	hashBytes := hasher.Sum(nil)
+
+	hashString := base58.Encode(hashBytes)
+
+	return hashString
 }
 
 func HighwayHash58(in string) (string, error) {
@@ -119,11 +119,13 @@ func QuickFileHash(filepath string) (string, error) {
 	return base64.StdEncoding.EncodeToString(hash), nil
 }
 
+// Hash password using bcrypt
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
 }
 
+// Compare password with hash using bcrypt
 func ComparePasswords(password string, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
@@ -135,34 +137,38 @@ func RandBase58String(entropyBytes int) string {
 	return base58.Encode(b)
 }
 
-func EncryptSecret(data []byte, passKey string) (string, error) {
+////////////////////////////////
+// Encryption FUNCTIONS
+////////////////////////////////
+
+
+// AES Encrypt
+func EncryptSecret(data []byte, passKey string) ([]byte, error) {
 	key := make([]byte, 32)
 	copy(key, passKey)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	encryptedData := gcm.Seal(nonce, nonce, data, nil)
-	encodedData := base58.Encode(encryptedData)
 
-	return encodedData, nil
+	return encryptedData, nil
 }
 
-func DecryptSecret(encryptedData string, passKey string) ([]byte, error) {
-	encryptedBytes := base58.Decode(encryptedData)
-
+// AES Decrypt
+func DecryptSecret(encryptedData []byte, passKey string) ([]byte, error) {
 	key := make([]byte, 32)
 	copy(key, passKey)
 
@@ -177,15 +183,64 @@ func DecryptSecret(encryptedData string, passKey string) ([]byte, error) {
 	}
 
 	nonceSize := gcm.NonceSize()
-	if len(encryptedBytes) < nonceSize {
+	if len(encryptedData) < nonceSize {
 		return nil, fmt.Errorf("ciphertext too short")
 	}
-	nonce, encryptedBytes := encryptedBytes[:nonceSize], encryptedBytes[nonceSize:]
+	nonce, encryptedData := encryptedData[:nonceSize], encryptedData[nonceSize:]
 
-	decryptedData, err := gcm.Open(nil, nonce, encryptedBytes, nil)
+	decryptedData, err := gcm.Open(nil, nonce, encryptedData, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return decryptedData, nil
+}
+
+// Encrypt data using default private key
+func EncryptData[T any](data *T) ([]byte, error) {
+	return EncryptDataWithKey(data, config.GetConfig().IdentityPrivateKey)
+}
+
+// Decrypt data using default private key
+func DecryptData[T any](data []byte) (*T, error) {
+	return DecryptDataWithKey[T](data, config.GetConfig().IdentityPrivateKey)
+}
+
+func EncryptDataWithKey[T any](data *T, key string) ([]byte, error) {
+	// serialize
+	b := bytes.Buffer{}
+	e := gob.NewEncoder(&b)
+	err := e.Encode(data)
+	if err != nil {
+		return nil, err
+	}
+
+	// encrypt
+	out, err := EncryptSecret(b.Bytes(), key)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+func DecryptDataWithKey[T any](data []byte, key string) (*T, error) {
+	dest := new(T)
+
+	secret, err := DecryptSecret(data, key)
+	if err != nil {
+		return nil, err
+	}
+
+	// de-serialized
+	b := bytes.Buffer{}
+	b.Write(secret)
+
+	d := gob.NewDecoder(&b)
+	gobErr := d.Decode(dest)
+	if gobErr != nil {
+		return nil, gobErr
+	}
+
+	return dest, nil
 }

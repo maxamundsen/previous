@@ -37,5 +37,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	api.ApiWritePlaintext(w, encrypted)
+	api.ApiWritePlaintext(w, security.EncodeBase58(encrypted))
 }
