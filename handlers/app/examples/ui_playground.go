@@ -26,8 +26,8 @@ func UIPlaygroundHandler(w http.ResponseWriter, r *http.Request) {
 			Text("This is a modal!"),
 			Text(LOREM_IPSUM),
 			[]Node{
-				ButtonUISuccess(Text("OK")),
-				ButtonUIOutline(Text("Close")),
+				ButtonUISuccess(ModalCloser(), Text("OK")),
+				ButtonUIOutline(ModalCloser(), Text("Close")),
 			},
 		),
 

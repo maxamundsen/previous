@@ -51,105 +51,6 @@ func BadgeWarning(children ...Node) Node {
 	)
 }
 
-// DIALOG / MODAL
-func ModalActuator(id string, contents Node) Node {
-	return Span(
-		InlineScriptf(`
-			let act = me();
-			let dialog = me("#%s_dialog");
-			act.on("click", () => { dialog.showModal(); });
-		`, id),
-		contents,
-	)
-}
-
-func Modal(id string, header Node, body Node, closeElements []Node) Node {
-	return Dialog(
-		ID(id+"_dialog"),
-		InlineStyle(`
-			$me {
-				top: 50%;
-				left: 50%;
-				translate: -50% -50%;
-				z-index: 10;
-				background: $color(white);
-				box-shadow: var(--shadow-md);
-				font-size: var(--text-sm);
-			}
-
-			$me::backdrop {
-				background: $color(black/30);
-			}
-		`),
-
-		// Header
-		Div(
-			InlineStyle(`
-				$me {
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-					padding: $6 $8 $1 $8;
-					font-size: var(--text-xl);
-					font-weight: var(--font-weight-bold);
-				}
-			`),
-			header,
-
-			Div(
-				Class("modal-close-btn"),
-				InlineStyle("$me { cursor: pointer; }"),
-				Icon(ICON_X_DIALOG_CLOSE, 24),
-			),
-		),
-
-		//Modal contents
-		Div(
-			ID(id), // we use the passed id here so that swapping the content is easier
-			InlineStyle(`
-				$me {
-					padding: $3 $8 $8 $8;
-					color: $color(neutral-700);
-				}
-			`),
-			body,
-		),
-
-		// footer
-		If(len(closeElements) > 0,
-			Div(
-				InlineStyle(`
-					$me {
-						padding: $3 $8 $3 $8;
-						display: flex;
-						flex-direction: row-reverse;
-						gap: $2;
-					}
-				`),
-
-				Map(closeElements, func(el Node) Node {
-					return Div(Class("modal-close-btn"),
-						el,
-					)
-				}),
-			),
-		),
-
-		InlineScript(`
-			let dialog = me();
-			let close_buttons = any(".modal-close-btn", me())
-
-			dialog.on("click", (ev) => {
-				if (ev.target === dialog) {
-					dialog.close();
-				}
-			});
-
-			close_buttons.on("click", () => { dialog.close(); });
-		`),
-	)
-}
-
 // CONTAINERS
 func Flex(n ...Node) Node {
 	return Div(
@@ -237,6 +138,10 @@ func TdLeft(c ...Node) Node {
 
 func TdRight(c ...Node) Node {
 	return Td(InlineStyle("$me { text-align: right; }"), Group(c))
+}
+
+func TdCenter(c ...Node) Node {
+	return Td(InlineStyle("$me { text-align: center; }"), Group(c))
 }
 
 // HTMX Helpers
