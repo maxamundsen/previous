@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"previous/auth"
+	"previous/config"
 	"previous/handlers/api"
 	"previous/security"
 
@@ -31,7 +32,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	identity := auth.NewIdentity(userid, false)
 
-	encrypted, err := security.EncryptData(identity)
+	encrypted, err := security.EncryptData(identity, config.GetConfig().IdentityPrivateKey)
 	if err != nil {
 		http.Error(w, "An error occured while generating the api token.", http.StatusUnauthorized)
 		return
