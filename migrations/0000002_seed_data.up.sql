@@ -1,5 +1,5 @@
 INSERT INTO
-    "user" (
+    "users" (
         "username",
         "email",
         "firstname",
@@ -35,7 +35,7 @@ VALUES
     );
 
 INSERT INTO
-    "order" (
+    "orders" (
         "product_id",
         "price",
         "purchaser_name",

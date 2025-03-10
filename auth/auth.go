@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"math/big"
-	"previous/.jet/model"
 	"previous/constants"
 	"previous/security"
 	"previous/users"
@@ -19,7 +18,7 @@ const (
 )
 
 type Identity struct {
-	User          model.User
+	User          users.User
 	Permissions   users.Permissions
 	Authenticated bool
 	RememberMe    bool

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
@@ -63,14 +62,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	newpath := filepath.Join(".", ".metagen")
-	err := os.MkdirAll(newpath, os.ModePerm)
-
-	if err != nil {
-		fmt.Println("Cannot create metagen output dir. Exiting.")
-		os.Exit(1)
-	}
-
 	args := flag.Args()
 
 	for _, arg := range args {
@@ -118,7 +109,6 @@ func preBuild() {
 	// code generation
 	generateInlineStyles()
 	generateDebugConfig()
-	generateJetModels()
 }
 
 func build() {

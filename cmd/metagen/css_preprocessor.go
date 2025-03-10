@@ -42,6 +42,45 @@ func generateInlineStyles() {
 
 				s := string(content)
 
+				lines := strings.Split(s, "\n")
+
+				var inMultilineComment bool
+				for _, line := range lines {
+					// Trim whitespace from the start of the line
+					trimmed := strings.TrimSpace(line)
+
+					// Skip empty lines
+					if len(trimmed) == 0 {
+						continue
+					}
+
+					// Check if we're in a multi-line comment
+					if inMultilineComment {
+						if strings.Contains(trimmed, "*/") {
+							inMultilineComment = false
+						}
+						s = strings.ReplaceAll(s, line, "")
+						continue
+					}
+
+					// Check for start of multi-line comment
+					if strings.HasPrefix(trimmed, "/*") {
+						inMultilineComment = true
+						if strings.Contains(trimmed, "*/") {
+							inMultilineComment = false
+						}
+
+						s = strings.ReplaceAll(s, line, "")
+						continue
+					}
+
+					// Check for single-line comment
+					if strings.HasPrefix(trimmed, "//") {
+						s = strings.ReplaceAll(s, line, "")
+						continue
+					}
+				}
+
 				// only pre-process page & component files
 				inlineStyleRegex.ReplaceAllStringFunc(s, func(match string) string {
 					submatch := inlineStyleRegex.FindStringSubmatch(match)

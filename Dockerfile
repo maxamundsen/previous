@@ -23,6 +23,8 @@ FROM scratch
 
 COPY --from=build /app/server /app/server
 COPY --from=build /app/wwwroot /app/wwwroot
-COPY --from=build /app/passwords.db /app/passwords.db
+COPY --from=build /app/example.db /app/example.db
 
-CMD ["/app/server"]
+WORKDIR /app
+
+ENTRYPOINT ["./server"]

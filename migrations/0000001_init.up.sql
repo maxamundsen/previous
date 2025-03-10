@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
     "id" INTEGER NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     PRIMARY KEY("id")
 );
 
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE IF NOT EXISTS "orders" (
     "id" INTEGER NOT NULL,
     "product_id" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,

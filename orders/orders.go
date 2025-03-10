@@ -1,82 +1,71 @@
 package orders
 
 import (
-	"previous/.jet/model"
 	"previous/database"
 	"previous/finance"
-
-	. "previous/.jet/table"
-
-	. "github.com/go-jet/jet/v2/sqlite"
 )
 
-func Fetch() ([]model.Order, error) {
-	orders := []model.Order{}
-
-	stmt := SELECT(Order.AllColumns).FROM(Order)
-	err := stmt.Query(database.DB, &orders)
-
-	return orders, err
+type Order struct {
+	ID             int32  `db:"id"`
+	ProductID      int32  `db:"product_id"`
+	Price          int32  `db:"price"`
+	PurchaserName  string `db:"purchaser_name"`
+	PurchaserEmail string `db:"purchaser_email"`
 }
 
-func Filter(f database.Filter) ([]model.Order, error) {
-	orders := []model.Order{}
+func Fetch() ([]Order, error) {
+	qb := &database.QueryBuilder{}
+	qb.BaseSQL = "SELECT * FROM orders"
 
-	stmt := SELECT(Order.AllColumns).FROM(Order)
+	return database.Select[Order](qb, database.DB)
+}
 
-	condition := Bool(true)
+func Filter(f database.Filter) ([]Order, error) {
+	qb := &database.QueryBuilder{}
+	qb.BaseSQL = "SELECT * FROM orders"
 
 	// search filters
-	emailSearch := f.Search[Order.PurchaserEmail.Name()]
-	if emailSearch != "" {
-		condition = condition.AND(Order.PurchaserEmail.LIKE(String("%" + emailSearch + "%")))
+	purchaserSearch := f.Search["purchaser_name"]
+	if purchaserSearch != "" {
+		qb.Where = append(qb.Where, database.QueryFilter{
+			Column: "purchaser_name", Operator: database.LIKE, Parameter: database.LikeContains(purchaserSearch),
+		})
 	}
 
-	purchaserSearch := f.Search[Order.PurchaserName.Name()]
-	if purchaserSearch != "" {
-		condition = condition.AND(Order.PurchaserName.LIKE(String("%" + purchaserSearch + "%")))
+	emailSearch := f.Search["purchaser_email"]
+	if emailSearch != "" {
+		qb.Where = append(qb.Where, database.QueryFilter{
+			Column: "purchaser_email", Operator: database.LIKE, Parameter: database.LikeContains(emailSearch),
+		})
 	}
 
 	// between filters
-	priceSearchLeft_string := f.Search[Order.Price.Name()+"_left"]
-	priceSearchRight_string := f.Search[Order.Price.Name()+"_right"]
+	priceSearchLeft_string := f.Search["price_left"]
+	priceSearchRight_string := f.Search["price_right"]
 
-	priceSearchLeft := Int32(int32(finance.MoneyToInt64(priceSearchLeft_string)))
-	priceSearchRight := Int32(int32(finance.MoneyToInt64(priceSearchRight_string)))
+	priceSearchLeft := int32(finance.MoneyToInt64(priceSearchLeft_string))
+	priceSearchRight := int32(finance.MoneyToInt64(priceSearchRight_string))
 
 	if priceSearchLeft_string != "" {
-		condition = condition.AND(Order.Price.GT_EQ(priceSearchLeft))
+		qb.Where = append(qb.Where, database.QueryFilter{
+			Column: "price", Operator: database.GE, Parameter: priceSearchLeft,
+		})
 	}
 
 	if priceSearchRight_string != "" {
-		condition = condition.AND(Order.Price.LT_EQ(priceSearchRight))
+		qb.Where = append(qb.Where, database.QueryFilter{
+			Column: "price", Operator: database.LE, Parameter: priceSearchRight,
+		})
 	}
 
-	stmt.WHERE(condition)
-
 	// order by
-	obCol, exists := database.GetColumnFromStringName(f.OrderBy, Order.AllColumns)
-
-	if exists {
-		if f.OrderDescending {
-			stmt.ORDER_BY(obCol.DESC())
-		} else {
-			stmt.ORDER_BY(obCol.ASC())
-		}
-	} else {
-		stmt.ORDER_BY(Order.ID.ASC())
+	if f.OrderBy != "" {
+		qb.OrderBy = []string{f.OrderBy}
+		qb.OrderDescending = f.OrderDescending
 	}
 
 	// pagination
-	if f.Pagination.Enabled {
-		if f.Pagination.MaxItemsPerPage > 0 {
-			stmt.LIMIT(int64(f.Pagination.MaxItemsPerPage))
-			stmt.OFFSET(int64((f.Pagination.CurrentPage - 1) * f.Pagination.MaxItemsPerPage))
-		}
-	}
+	qb.Pagination = f.Pagination
 
-	// fmt.Println(stmt.DebugSql())
-
-	err := stmt.Query(database.DB, &orders)
-	return orders, err
+	return database.Select[Order](qb, database.DB)
 }

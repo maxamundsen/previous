@@ -1,5 +1,5 @@
 DELETE FROM
-    "user";
+    "users";
 
 DELETE FROM
-    "order";
+    "orders";

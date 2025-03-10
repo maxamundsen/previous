@@ -2,15 +2,15 @@ module previous
 
 go 1.24.1
 
-require golang.org/x/crypto v0.36.0
-
 require (
+	golang.org/x/crypto v0.36.0
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/go-co-op/gocron/v2 v2.16.0
 	github.com/go-jet/jet/v2 v2.12.0
 	github.com/golang-migrate/migrate/v4 v4.18.2
 	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/microcosm-cc/bluemonday v1.0.27
