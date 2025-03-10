@@ -1,3 +1,5 @@
+// This file provides the QueryBuilder API for building dynamic queries.
+// API for building dynamic SQL queries from structured database filters
 package database
 
 import (
@@ -11,15 +13,17 @@ import (
 )
 
 type QueryBuilder struct {
-	BaseSQL         string // initial sql string to build query from
-	Subquery        bool   // wraps query in parenthesis
-	Single          bool   // returns single entity
-	Pagination      Pagination
-	OrderBy         []string
-	OrderDescending bool
-	GroupBy         []string
-	Where           []QueryFilter
-	Setters         []QuerySetter // used for insert and update compilation
+	BaseSQL           string // initial sql string to build query from
+	Subquery          bool   // wraps query in parenthesis
+	Single            bool   // returns single entity
+	PaginationEnabled bool
+	CurrentPage       int
+	MaxItemsPerPage   int
+	OrderBy           []string
+	OrderDescending   bool
+	GroupBy           []string
+	Where             []QueryFilter
+	Setters           []QuerySetter // used for insert and update compilation
 }
 
 type QueryFilter struct {
@@ -117,8 +121,55 @@ func Get[T any](qb *QueryBuilder, db *sqlx.DB, manualParams ...interface{}) (T, 
 	return entity, err
 }
 
-func LikeContains(in string) string {
-	return "%" + in + "%"
+// Set query builder properties from a `Filter` object
+// NOTE: The Filter.Search map does not generate a QueryWhere[] on the builder
+// Either create them manually for fine-grain control, or use the `SetBuilderWhereFromFilter` instead.
+func SetBuilderFromFilter(qb *QueryBuilder, f Filter) {
+	qb.PaginationEnabled = f.Pagination.Enabled
+	qb.CurrentPage = f.Pagination.CurrentPage
+	qb.MaxItemsPerPage = f.Pagination.MaxItemsPerPage
+
+	if f.OrderBy != "" {
+		qb.OrderBy = []string{f.OrderBy}
+		qb.OrderDescending = f.OrderDescending
+	}
+}
+
+// Append to QueryBuilder.QueryWhere[] array from a Filter.Search hashmap
+// NOTE: This automatically generate WHERE clause uses the LIKE operator, with the search item wrapped in wildcards.
+// This is nice when you want to do a simple "search" on a column, but you probably don't want this function if you are doing
+// something more specific with your search results.
+//
+// - Filter.Search keys map to column names
+// - Filter.Search values map to SQL parameters
+func SetBuilderWhereFromFilter(qb *QueryBuilder, f Filter) {
+	for k, v := range f.Search {
+		qb.Where = append(qb.Where, QueryFilter{
+			Column: k, Operator: LIKE, Parameter: Wildcard(v),
+		})
+	}
+}
+
+// Wrap the input in SQL wildcards
+func Wildcard(i interface{}) string {
+	v := reflect.ValueOf(i)
+
+	output := ""
+
+	switch v.Kind() {
+	case reflect.String:
+		output = v.String()
+	case reflect.Int:
+		output = fmt.Sprintf("%%%d%%", v.Int())
+	case reflect.Float64:
+		output = fmt.Sprintf("%%%f%%", v.Float())
+	case reflect.Bool:
+		output = fmt.Sprintf("%%%t%%", v.Bool())
+	default:
+		output = fmt.Sprintf("%%%v%%", i)
+	}
+
+	return output
 }
 
 // internal functions
@@ -279,18 +330,18 @@ func buildSelect[T any](qb *QueryBuilder) (string, []interface{}, error) {
 	}
 
 	// pagination
-	if !qb.Single && qb.Pagination.Enabled {
-		if qb.Pagination.CurrentPage <= 0 {
-			qb.Pagination.CurrentPage = 1
+	if !qb.Single && qb.PaginationEnabled {
+		if qb.CurrentPage <= 0 {
+			qb.CurrentPage = 1
 		}
 
-		if qb.Pagination.MaxItemsPerPage <= 0 {
-			qb.Pagination.MaxItemsPerPage = 10
+		if qb.MaxItemsPerPage <= 0 {
+			qb.MaxItemsPerPage = 10
 		}
 
-		sql += fmt.Sprintf("LIMIT %d ", qb.Pagination.MaxItemsPerPage)
+		sql += fmt.Sprintf("LIMIT %d ", qb.MaxItemsPerPage)
 
-		offset := (qb.Pagination.CurrentPage - 1) * qb.Pagination.MaxItemsPerPage
+		offset := (qb.CurrentPage - 1) * qb.MaxItemsPerPage
 		sql += fmt.Sprintf("OFFSET %d", offset)
 	}
 

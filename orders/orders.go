@@ -28,14 +28,14 @@ func Filter(f database.Filter) ([]Order, error) {
 	purchaserSearch := f.Search["purchaser_name"]
 	if purchaserSearch != "" {
 		qb.Where = append(qb.Where, database.QueryFilter{
-			Column: "purchaser_name", Operator: database.LIKE, Parameter: database.LikeContains(purchaserSearch),
+			Column: "purchaser_name", Operator: database.LIKE, Parameter: database.Wildcard(purchaserSearch),
 		})
 	}
 
 	emailSearch := f.Search["purchaser_email"]
 	if emailSearch != "" {
 		qb.Where = append(qb.Where, database.QueryFilter{
-			Column: "purchaser_email", Operator: database.LIKE, Parameter: database.LikeContains(emailSearch),
+			Column: "purchaser_email", Operator: database.LIKE, Parameter: database.Wildcard(emailSearch),
 		})
 	}
 
@@ -58,14 +58,8 @@ func Filter(f database.Filter) ([]Order, error) {
 		})
 	}
 
-	// order by
-	if f.OrderBy != "" {
-		qb.OrderBy = []string{f.OrderBy}
-		qb.OrderDescending = f.OrderDescending
-	}
-
-	// pagination
-	qb.Pagination = f.Pagination
+	// pagination, orderby
+	database.SetBuilderFromFilter(qb, f)
 
 	return database.Select[Order](qb, database.DB)
 }

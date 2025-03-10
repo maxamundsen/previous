@@ -1,3 +1,10 @@
+// This file provides a `Filter` API that can be used by any subsystem that accepts user input for filtering data.
+//
+// The typical workflow looks something like this:
+// - Author a component / handler that accepts user input.
+// - Generate a `Filter` object from the user input.
+// - Use the filter object as a parameter to some function that returns database results.
+//   - You can use the QueryBuilder API to build this dynamic filter function
 package database
 
 import (
@@ -12,8 +19,6 @@ import (
 )
 
 const (
-	BETWEEN_LEFT_URL_KEY_PREFIX  = "betweenLeft_"
-	BETWEEN_RIGHT_URL_KEY_PREFIX = "betweenRight_"
 	ORDER_BY_URL_KEY             = "orderBy"
 	ORDER_DESC_URL_KEY           = "desc"
 	PAGE_NUM_URL_KEY             = "pageNum"
